@@ -21,28 +21,32 @@ $current_page = basename($_SERVER['PHP_SELF']);
         left: 0;
         top: 0;
         border-right: 1px solid #dee2e6;
-        padding-top: 20px;
         z-index: 1000;
     }
 
     .sidebar nav ul {
         list-style-type: none;
         padding: 0;
+        margin: 0;
     }
 
     .sidebar nav ul li {
-        padding: 10px 0;
+        padding: 0;
     }
 
     .sidebar nav ul li a {
         text-decoration: none;
         color: #333;
         display: block;
-        padding: 5px 20px;
+        padding: 10px 20px;
         transition: background-color 0.3s;
     }
 
-    .sidebar nav ul li a:hover, .sidebar nav ul li a.active {
+    .sidebar nav ul li a:hover {
         background-color: #e9ecef;
+    }
+
+    .sidebar nav ul li a.active {
+        font-weight: bold;
     }
 </style>

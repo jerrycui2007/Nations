@@ -98,8 +98,68 @@ $total_land = array_sum(array_slice($land, 1)); // Sum all land types, excluding
             This table shows the distribution of land types in your country. Most constructions will require Cleared Land to build.
             You can get Cleared Land by clearing the different types of lands.
             You will also need to convert Cleared Land to Urban Areas (1000 people per Urban Area), or your population will not grow.
-
         </p>
+
+        <h2>Land Conversion Costs</h2>
+        <table>
+            <tr>
+                <th>Land Type</th>
+                <th>Cost to Convert to Cleared Land</th>
+            </tr>
+            <tr>
+                <td>Forest</td>
+                <td>$100</td>
+            </tr>
+            <tr>
+                <td>Mountain</td>
+                <td>Cannot convert</td>
+            </tr>
+            <tr>
+                <td>River</td>
+                <td>Cannot convert</td>
+            </tr>
+            <tr>
+                <td>Lake</td>
+                <td>Cannot convert</td>
+            </tr>
+            <tr>
+                <td>Grassland</td>
+                <td>$100</td>
+            </tr>
+            <tr>
+                <td>Jungle</td>
+                <td>$300</td>
+            </tr>
+            <tr>
+                <td>Desert</td>
+                <td>$500</td>
+            </tr>
+            <tr>
+                <td>Tundra</td>
+                <td>$500</td>
+            </tr>
+        </table>
+
+        <h2>Other Costs</h2>
+        <table>
+            <tr>
+                <th>Action</th>
+                <th>Cost</th>
+            </tr>
+            <tr>
+                <td>Convert Cleared Land to Urban Areas</td>
+                <td>$500</td>
+            </tr>
+            <tr>
+                <td>Expand borders</td>
+                <td>
+                    $5000<br>
+                    1000 Food<br>
+                    1600 Building Materials<br>
+                    1000 Consumer Goods
+                </td>
+            </tr>
+        </table>
     </div>
 
     <?php 
