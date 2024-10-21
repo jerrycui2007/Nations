@@ -60,7 +60,7 @@ function performHourlyUpdates() {
             $update_stmt->bind_param("ii", $new_consumer_goods, $user_id);
             $update_stmt->execute();
 
-echo "User ID {$user_id}: " . $income_result['message'] . " " . $food_consumption_result['message'] . " " 
+echo "User ID {$user_id}: " . $income_result['message'] . " " . $food_consumption_result['message'] . " " ;
 
             echo "User ID {$user_id}: " . $income_result['message'] . " " . $food_consumption_result['message'] . " " . $power_consumption_result['message'] . "\n";
 
