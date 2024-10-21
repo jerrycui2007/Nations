@@ -7,7 +7,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <ul>
             <li><a href="home.php" <?php echo ($current_page == 'home.php') ? 'class="active"' : ''; ?>>Home</a></li>
             <li><a href="land.php" <?php echo ($current_page == 'land.php') ? 'class="active"' : ''; ?>>Land</a></li>
-            <li><button id="end-turn-btn" class="sidebar-button">End Turn</button></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </nav>
@@ -35,23 +34,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
         padding: 0;
     }
 
-    .sidebar nav ul li a,
-    .sidebar nav ul li button.sidebar-button {
+    .sidebar nav ul li a {
         text-decoration: none;
         color: #333;
         display: block;
         padding: 10px 20px;
         transition: background-color 0.3s;
-        width: 100%;
-        text-align: center;
-        border: none;
-        background: none;
-        cursor: pointer;
-        font-size: 1em;
     }
 
-    .sidebar nav ul li a:hover,
-    .sidebar nav ul li button.sidebar-button:hover {
+    .sidebar nav ul li a:hover {
         background-color: #e9ecef;
     }
 
@@ -59,27 +50,3 @@ $current_page = basename($_SERVER['PHP_SELF']);
         font-weight: bold;
     }
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const endTurnBtn = document.getElementById('end-turn-btn');
-    
-    endTurnBtn.addEventListener('click', function() {
-        fetch('../backend/hourly_updates.php', {
-            method: 'POST',
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log('Hourly updates executed successfully');
-                // Optionally, you can reload the page or update specific elements here
-                location.reload();
-            } else {
-                console.error('Failed to execute hourly updates');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-});
-</script>
