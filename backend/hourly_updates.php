@@ -1,6 +1,7 @@
 <?php
 require_once 'db_connection.php';
 require_once 'calculate_income.php';
+require_once 'calculate_food_consumption.php';
 
 function performHourlyUpdates() {
     global $conn;
@@ -21,17 +22,49 @@ function performHourlyUpdates() {
         while ($user = $result->fetch_assoc()) {
             $user_id = $user['id'];
             
-            // Calculate income using the new function
+            // Calculate income
             $income_result = calculateIncome($user);
+
+            // Calculate food consumption
+            $food_consumption_result = calculateFoodConsumption($user);
 
             if ($income_result['success']) {
                 // Update user's money
+                $new_money = $income_result['new_money'];
                 $update_stmt = $conn->prepare("UPDATE commodities SET money = ? WHERE id = ?");
-                $update_stmt->bind_param("ii", $income_result['new_money'], $user_id);
+                $update_stmt->bind_param("ii", $new_money, $user_id);
                 $update_stmt->execute();
             }
 
-            echo "User ID {$user_id}: " . $income_result['message'] . "\n";
+            // Update user's food (new_food is already guaranteed to be non-negative)
+            $new_food = $food_consumption_result['new_food'];
+            $update_stmt = $conn->prepare("UPDATE commodities SET food = ? WHERE id = ?");
+            $update_stmt->bind_param("ii", $new_food, $user_id);
+            $update_stmt->execute();
+
+            // Calculate power consumption
+            $power_consumption_result = calculatePowerConsumption($user);
+
+            // Update user's power
+            $new_power = $power_consumption_result['new_power'];
+            $update_stmt = $conn->prepare("UPDATE commodities SET power = ? WHERE id = ?");
+            $update_stmt->bind_param("ii", $new_power, $user_id);
+            $update_stmt->execute();
+
+            // Calculate consumer goods consumption
+            $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user);
+
+            // Update user's consumer goods
+            $new_consumer_goods = $consumer_goods_consumption_result['new_consumer_goods'];
+            $update_stmt = $conn->prepare("UPDATE commodities SET consumer_goods = ? WHERE id = ?");
+            $update_stmt->bind_param("ii", $new_consumer_goods, $user_id);
+            $update_stmt->execute();
+
+echo "User ID {$user_id}: " . $income_result['message'] . " " . $food_consumption_result['message'] . " " 
+
+            echo "User ID {$user_id}: " . $income_result['message'] . " " . $food_consumption_result['message'] . " " . $power_consumption_result['message'] . "\n";
+
+            echo "User ID {$user_id}: " . $income_result['message'] . " " . $food_consumption_result['message'] . "\n";
         }
 
         $conn->commit();
