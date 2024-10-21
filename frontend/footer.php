@@ -41,6 +41,7 @@ $resources = [
         bottom: 0;
         width: 100%;
         border-top: 1px solid #dee2e6;
+        z-index: 999;
     }
     .resources-container {
         display: flex;
