@@ -25,22 +25,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows > 0) {
             $error = "Country name, leader name, or email already exists.";
         } else {
-            // Prepare and bind
-            $stmt = $conn->prepare("INSERT INTO users (country_name, leader_name, email, password) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("ssss", $country_name, $leader_name, $email, $password);
+            // Start a transaction
+            $conn->begin_transaction();
 
-            // Execute and check for errors
-            if ($stmt->execute()) {
-                echo "Registration successful!";
-                // Redirect to log in or homepage after registration
-                header("Location: login.php");
-                exit();
-            } else {
-                $error = "Error: " . $stmt->error;
+            try {
+                // Prepare and bind for users table
+                $stmt = $conn->prepare("INSERT INTO users (country_name, leader_name, email, password) VALUES (?, ?, ?, ?)");
+                $stmt->bind_param("ssss", $country_name, $leader_name, $email, $password);
+
+                // Execute and check for errors
+                if ($stmt->execute()) {
+                    $user_id = $conn->insert_id; // Get the ID of the newly inserted user
+
+                    // Insert into commodities table
+                    $stmt_commodities = $conn->prepare("INSERT INTO commodities (id) VALUES (?)");
+                    $stmt_commodities->bind_param("i", $user_id);
+                    $stmt_commodities->execute();
+                    $stmt_commodities->close();
+
+                    $conn->commit(); // Commit the transaction
+
+                    echo "Registration successful!";
+                    // Redirect to log in or homepage after registration
+                    header("Location: login.php");
+                    exit();
+                } else {
+                    throw new Exception("Error: " . $stmt->error);
+                }
+            } catch (Exception $e) {
+                $conn->rollback(); // Rollback the transaction on error
+                $error = $e->getMessage();
             }
-        }
 
-        $stmt->close();
+            $stmt->close();
+        }
     }
 }
 
