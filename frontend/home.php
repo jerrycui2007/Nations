@@ -1,6 +1,8 @@
 <?php
+global $conn;
 session_start();
 require_once '../backend/db_connection.php';
+require_once '../backend/calculate_points.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -25,7 +27,7 @@ $commodities = $result->fetch_assoc();
 $stmt->close();
 
 // Set points (not in database yet)
-$points = 0;
+$points = getPointsForUser($conn, $_SESSION['user_id']);
 ?>
 
 <!DOCTYPE html>
