@@ -1,4 +1,5 @@
 <?php
+global $conn;
 require_once '../backend/db_connection.php';
 
 // Initialize variables
@@ -42,6 +43,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_commodities->bind_param("i", $user_id);
                     $stmt_commodities->execute();
                     $stmt_commodities->close();
+
+                    // Insert into land table
+                    $stmt_land = $conn->prepare("INSERT INTO land (id) VALUES (?)");
+                    $stmt_land->bind_param("i", $user_id);
+                    $stmt_land->execute();
+                    $stmt_land->close();
 
                     $conn->commit(); // Commit the transaction
 

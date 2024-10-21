@@ -1,5 +1,6 @@
 <?php
 // Fetch commodities data
+global $conn;
 $stmt = $conn->prepare("SELECT * FROM commodities WHERE id = ?");
 $stmt->bind_param("i", $_SESSION['user_id']);
 $stmt->execute();
@@ -9,16 +10,16 @@ $stmt->close();
 
 // Define an array of resources to display
 $resources = [
-    'money' => 'Money',
-    'food' => 'Food',
-    'power' => 'Power',
-    'building_materials' => 'Building Materials',
-    'consumer_goods' => 'Consumer Goods',
-    'metal' => 'Metal',
-    'ammunition' => 'Ammunition',
-    'fuel' => 'Fuel',
-    'uranium' => 'Uranium',
-    'whz' => 'WHZ'
+    'money' =>               'Money',
+    'food' =>                'Food',
+    'power' =>               'Power',
+    'building_materials' =>  'Building Materials',
+    'consumer_goods' =>      'Consumer Goods',
+    'metal' =>               'Metal',
+    'ammunition' =>          'Ammunition',
+    'fuel' =>                'Fuel',
+    'uranium' =>             'Uranium',
+    'whz' =>                 'WhZ'
 ];
 ?>
 
