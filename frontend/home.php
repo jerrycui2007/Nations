@@ -37,22 +37,40 @@ $points = getPointsForUser($conn, $_SESSION['user_id']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($user['country_name']); ?> - Nations</title>
     <link rel="stylesheet" type="text/css" href="design/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            padding-bottom: 60px; /* Add padding to accommodate the footer */
+        }
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        .nation-info {
+            margin-top: 20px;
+        }
+        .nation-info p {
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
-    <?php include 'sidebar.php'; ?>
 
-    <div class="content">
-        <h1><?php echo htmlspecialchars($user['country_name']); ?></h1>
-        <div class="nation-info">
-            <p><strong>Leader:</strong> <?php echo htmlspecialchars($user['leader_name']); ?></p>
-            <p><strong>Population:</strong> <?php echo number_format($user['population']); ?></p>
-            <p><strong>GP:</strong> <?php echo number_format($points); ?></p>
-        </div>
-    </div>
+<h1><?php echo htmlspecialchars($user['country_name']); ?></h1>
+<div class="nation-info">
+    <p><strong>Leader:</strong> <?php echo htmlspecialchars($user['leader_name']); ?></p>
+    <p><strong>Population:</strong> <?php echo number_format($user['population']); ?></p>
+    <p><strong>GP:</strong> <?php echo number_format($points); ?></p>
+</div>
 
-    <?php 
-    include 'footer.php';
-    $conn->close();
-    ?>
+<?php include 'footer.php'; 
+// Close the connection after all queries are done
+$conn->close();
+?>
+
 </body>
 </html>
