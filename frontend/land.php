@@ -1,4 +1,5 @@
 <?php
+global $conn;
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/calculate_points.php';
@@ -29,6 +30,9 @@ $points = getPointsForUser($conn, $_SESSION['user_id']);
 
 // Calculate total land
 $total_land = array_sum(array_slice($land, 1)); // Sum all land types, excluding the 'id' column
+
+// Define land types
+$land_types = ['cleared_land', 'urban_areas', 'forest', 'mountain', 'river', 'lake', 'grassland', 'jungle', 'desert', 'tundra'];
 ?>
 
 <!DOCTYPE html>
@@ -77,17 +81,32 @@ $total_land = array_sum(array_slice($land, 1)); // Sum all land types, excluding
             <tr>
                 <th>Land Type</th>
                 <th>Amount</th>
+                <th>Convert</th>
             </tr>
             <tr>
                 <td>Total Land</td>
-                <td><?php echo number_format($total_land); ?></td>
+                <td id="total-land"><?php echo number_format($total_land); ?></td>
+                <td></td>
             </tr>
             <?php
-            $land_types = ['cleared_land', 'urban_areas', 'forest', 'mountain', 'river', 'lake', 'grassland', 'jungle', 'desert', 'tundra'];
+            $convertible_types = ['forest', 'grassland', 'jungle', 'desert', 'tundra'];
             foreach ($land_types as $type) {
                 echo "<tr>";
                 echo "<td>" . ucwords(str_replace('_', ' ', $type)) . "</td>";
-                echo "<td>" . number_format($land[$type]) . "</td>";
+                echo "<td id='{$type}-amount'>" . number_format($land[$type]) . "</td>";
+                if (in_array($type, $convertible_types)) {
+                    echo "<td>";
+                    echo "<input type='number' id='{$type}-convert' min='0' max='{$land[$type]}' style='width: 80px;'>";
+                    echo "<button onclick='convertLand(\"{$type}\")'>Convert to Cleared Land</button>";
+                    echo "</td>";
+                } elseif ($type === 'urban_areas') {
+                    echo "<td>";
+                    echo "<input type='number' id='urban-areas-build' min='0' max='{$land['cleared_land']}' style='width: 80px;'>";
+                    echo "<button onclick='buildUrbanAreas()'>Build Urban Areas</button>";
+                    echo "</td>";
+                } else {
+                    echo "<td></td>";
+                }
                 echo "</tr>";
             }
             ?>
@@ -155,7 +174,7 @@ $total_land = array_sum(array_slice($land, 1)); // Sum all land types, excluding
                 <td>
                     $5000<br>
                     1000 Food<br>
-                    1600 Building Materials<br>
+                    1000 Building Materials<br>
                     1000 Consumer Goods
                 </td>
             </tr>
@@ -166,5 +185,65 @@ $total_land = array_sum(array_slice($land, 1)); // Sum all land types, excluding
     include 'footer.php';
     $conn->close();
     ?>
+
+<script>
+function convertLand(landType) {
+    const amount = document.getElementById(`${landType}-convert`).value;
+    if (amount <= 0) {
+        alert("Please enter a valid amount to convert to Cleared Land.");
+        return;
+    }
+
+    fetch('../backend/convert_land.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `land_type=${landType}&amount=${amount}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred while processing your request. Check the console for more details.');
+    });
+}
+
+function buildUrbanAreas() {
+    const amount = document.getElementById('urban-areas-build').value;
+    if (amount <= 0) {
+        alert("Please enter a valid amount to build Urban Areas.");
+        return;
+    }
+
+    fetch('../backend/build_urban_areas.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `amount=${amount}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message || 'An error occurred while processing your request.');
+            console.error('Error details:', data.error_details);
+        }
+    })
+    .catch((error) => {
+        console.error('Fetch error:', error);
+        alert('An error occurred while processing your request. Check the console for more details.');
+    });
+}
+</script>
+
 </body>
 </html>
