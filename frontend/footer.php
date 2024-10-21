@@ -57,4 +57,3 @@ $resources = [
         font-weight: bold;
         margin-right: 5px;
     }
-</style>
