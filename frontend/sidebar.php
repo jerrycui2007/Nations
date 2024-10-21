@@ -21,7 +21,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         left: 0;
         top: 0;
         border-right: 1px solid #dee2e6;
-        z-index: 1000;
+        z-index: 500;
     }
 
     .sidebar nav ul {
