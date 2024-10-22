@@ -5,6 +5,7 @@ require_once 'calculate_food_consumption.php';
 require_once 'calculate_power_consumption.php';
 require_once 'calculate_consumer_goods_consumption.php';
 require_once 'calculate_population_growth.php';
+require_once 'calculate_points.php';
 
 function performHourlyUpdates() {
     global $conn;
@@ -76,6 +77,19 @@ function performHourlyUpdates() {
             $update_stmt->execute();
 
             log_message("User ID {$user_id}: " . $population_growth_result['message']);
+
+            // Calculate points
+            $points = getPointsForUser($conn, $user_id);
+
+            log_message("User ID {$user_id}: Old GP: {$user['gp']}");
+            log_message("User ID {$user_id}: Calculated new GP: {$points}");
+
+            // Update user's points in the database
+            $update_stmt = $conn->prepare("UPDATE users SET gp = ? WHERE id = ?");
+            $update_stmt->bind_param("ii", $points, $user_id);
+            $update_stmt->execute();
+
+            log_message("User ID {$user_id}: Updated GP from {$user['gp']} to {$points}");
         }
 
         $conn->commit();

@@ -11,8 +11,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Fetch user data including commodities
-$stmt = $conn->prepare("SELECT u.country_name, u.leader_name, u.population, c.food, c.power, c.consumer_goods 
+// Fetch user data including commodities and GP
+$stmt = $conn->prepare("SELECT u.country_name, u.leader_name, u.population, u.gp, c.food, c.power, c.consumer_goods 
                         FROM users u 
                         JOIN commodities c ON u.id = c.id 
                         WHERE u.id = ?");
@@ -26,10 +26,7 @@ $stmt->close();
 $population_growth_result = calculatePopulationGrowth($user);
 $growth = $population_growth_result['growth'];
 
-// Set points (not in database yet)
-$points = getPointsForUser($conn, $_SESSION['user_id']);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,7 +67,7 @@ $points = getPointsForUser($conn, $_SESSION['user_id']);
         <div class="nation-info">
             <p><strong>Leader:</strong> <?php echo htmlspecialchars($user['leader_name']); ?></p>
             <p><strong>Population:</strong> <?php echo number_format($user['population']); ?> (<?php echo ($growth >= 0 ? '+' : '') . number_format($growth); ?>)</p>
-            <p><strong>GP:</strong> <?php echo number_format($points); ?></p>
+            <p><strong>GP:</strong> <?php echo number_format($user['gp']); ?></p>
         </div>
     </div>
 

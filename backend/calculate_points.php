@@ -10,14 +10,12 @@ function getPointsForUser($conn, $user_id) {
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($row = $result->fetch_assoc()) {
         $population = $row['population'];
         $total_land = $row['total_land'];
         $points = calculatePoints($population, $total_land);
         return $points;
     }
-    
-    return 0; // Return 0 if user not found or population is 0
 }
 ?>
