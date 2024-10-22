@@ -4,6 +4,7 @@ require_once 'calculate_income.php';
 require_once 'calculate_food_consumption.php';
 require_once 'calculate_power_consumption.php';
 require_once 'calculate_consumer_goods_consumption.php';
+require_once 'calculate_population_growth.php';
 
 function performHourlyUpdates() {
     global $conn;
@@ -64,6 +65,17 @@ function performHourlyUpdates() {
             $update_stmt = $conn->prepare("UPDATE commodities SET consumer_goods = ? WHERE id = ?");
             $update_stmt->bind_param("ii", $new_consumer_goods, $user_id);
             $update_stmt->execute();
+
+            // Calculate population growth
+            $population_growth_result = calculatePopulationGrowth($user);
+
+            // Update user's population
+            $new_population = $population_growth_result['new_population'];
+            $update_stmt = $conn->prepare("UPDATE users SET population = ? WHERE id = ?");
+            $update_stmt->bind_param("ii", $new_population, $user_id);
+            $update_stmt->execute();
+
+            log_message("User ID {$user_id}: " . $population_growth_result['message']);
         }
 
         $conn->commit();

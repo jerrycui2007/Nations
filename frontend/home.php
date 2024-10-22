@@ -3,6 +3,7 @@ global $conn;
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/calculate_points.php';
+require_once '../backend/calculate_population_growth.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -10,21 +11,20 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Fetch user data
-$stmt = $conn->prepare("SELECT country_name, leader_name, population FROM users WHERE id = ?");
+// Fetch user data including commodities
+$stmt = $conn->prepare("SELECT u.country_name, u.leader_name, u.population, c.food, c.power, c.consumer_goods 
+                        FROM users u 
+                        JOIN commodities c ON u.id = c.id 
+                        WHERE u.id = ?");
 $stmt->bind_param("i", $_SESSION['user_id']);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
 
-// Fetch commodities data
-$stmt = $conn->prepare("SELECT * FROM commodities WHERE id = ?");
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$result = $stmt->get_result();
-$commodities = $result->fetch_assoc();
-$stmt->close();
+// Calculate population growth
+$population_growth_result = calculatePopulationGrowth($user);
+$growth = $population_growth_result['growth'];
 
 // Set points (not in database yet)
 $points = getPointsForUser($conn, $_SESSION['user_id']);
@@ -69,7 +69,7 @@ $points = getPointsForUser($conn, $_SESSION['user_id']);
         <h1><?php echo htmlspecialchars($user['country_name']); ?></h1>
         <div class="nation-info">
             <p><strong>Leader:</strong> <?php echo htmlspecialchars($user['leader_name']); ?></p>
-            <p><strong>Population:</strong> <?php echo number_format($user['population']); ?></p>
+            <p><strong>Population:</strong> <?php echo number_format($user['population']); ?> (<?php echo ($growth >= 0 ? '+' : '') . number_format($growth); ?>)</p>
             <p><strong>GP:</strong> <?php echo number_format($points); ?></p>
         </div>
     </div>
