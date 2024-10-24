@@ -50,6 +50,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_land->execute();
                     $stmt_land->close();
 
+                    // Insert into factories table
+                    $stmt_factories = $conn->prepare("INSERT INTO factories (id) VALUES (?)");
+                    $stmt_factories->bind_param("i", $user_id);
+                    $stmt_factories->execute();
+                    $stmt_factories->close();
+
+                    // Insert into production capacity table
+                    $stmt_production_capacity = $conn->prepare("INSERT INTO production_capacity (id) VALUES (?)");
+                    $stmt_production_capacity->bind_param("i", $user_id);
+                    $stmt_production_capacity->execute();
+                    $stmt_production_capacity->close();
+
                     $conn->commit(); // Commit the transaction
 
                     echo "Registration successful!";
