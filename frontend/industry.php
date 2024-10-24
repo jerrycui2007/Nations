@@ -162,7 +162,7 @@ $stmt->close();
                 <td>$500</td>
                 <td>5 Cleared Land</td>
                 <td>30 minutes</td>
-                <td><button class="button smallButton">Build</button></td>
+                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'farm'; ?>')">Build</button></td>
             </tr>
             <tr>
                 <td>Windmill</td>
@@ -171,7 +171,7 @@ $stmt->close();
                 <td>$250</td>
                 <td>5 Cleared Land</td>
                 <td>30 minutes</td>
-                <td><button class="button smallButton">Build</button></td>
+                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'windmill'; ?>')">Build</button></td>
             </tr>
             <tr>
                 <td>Quarry</td>
@@ -180,7 +180,7 @@ $stmt->close();
                 <td>$1,000</td>
                 <td>5 Mountains</td>
                 <td>30 minutes</td>
-                <td><button class="button smallButton">Build</button></td>
+                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'quarry'; ?>')">Build</button></td>
             </tr>
             <tr>
                 <td>Sandstone Quarry</td>
@@ -189,7 +189,7 @@ $stmt->close();
                 <td>$1,000</td>
                 <td>5 Desert</td>
                 <td>30 minutes</td>
-                <td><button class="button smallButton">Build</button></td>
+                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'sandstone_quarry'; ?>')">Build</button></td>
             </tr>
             <tr>
                 <td>Sawmill</td>
@@ -198,7 +198,7 @@ $stmt->close();
                 <td>$1,000</td>
                 <td>5 Forest</td>
                 <td>30 minutes</td>
-                <td><button class="button smallButton">Build</button></td>
+                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'sawmill'; ?>')">Build</button></td>
             </tr>
             <tr>
                 <td>Automobile Factory</td>
@@ -207,7 +207,7 @@ $stmt->close();
                 <td>$5,000<br>1,000 Building Materials<br>100 Metal</td>
                 <td>5 Cleared Land</td>
                 <td>30 minutes</td>
-                <td><button class="button smallButton">Build</button></td>
+                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'automobile_factory'; ?>')">Build</button></td>
             </tr>
         </table>
 
@@ -308,6 +308,29 @@ $stmt->close();
             inputCell.innerHTML = `$${inputValue * 12 * factoryAmount}<br>${inputValue * 10 * factoryAmount} Power<br>${inputValue * factoryAmount} Metal`;
             outputCell.innerHTML = `${inputValue * 6 * factoryAmount} Consumer Goods`;
         }
+    }
+
+    function buildFactory(factoryType) {
+        fetch('../backend/build_factory.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `factory_type=${factoryType}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                window.location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred while processing your request. Check the console for more details.');
+        });
     }
 
     // Add event listeners to all input fields
