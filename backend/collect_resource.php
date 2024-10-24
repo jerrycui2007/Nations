@@ -44,22 +44,22 @@ try {
     $inputs = [];
     $outputs = [];
     if ($factory_type === 'farm') {
-        $inputs[] = ['resource' => 'money', 'amount' => $amount * 7 * $factory_data[$factory_type]];
-        $outputs[] = ['resource' => 'food', 'amount' => $amount * $factory_data[$factory_type]];
+        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 7 * $factory_data[$factory_type]];
+        $outputs[] = ['resource' => 'Food', 'amount' => $amount * $factory_data[$factory_type]];
     }
     elseif ($factory_type === 'windmill') {
-        $inputs[] = ['resource' => 'money', 'amount' => $amount * 2 * $factory_data[$factory_type]];
-        $outputs[] = ['resource' => 'power', 'amount' => $amount * $factory_data[$factory_type]];
+        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 2 * $factory_data[$factory_type]];
+        $outputs[] = ['resource' => 'Power', 'amount' => $amount * $factory_data[$factory_type]];
     }
     elseif ($factory_type === 'quarry' || $factory_type === 'sandstone_quarry' || $factory_type === 'sawmill') {
-        $inputs[] = ['resource' => 'money', 'amount' => $amount * 7 * $factory_data[$factory_type]];
-        $outputs[] = ['resource' => 'building_materials', 'amount' => $amount * $factory_data[$factory_type]];
+        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 7 * $factory_data[$factory_type]];
+        $outputs[] = ['resource' => 'Building Materials', 'amount' => $amount * $factory_data[$factory_type]];
     }
     elseif ($factory_type === 'automobile_factory') {
-        $inputs[] = ['resource' => 'money', 'amount' => $amount * 12 * $factory_data[$factory_type]];
-        $inputs[] = ['resource' => 'power', 'amount' => $amount * 10 * $factory_data[$factory_type]];
-        $inputs[] = ['resource' => 'metal', 'amount' => $amount * $factory_data[$factory_type]];
-        $outputs[] = ['resource' => 'consumer_goods', 'amount' => $amount * 6 * $factory_data[$factory_type]];
+        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 12 * $factory_data[$factory_type]];
+        $inputs[] = ['resource' => 'Power', 'amount' => $amount * 10 * $factory_data[$factory_type]];
+        $inputs[] = ['resource' => 'Metal', 'amount' => $amount * $factory_data[$factory_type]];
+        $outputs[] = ['resource' => 'Consumer Goods', 'amount' => $amount * 6 * $factory_data[$factory_type]];
     }
     // Add more conditions for other factory types here
 

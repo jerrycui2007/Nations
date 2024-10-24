@@ -89,22 +89,22 @@ $stmt->close();
                     $inputs = [];
                     $outputs = [];
                     if ($factory_type === 'farm') {
-                        $inputs[] = ['resource' => 'money', 'amount' => $capacity * 7 * $amount];
-                        $outputs[] = ['resource' => 'food', 'amount' => $capacity * $amount];
+                        $inputs[] = ['resource' => 'Money', 'amount' => $capacity * 7 * $amount];
+                        $outputs[] = ['resource' => 'Food', 'amount' => $capacity * $amount];
                     }
                     elseif ($factory_type === 'windmill') {
-                        $inputs[] = ['resource' => 'money', 'amount' => $capacity * 2 * $amount];
-                        $outputs[] = ['resource' => 'power', 'amount' => $capacity * $amount];
+                        $inputs[] = ['resource' => 'Money', 'amount' => $capacity * 2 * $amount];
+                        $outputs[] = ['resource' => 'Power', 'amount' => $capacity * $amount];
                     }
                     elseif ($factory_type === 'quarry' || $factory_type === 'sandstone_quarry' || $factory_type === 'sawmill') {
-                        $inputs[] = ['resource' => 'money', 'amount' => $capacity * 7 * $amount];
-                        $outputs[] = ['resource' => 'building_materials', 'amount' => $capacity * $amount];
+                        $inputs[] = ['resource' => 'Money', 'amount' => $capacity * 7 * $amount];
+                        $outputs[] = ['resource' => 'Building Materials', 'amount' => $capacity * $amount];
                     }
                     elseif ($factory_type === 'automobile_factory') {
-                        $inputs[] = ['resource' => 'money', 'amount' => $capacity * 12 * $amount];
-                        $inputs[] = ['resource' => 'power', 'amount' => $capacity * 10 * $amount];
-                        $inputs[] = ['resource' => 'metal', 'amount' => $capacity * $amount];
-                        $outputs[] = ['resource' => 'consumer_goods', 'amount' => $capacity * 6 * $amount];
+                        $inputs[] = ['resource' => 'Money', 'amount' => $capacity * 12 * $amount];
+                        $inputs[] = ['resource' => 'Power', 'amount' => $capacity * 10 * $amount];
+                        $inputs[] = ['resource' => 'Metal', 'amount' => $capacity * $amount];
+                        $outputs[] = ['resource' => 'Consumer Goods', 'amount' => $capacity * 6 * $amount];
                     }
                 ?>
                     <tr>
@@ -143,6 +143,83 @@ $stmt->close();
                 <?php endif; ?>
             <?php endforeach; ?>
         </table>
+
+        <h2>Construct New Factories</h2>
+        <table>
+            <tr>
+                <th>Factory Name</th>
+                <th>Input</th>
+                <th>Output</th>
+                <th>Construction Costs</th>
+                <th>Land Requirements</th>
+                <th>Construction Time</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td>Farm</td>
+                <td>$7</td>
+                <td>1 Food</td>
+                <td>$500</td>
+                <td>5 Cleared Land</td>
+                <td>30 minutes</td>
+                <td><button class="button smallButton">Build</button></td>
+            </tr>
+            <tr>
+                <td>Windmill</td>
+                <td>$2</td>
+                <td>1 Power</td>
+                <td>$250</td>
+                <td>5 Cleared Land</td>
+                <td>30 minutes</td>
+                <td><button class="button smallButton">Build</button></td>
+            </tr>
+            <tr>
+                <td>Quarry</td>
+                <td>$7</td>
+                <td>1 Building Material</td>
+                <td>$1,000</td>
+                <td>5 Mountains</td>
+                <td>30 minutes</td>
+                <td><button class="button smallButton">Build</button></td>
+            </tr>
+            <tr>
+                <td>Sandstone Quarry</td>
+                <td>$7</td>
+                <td>1 Building Material</td>
+                <td>$1,000</td>
+                <td>5 Desert</td>
+                <td>30 minutes</td>
+                <td><button class="button smallButton">Build</button></td>
+            </tr>
+            <tr>
+                <td>Sawmill</td>
+                <td>$7</td>
+                <td>1 Building Material</td>
+                <td>$1,000</td>
+                <td>5 Forest</td>
+                <td>30 minutes</td>
+                <td><button class="button smallButton">Build</button></td>
+            </tr>
+            <tr>
+                <td>Automobile Factory</td>
+                <td>$12<br>10 Power<br>1 Metal</td>
+                <td>6 Consumer Goods</td>
+                <td>$5,000<br>1,000 Building Materials<br>100 Metal</td>
+                <td>5 Cleared Land</td>
+                <td>30 minutes</td>
+                <td><button class="button smallButton">Build</button></td>
+            </tr>
+        </table>
+
+
+        <h2>About</h2>
+        <p>
+            This page lists your factories and their production capacity.
+            You can collect resources from your factories by clicking the "Collect" button.
+            The input and output of each factory is also shown.
+            Factory capacity is updated every hour, to a maximum of 24. You can choose how much capacity you want to collect from each factory.
+        </p>
+
     </div>
 
     <?php include 'footer.php'; 
@@ -214,21 +291,22 @@ $stmt->close();
         }
 
         // Update input and output based on factory type
+        // Update input and output based on factory type
         if (factoryType === 'farm') {
-            inputCell.innerHTML = `${inputValue * 7 * factoryAmount} money`;
-            outputCell.innerHTML = `${inputValue * factoryAmount} food`;
+            inputCell.innerHTML = `$${inputValue * 7 * factoryAmount}`;
+            outputCell.innerHTML = `${inputValue * factoryAmount} Food`;
         }
         else if (factoryType === 'windmill') {
-            inputCell.innerHTML = `${inputValue * 2 * factoryAmount} money`;
-            outputCell.innerHTML = `${inputValue * factoryAmount} power`;
+            inputCell.innerHTML = `$${inputValue * 2 * factoryAmount}`;
+            outputCell.innerHTML = `${inputValue * factoryAmount} Power`;
         }
         else if (factoryType === 'quarry' || factoryType === 'sandstone_quarry' || factoryType === 'sawmill') {
-            inputCell.innerHTML = `${inputValue * 7 * factoryAmount} money`;
-            outputCell.innerHTML = `${inputValue * factoryAmount} building materials`;
+            inputCell.innerHTML = `$${inputValue * 7 * factoryAmount}`;
+            outputCell.innerHTML = `${inputValue * factoryAmount} Building Materials`;
         }
         else if (factoryType === 'automobile_factory') {
-            inputCell.innerHTML = `${inputValue * 12 * factoryAmount} money<br>${inputValue * 10 * factoryAmount} power<br>${inputValue * factoryAmount} metal`;
-            outputCell.innerHTML = `${inputValue * 6 * factoryAmount} consumer goods`;
+            inputCell.innerHTML = `$${inputValue * 12 * factoryAmount}<br>${inputValue * 10 * factoryAmount} Power<br>${inputValue * factoryAmount} Metal`;
+            outputCell.innerHTML = `${inputValue * 6 * factoryAmount} Consumer Goods`;
         }
     }
 
