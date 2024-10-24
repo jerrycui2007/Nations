@@ -83,6 +83,9 @@ function performHourlyUpdates() {
             $update_stmt = $conn->prepare("UPDATE users SET tier = ? WHERE id = ?");
             $update_stmt->bind_param("ii", $new_tier, $user_id);
             $update_stmt->execute();
+
+            // New function to update production capacity
+            updateProductionCapacity($user_id);
         }
 
         $conn->commit();
@@ -92,6 +95,43 @@ function performHourlyUpdates() {
     }
 
     $conn->close();
+}
+
+function updateProductionCapacity($user_id) {
+    global $conn;
+
+    $factory_types = ['farm', 'windmill', 'quarry', 'sandstone_quarry', 'sawmill', 'automobile_factory'];
+
+    // Fetch user's factories
+    $stmt = $conn->prepare("SELECT * FROM factories WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $factories_result = $stmt->get_result();
+    $factories = $factories_result->fetch_assoc();
+
+    // Fetch user's current production capacity
+    $stmt = $conn->prepare("SELECT * FROM production_capacity WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $capacity_result = $stmt->get_result();
+    $capacities = $capacity_result->fetch_assoc();
+
+    // Prepare update statement
+    $update_parts = [];
+    foreach ($factory_types as $type) {
+        if ($factories[$type] > 0) {
+            $update_parts[] = "$type = LEAST($type + 1, 24)";
+        }
+    }
+
+    if (!empty($update_parts)) {
+        $update_sql = "UPDATE production_capacity SET " . implode(", ", $update_parts) . " WHERE id = ?";
+        $stmt = $conn->prepare($update_sql);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+
+        log_message("Updated production capacity for user $user_id");
+    }
 }
 
 function log_message($message) {

@@ -89,16 +89,23 @@ $stmt->close();
                     $inputs = [];
                     $outputs = [];
                     if ($factory_type === 'farm') {
-                        $inputs[] = ['resource' => 'money', 'amount' => $capacity * 7];
-                        $outputs[] = ['resource' => 'food', 'amount' => $capacity];
+                        $inputs[] = ['resource' => 'money', 'amount' => $capacity * 7 * $amount];
+                        $outputs[] = ['resource' => 'food', 'amount' => $capacity * $amount];
                     }
-                    // Add more conditions for other factory types here
-                    // Example:
-                    // elseif ($factory_type === 'sawmill') {
-                    //     $inputs[] = ['resource' => 'money', 'amount' => $capacity * 5];
-                    //     $inputs[] = ['resource' => 'power', 'amount' => $capacity * 2];
-                    //     $outputs[] = ['resource' => 'building_materials', 'amount' => $capacity];
-                    // }
+                    elseif ($factory_type === 'windmill') {
+                        $inputs[] = ['resource' => 'money', 'amount' => $capacity * 2 * $amount];
+                        $outputs[] = ['resource' => 'power', 'amount' => $capacity * $amount];
+                    }
+                    elseif ($factory_type === 'quarry' || $factory_type === 'sandstone_quarry' || $factory_type === 'sawmill') {
+                        $inputs[] = ['resource' => 'money', 'amount' => $capacity * 7 * $amount];
+                        $outputs[] = ['resource' => 'building_materials', 'amount' => $capacity * $amount];
+                    }
+                    elseif ($factory_type === 'automobile_factory') {
+                        $inputs[] = ['resource' => 'money', 'amount' => $capacity * 12 * $amount];
+                        $inputs[] = ['resource' => 'power', 'amount' => $capacity * 10 * $amount];
+                        $inputs[] = ['resource' => 'metal', 'amount' => $capacity * $amount];
+                        $outputs[] = ['resource' => 'consumer_goods', 'amount' => $capacity * 6 * $amount];
+                    }
                 ?>
                     <tr>
                         <td><?php echo ucfirst(str_replace('_', ' ', $factory_type)); ?></td>
@@ -179,6 +186,7 @@ $stmt->close();
         const inputElement = document.getElementById(`${factoryType}-collect`);
         const inputValue = parseInt(inputElement.value) || 0;
         const maxCapacity = parseInt(inputElement.max);
+        const factoryAmount = parseInt(inputElement.closest('tr').querySelector('td:nth-child(2)').textContent);
         
         // Ensure the input value doesn't exceed the max capacity
         if (inputValue > maxCapacity) {
@@ -207,10 +215,21 @@ $stmt->close();
 
         // Update input and output based on factory type
         if (factoryType === 'farm') {
-            inputCell.innerHTML = `${inputValue * 7} money`;
-            outputCell.innerHTML = `${inputValue} food`;
+            inputCell.innerHTML = `${inputValue * 7 * factoryAmount} money`;
+            outputCell.innerHTML = `${inputValue * factoryAmount} food`;
         }
-        // Add more conditions for other factory types here
+        else if (factoryType === 'windmill') {
+            inputCell.innerHTML = `${inputValue * 2 * factoryAmount} money`;
+            outputCell.innerHTML = `${inputValue * factoryAmount} power`;
+        }
+        else if (factoryType === 'quarry' || factoryType === 'sandstone_quarry' || factoryType === 'sawmill') {
+            inputCell.innerHTML = `${inputValue * 7 * factoryAmount} money`;
+            outputCell.innerHTML = `${inputValue * factoryAmount} building materials`;
+        }
+        else if (factoryType === 'automobile_factory') {
+            inputCell.innerHTML = `${inputValue * 12 * factoryAmount} money<br>${inputValue * 10 * factoryAmount} power<br>${inputValue * factoryAmount} metal`;
+            outputCell.innerHTML = `${inputValue * 6 * factoryAmount} consumer goods`;
+        }
     }
 
     // Add event listeners to all input fields
