@@ -6,6 +6,7 @@ require_once 'calculate_power_consumption.php';
 require_once 'calculate_consumer_goods_consumption.php';
 require_once 'calculate_population_growth.php';
 require_once 'calculate_points.php';
+require_once 'calculate_tier.php';
 
 function performHourlyUpdates() {
     global $conn;
@@ -16,9 +17,10 @@ function performHourlyUpdates() {
     try {
         // Fetch all users, their population, and commodities
         $stmt = $conn->prepare("
-            SELECT u.id, u.population, c.food, c.power, c.money, c.consumer_goods
+            SELECT u.id, u.population, c.food, c.power, c.money, c.consumer_goods, l.urban_areas
             FROM users u 
             JOIN commodities c ON u.id = c.id
+            JOIN land l ON u.id = l.id
         ");
         $stmt->execute();
         $result = $stmt->get_result();
@@ -76,27 +78,17 @@ function performHourlyUpdates() {
             $update_stmt->bind_param("ii", $new_population, $user_id);
             $update_stmt->execute();
 
-            log_message("User ID {$user_id}: " . $population_growth_result['message']);
-
-            // Calculate points
-            $points = getPointsForUser($conn, $user_id);
-
-            log_message("User ID {$user_id}: Old GP: {$user['gp']}");
-            log_message("User ID {$user_id}: Calculated new GP: {$points}");
-
-            // Update user's points in the database
-            $update_stmt = $conn->prepare("UPDATE users SET gp = ? WHERE id = ?");
-            $update_stmt->bind_param("ii", $points, $user_id);
+            // Calculate and update user's tier
+            $new_tier = calculateTier($new_population);
+            $update_stmt = $conn->prepare("UPDATE users SET tier = ? WHERE id = ?");
+            $update_stmt->bind_param("ii", $new_tier, $user_id);
             $update_stmt->execute();
-
-            log_message("User ID {$user_id}: Updated GP from {$user['gp']} to {$points}");
         }
 
         $conn->commit();
-        echo "Hourly updates completed successfully.\n";
     } catch (Exception $e) {
         $conn->rollback();
-        echo "Error during hourly updates: " . $e->getMessage() . "\n";
+        log_message("Error during hourly updates: " . $e->getMessage());
     }
 
     $conn->close();

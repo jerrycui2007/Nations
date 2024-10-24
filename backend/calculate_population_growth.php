@@ -5,6 +5,7 @@ function calculatePopulationGrowth($user) {
     $food = $user['food'];
     $power = $user['power'];
     $consumer_goods = $user['consumer_goods'];
+    $urban_areas = $user['urban_areas'];
 
     $growth_rate = 0.01; // 1% growth rate
     $growth = 0;
@@ -18,6 +19,15 @@ function calculatePopulationGrowth($user) {
     }
 
     $new_population = max(0, $population + $growth);
+
+    // Cap the population based on the number of urban areas
+    $max_population_by_urban_areas = $urban_areas * 1000;
+    $max_population = min(74999, $max_population_by_urban_areas); // Cap at 74,999, because haven't added tier 2 yet
+
+    if ($new_population > $max_population) {
+        $new_population = $max_population;
+        $growth = $new_population - $population; // Adjust growth to reflect the cap
+    }
 
     return [
         'old_population' => $population,

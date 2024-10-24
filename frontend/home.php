@@ -12,14 +12,14 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Fetch user data including commodities and GP
-$stmt = $conn->prepare("SELECT u.country_name, u.leader_name, u.population, u.gp, c.food, c.power, c.consumer_goods 
+$stmt = $conn->prepare("SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, c.food, c.power, c.consumer_goods, l.urban_areas 
                         FROM users u 
                         JOIN commodities c ON u.id = c.id 
+                        JOIN land l ON u.id = l.id
                         WHERE u.id = ?");
 $stmt->bind_param("i", $_SESSION['user_id']);
 $stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$user = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 // Calculate population growth
@@ -67,6 +67,7 @@ $growth = $population_growth_result['growth'];
         <div class="nation-info">
             <p><strong>Leader:</strong> <?php echo htmlspecialchars($user['leader_name']); ?></p>
             <p><strong>Population:</strong> <?php echo number_format($user['population']); ?> (<?php echo ($growth >= 0 ? '+' : '') . number_format($growth); ?>)</p>
+            <p><strong>Tier:</strong> <?php echo number_format($user['tier']); ?></p>
             <p><strong>GP:</strong> <?php echo number_format($user['gp']); ?></p>
         </div>
     </div>
