@@ -18,6 +18,10 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
 
+$multiplier = max(1, $user['population'] / 50000);
+$money_cost = round(5000 * $multiplier);
+$resource_cost = round(1000 * $multiplier);
+
 // Fetch land data
 $stmt = $conn->prepare("SELECT * FROM land WHERE id = ?");
 $stmt->bind_param("i", $_SESSION['user_id']);
@@ -70,6 +74,9 @@ $land_types = ['cleared_land', 'urban_areas', 'forest', 'mountain', 'river', 'la
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+        .smallButton {
+            padding: 5px 10px;
+        }
     </style>
 </head>
 <body>
@@ -97,12 +104,12 @@ $land_types = ['cleared_land', 'urban_areas', 'forest', 'mountain', 'river', 'la
                 if (in_array($type, $convertible_types)) {
                     echo "<td>";
                     echo "<input type='number' id='{$type}-convert' min='0' max='{$land[$type]}' style='width: 80px;'>";
-                    echo "<button onclick='convertLand(\"{$type}\")'>Convert to Cleared Land</button>";
+                    echo "<button onclick='convertLand(\"{$type}\")' class='button smallButton'>Convert to Cleared Land</button>";
                     echo "</td>";
                 } elseif ($type === 'urban_areas') {
                     echo "<td>";
                     echo "<input type='number' id='urban-areas-build' min='0' max='{$land['cleared_land']}' style='width: 80px;'>";
-                    echo "<button onclick='buildUrbanAreas()'>Build Urban Areas</button>";
+                    echo "<button onclick='buildUrbanAreas()' class='button smallButton'>Build Urban Areas</button>";
                     echo "</td>";
                 } else {
                     echo "<td></td>";
@@ -111,7 +118,9 @@ $land_types = ['cleared_land', 'urban_areas', 'forest', 'mountain', 'river', 'la
             }
             ?>
         </table>
-        
+
+        <button onclick="expandBorders()" class="button">Expand Borders</button>
+
         <h2>About</h2>
         <p>
             This table shows the distribution of land types in your country. Most constructions will require Cleared Land to build.
@@ -172,10 +181,10 @@ $land_types = ['cleared_land', 'urban_areas', 'forest', 'mountain', 'river', 'la
             <tr>
                 <td>Expand borders</td>
                 <td>
-                    $5000<br>
-                    1000 Food<br>
-                    1000 Building Materials<br>
-                    1000 Consumer Goods
+                    $<?php echo number_format($money_cost); ?><br>
+                    <?php echo number_format($resource_cost); ?> Food<br>
+                    <?php echo number_format($resource_cost); ?> Building Materials<br>
+                    <?php echo number_format($resource_cost); ?> Consumer Goods
                 </td>
             </tr>
         </table>
@@ -240,6 +249,34 @@ function buildUrbanAreas() {
     })
     .catch((error) => {
         console.error('Fetch error:', error);
+        alert('An error occurred while processing your request. Check the console for more details.');
+    });
+}
+
+function expandBorders() {
+    fetch('../backend/expand_borders.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            let message = "You have expanded your borders and gained:\n";
+            for (const [landType, amount] of Object.entries(data.newLand)) {
+                if (amount > 0) {
+                    message += `${amount} ${landType.replace('_', ' ')}\n`;
+                }
+            }
+            alert(message);
+            window.location.reload();
+        } else {
+            alert(data.message || 'Not enough resources to expand borders.');
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
         alert('An error occurred while processing your request. Check the console for more details.');
     });
 }
