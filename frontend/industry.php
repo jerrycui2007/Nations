@@ -104,9 +104,19 @@ $stmt->close();
                         <td><?php echo ucfirst(str_replace('_', ' ', $factory_type)); ?></td>
                         <td><?php echo $amount; ?></td>
                         <td>
-                            <input type="number" id="<?php echo $factory_type; ?>-collect" min="1" max="<?php echo $capacity; ?>" style="width: 60px;">
+                            <?php 
+                            $capacity = $factories[$capacity_key];
+                            $isDisabled = $capacity == 0 ? 'disabled' : '';
+                            ?>
+                            <input type="number" id="<?php echo $factory_type; ?>-collect" 
+                                   min="1" max="<?php echo $capacity; ?>" 
+                                   style="width: 60px;" <?php echo $isDisabled; ?>>
                             / <?php echo $capacity; ?>
-                            <button class="button smallButton" onclick="collectResource('<?php echo $factory_type; ?>')">Collect</button>
+                            <button class="button smallButton" 
+                                    onclick="collectResource('<?php echo $factory_type; ?>')" 
+                                    <?php echo $isDisabled; ?>>
+                                Collect
+                            </button>
                         </td>
                         <td>
                             <?php 
@@ -134,8 +144,35 @@ $stmt->close();
     
     <script>
     function collectResource(factoryType) {
-        // Placeholder function for future implementation
-        console.log('collect clicked for ' + factoryType);
+        const inputElement = document.getElementById(`${factoryType}-collect`);
+        const amount = parseInt(inputElement.value);
+        const maxCapacity = parseInt(inputElement.max);
+
+        if (amount < 1 || amount > maxCapacity) {
+            alert(`Please enter a value between 1 and ${maxCapacity}.`);
+            return;
+        }
+
+        fetch('../backend/collect_resource.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `factory_type=${factoryType}&amount=${amount}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                window.location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred while processing your request. Check the console for more details.');
+        });
     }
 
     function updateInputOutput(factoryType) {
@@ -151,6 +188,22 @@ $stmt->close();
         const inputRow = inputElement.closest('tr');
         const inputCell = inputRow.cells[3];
         const outputCell = inputRow.cells[4];
+        const collectButton = inputRow.querySelector('button');
+
+        // Disable input and button if capacity is zero
+        if (maxCapacity === 0) {
+            inputElement.disabled = true;
+            collectButton.disabled = true;
+            inputElement.style.backgroundColor = '#f0f0f0';
+            collectButton.style.backgroundColor = '#f0f0f0';
+            collectButton.style.cursor = 'not-allowed';
+        } else {
+            inputElement.disabled = false;
+            collectButton.disabled = false;
+            inputElement.style.backgroundColor = '';
+            collectButton.style.backgroundColor = '';
+            collectButton.style.cursor = '';
+        }
 
         // Update input and output based on factory type
         if (factoryType === 'farm') {
@@ -158,11 +211,6 @@ $stmt->close();
             outputCell.innerHTML = `${inputValue} food`;
         }
         // Add more conditions for other factory types here
-        // Example:
-        // else if (factoryType === 'sawmill') {
-        //     inputCell.innerHTML = `${inputValue * 5} money<br>${inputValue * 2} power`;
-        //     outputCell.innerHTML = `${inputValue} building_materials`;
-        // }
     }
 
     // Add event listeners to all input fields
@@ -171,6 +219,8 @@ $stmt->close();
         inputs.forEach(input => {
             const factoryType = input.id.replace('-collect', '');
             input.addEventListener('input', () => updateInputOutput(factoryType));
+            // Call updateInputOutput initially to set the correct state
+            updateInputOutput(factoryType);
         });
     });
     </script>
