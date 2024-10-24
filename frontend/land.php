@@ -36,7 +36,7 @@ $points = getPointsForUser($conn, $_SESSION['user_id']);
 $total_land = array_sum(array_slice($land, 1)); // Sum all land types, excluding the 'id' column
 
 // Define land types
-$land_types = ['cleared_land', 'urban_areas', 'forest', 'mountain', 'river', 'lake', 'grassland', 'jungle', 'desert', 'tundra'];
+$land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 'river', 'lake', 'grassland', 'jungle', 'desert', 'tundra'];
 ?>
 
 <!DOCTYPE html>
@@ -126,6 +126,9 @@ $land_types = ['cleared_land', 'urban_areas', 'forest', 'mountain', 'river', 'la
             This table shows the distribution of land types in your country. Most constructions will require Cleared Land to build.
             You can get Cleared Land by clearing the different types of lands.
             You will also need to convert Cleared Land to Urban Areas (1000 people per Urban Area), or your population will not grow.
+        </p>
+        <p>
+            After using land, it will be converted to Used Land, regardless of what type it was.
         </p>
 
         <h2>Land Conversion Costs</h2>
