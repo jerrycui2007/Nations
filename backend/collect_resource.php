@@ -1,8 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-global $conn;
 session_start();
 require_once 'db_connection.php';
 
@@ -33,10 +29,7 @@ try {
     $result = $stmt->get_result();
     $capacity_data = $result->fetch_assoc();
 
-    $factory_count = $factory_data[$factory_type];
-    $capacity = $capacity_data['capacity'];
-
-    if ($amount > $capacity) {
+    if ($amount > $capacity_data['capacity']) {
         throw new Exception("Not enough production capacity");
     }
 
@@ -51,22 +44,22 @@ try {
     $inputs = [];
     $outputs = [];
     if ($factory_type === 'farm') {
-        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 7 * $factory_count];
-        $outputs[] = ['resource' => 'Food', 'amount' => $amount * $factory_count];
+        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 7 * $factory_data[$factory_type]];
+        $outputs[] = ['resource' => 'Food', 'amount' => $amount * $factory_data[$factory_type]];
     }
     elseif ($factory_type === 'windmill') {
-        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 2 * $factory_count];
-        $outputs[] = ['resource' => 'Power', 'amount' => $amount * $factory_count];
+        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 2 * $factory_data[$factory_type]];
+        $outputs[] = ['resource' => 'Power', 'amount' => $amount * $factory_data[$factory_type]];
     }
     elseif ($factory_type === 'quarry' || $factory_type === 'sandstone_quarry' || $factory_type === 'sawmill') {
-        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 7 * $factory_count];
-        $outputs[] = ['resource' => 'Building Materials', 'amount' => $amount * $factory_count];
+        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 7 * $factory_data[$factory_type]];
+        $outputs[] = ['resource' => 'Building Materials', 'amount' => $amount * $factory_data[$factory_type]];
     }
     elseif ($factory_type === 'automobile_factory') {
-        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 12 * $factory_count];
-        $inputs[] = ['resource' => 'Power', 'amount' => $amount * 10 * $factory_count];
-        $inputs[] = ['resource' => 'Metal', 'amount' => $amount * $factory_count];
-        $outputs[] = ['resource' => 'Consumer Goods', 'amount' => $amount * 6 * $factory_count];
+        $inputs[] = ['resource' => 'Money', 'amount' => $amount * 12 * $factory_data[$factory_type]];
+        $inputs[] = ['resource' => 'Power', 'amount' => $amount * 10 * $factory_data[$factory_type]];
+        $inputs[] = ['resource' => 'Metal', 'amount' => $amount * $factory_data[$factory_type]];
+        $outputs[] = ['resource' => 'Consumer Goods', 'amount' => $amount * 6 * $factory_data[$factory_type]];
     }
     // Add more conditions for other factory types here
 
@@ -109,13 +102,9 @@ try {
     ]);
 } catch (Exception $e) {
     $conn->rollback();
-    error_log("Error in collect_resource.php: " . $e->getMessage());
-    error_log("Stack trace: " . $e->getTraceAsString());
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine()
+        'message' => $e->getMessage()
     ]);
 }
 
