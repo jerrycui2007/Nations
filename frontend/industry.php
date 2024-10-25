@@ -244,17 +244,27 @@ $stmt->close();
             },
             body: `factory_type=${factoryType}&amount=${amount}`
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                window.location.reload();
-            } else {
-                alert(data.message);
+        .then(response => response.text())
+        .then(text => {
+            try {
+                const data = JSON.parse(text);
+                if (data.success) {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    if (data.debug_output) {
+                        console.error("Debug output:", data.debug_output);
+                    }
+                    alert(data.message || "An error occurred");
+                }
+            } catch (error) {
+                console.error("Error parsing JSON:", error);
+                console.error("Raw response:", text);
+                alert("An error occurred while processing the response");
             }
         })
         .catch((error) => {
-            console.error('Error:', error);
+            console.error('Fetch Error:', error);
             alert('An error occurred while processing your request. Check the console for more details.');
         });
     }

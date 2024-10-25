@@ -1,20 +1,27 @@
 <?php
+ob_start(); // Start output buffering
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 require_once 'db_connection.php';
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'User not logged in']);
-    exit();
-}
 
-$user_id = $_SESSION['user_id'];
-$factory_type = $_POST['factory_type'];
-$amount = intval($_POST['amount']);
-
-// Start transaction
-$conn->begin_transaction();
 
 try {
+    if (!isset($_SESSION['user_id'])) {
+        echo json_encode(['success' => false, 'message' => 'User not logged in']);
+        exit();
+    }
+    
+    $user_id = $_SESSION['user_id'];
+    $factory_type = $_POST['factory_type'];
+    $amount = intval($_POST['amount']);
+    
+    // Start transaction
+    $conn->begin_transaction();
+    
     // Fetch factory data
     $stmt = $conn->prepare("SELECT $factory_type FROM factories WHERE id = ?");
     $stmt->bind_param("i", $user_id);
@@ -96,16 +103,27 @@ try {
 
     $conn->commit();
 
-    echo json_encode([
+    $response = [
         'success' => true,
         'message' => "Successfully collected resources from $factory_type"
-    ]);
+    ];
 } catch (Exception $e) {
     $conn->rollback();
-    echo json_encode([
+    $response = [
         'success' => false,
-        'message' => $e->getMessage()
-    ]);
+        'message' => $e->getMessage(),
+        'error_details' => $e->getTraceAsString()
+    ];
 }
 
 $conn->close();
+
+// Capture any output that occurred before this point
+$output = ob_get_clean();
+
+if (!empty($output)) {
+    $response['debug_output'] = $output;
+}
+
+header('Content-Type: application/json');
+echo json_encode($response);
