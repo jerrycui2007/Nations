@@ -59,10 +59,13 @@ if (!isset($_SESSION['user_id'])) {
         <p>
             Population also impacts your resource consumption, tier and GP.
         </p>
-        <h2>See also: </h4>
+        <p>
+            Currently, there is a cap of 74,999 population per nation, as tier 2 is not yet implemented.
+        </p
+        <h2>See also: </h2>
         <ul class="wiki-list">
             <li><a href="tiers_wiki.php">Tiers</a></li>
-            <li><a href="resource_consumption_wiki.php">Resource Consumption</a></li>
+            <li><a href="resource_consumption_wiki.php">Hourly Updates</a></li>
             <li><a href="gp_wiki.php">GP</a></li>
         </ul>
     </div>

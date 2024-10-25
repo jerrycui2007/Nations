@@ -57,6 +57,11 @@ sort($wiki_files);
         
         <ul class="wiki-list">
             <li><a href="population_wiki.php">Population</a></li>
+            <li><a href="tiers_wiki.php">Tiers</a></li>
+            <li><a href="gp_wiki.php">GP</a></li>
+            <li><a href="land_wiki.php">Land</a></li>
+            <li><a href="factories_wiki.php">Factories</a></li>
+            <li><a href="turns_wiki.php">Turns</a></li>
         </ul>
     </div>
 

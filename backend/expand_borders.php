@@ -47,7 +47,7 @@ try {
     }
 
     // Calculate new land amount
-    $new_land_amount = round($user_data['population'] / 1000);
+    $new_land_amount = round($user_data['population'] / 2000);
 
     // Define eligible land types
     $eligible_types = ['cleared_land', 'forest', 'mountain', 'river', 'lake', 'grassland', 'jungle', 'desert', 'tundra'];

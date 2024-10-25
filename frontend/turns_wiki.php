@@ -33,7 +33,7 @@ function formatResources($resources) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Factories - Nations</title>
+    <title>Turns - Nations</title>
     <link rel="stylesheet" type="text/css" href="design/style.css">
     <style>
         body {
@@ -80,46 +80,61 @@ function formatResources($resources) {
     <?php include 'sidebar.php'; ?>
     
     <div class="content">
-        <h1>Factories</h1>
+        <h1>Turns</h1>
         <p>
-            Factories are how your nation produces commodities. There a variety of different factories. Each has their own input, output, and requirements.
+            Turns are basic unit of time. There are three types of turns: minute turns, hourly turns, and daily turns.
+            However, the term "turn" is general refers to hourly turns if not specificed.
         </p>
+        <h2>
+            Minute Turns
+        </h2>
         <p>
-            Factories have a maximum production capacity of 24, and start at 0. This increases by 1 every turn. All factories of the same type have the same production capacity.
-            When collecting resources from a factory, you can choose how much production capacity to collect, which will multiply the base input and output of the factory.
-            Here is a list of all factories:
+            Minute turns are the smallest unit of time. They are used for most actions that happen every turn.
         </p>
-
+        <h2>
+            Hourly Turns
+        </h2>
+        <p>
+            Hourly turns are where most things happen. Here is a table of all the things that happen on an hourly turn:
+        </p>
         <table>
-            <tr>
-                <th>Name</th>
-                <th>Tier</th>
-                <th>Input</th>
-                <th>Output</th>
-                <th>Construction Cost</th>
-                <th>Land Requirement</th>
-                <th>Construction Time</th>
-                <th>GP Value</th>
+            <tbody><tr>
+                <th>Event</th>
+                <th>Details</th>
             </tr>
-            <?php
-            foreach ($FACTORY_CONFIG as $factory) {
-                echo "<tr>";
-                echo "<td>{$factory['name']}</td>";
-                echo "<td>{$factory['tier']}</td>";
-                echo "<td>" . formatResources($factory['input']) . "</td>";
-                echo "<td>" . formatResources($factory['output']) . "</td>";
-                echo "<td>" . formatResources($factory['construction_cost']) . "</td>";
-                echo "<td>{$factory['land']['amount']} " . getResourceDisplayName($factory['land']['type']) . "</td>";
-                echo "<td>{$factory['construction_time']} minutes</td>";
-                echo "<td>{$factory['gp_value']}</td>";
-                echo "</tr>";
-            }
-            ?>
-        </table>
+            <tr>
+                <td>Population Growth</td>
+                <td>Grows by 1% (see <a href="population_wiki.php">Population</a>) for more details</td>
+            </tr>
+            <tr>
+                <td>Income</td>
+                <td>round(Population / 100), only if your nation has sufficient food, power, and consumer goods</td>
+            </tr>
+            <tr>
+                <td>Power</td>
+                <td>Decreases by round(Population / 1,000)</td>
+            </tr>
+            <tr>
+                <td>Consumer Goods</td>
+                <td>Decreases by round(Population / 5,000)</td>
+            </tr>
+            <tr>
+                <td>Factories</td>
+                <td>Production capacity increases by 1 (max 24)</td>
+            </tr>
+           
+        </tbody></table>
+        <h2>
+                Daily Turns
+            </h2>
+            <p>
+                Daily turns are when things are reset, such as expand borders cooldown.
+            </p>
 
         <h2>See also: </h2>
         <ul class="wiki-list">
-            <li><a href="turns_wiki.php">Turns</a></li>
+            <li><a href="factories_wiki.php">Factories</a></li>
+            <li><a href="population_wiki.php">Population</a></li>
         </ul>
     </div>
 
