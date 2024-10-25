@@ -1,12 +1,18 @@
 <?php
 session_start();
-require_once '../../backend/db_connection.php';
+require_once '../backend/db_connection.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
+
+// Get all PHP files in the wiki folder
+$wiki_files = glob("wiki/*.php");
+
+// Sort the files alphabetically
+sort($wiki_files);
 
 ?>
 
@@ -15,7 +21,7 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Population - Nations</title>
+    <title>Game Wiki - Nations</title>
     <link rel="stylesheet" type="text/css" href="design/style.css">
     <style>
         body {
@@ -43,18 +49,17 @@ if (!isset($_SESSION['user_id'])) {
     </style>
 </head>
 <body>
-    <?php include '../sidebar.php'; ?>
+    <?php include 'sidebar.php'; ?>
     
     <div class="content">
-        <h1>Population</h1>
-        <p>
-            Your nation starts with 50,000 population, and will grow automatically. The growth rate is 1%, which means that every turn, 
-            your population will increase by 1% of its current value. However, if your Power and Consumer Goods are zero, your population will not grow
-            and stay stagnant. And if your Food is zero, then your population will decrease by 1% of its current value instead.
-        </p>
+        <h1>Game Wiki</h1>
+        <p>Welcome to the game wiki. Here you can find information about various game features and mechanics.</p>
         
+        <ul class="wiki-list">
+            <li><a href="population_wiki.php">Population</a></li>
+        </ul>
     </div>
 
-    <?php include '../footer.php'; ?>
+    <?php include 'footer.php'; ?>
 </body>
 </html>
