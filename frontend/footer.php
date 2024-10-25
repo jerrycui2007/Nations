@@ -1,6 +1,6 @@
 <?php
 global $conn;
-require_once '../backend/calculate_income.php';
+require_once __DIR__ . '/../backend/calculate_income.php';
 require_once '../backend/calculate_food_consumption.php';
 require_once '../backend/calculate_power_consumption.php';
 require_once '../backend/calculate_consumer_goods_consumption.php';
@@ -59,6 +59,7 @@ $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_dat
         padding: 10px 0;
         position: fixed;
         bottom: 0;
+        left: 0;
         width: 100%;
         border-top: 1px solid #dee2e6;
         z-index: 999;
