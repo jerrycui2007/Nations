@@ -1,4 +1,5 @@
 <?php
+global $conn;
 session_start();
 require_once '../backend/db_connection.php';
 
@@ -250,11 +251,12 @@ $stmt->close();
                 alert(data.message);
                 window.location.reload();
             } else {
-                alert(data.message);
+                console.error('Server error:', data);
+                alert(`Error: ${data.message}\nFile: ${data.file}\nLine: ${data.line}`);
             }
         })
         .catch((error) => {
-            console.error('Error:', error);
+            console.error('Fetch error:', error);
             alert('An error occurred while processing your request. Check the console for more details.');
         });
     }
