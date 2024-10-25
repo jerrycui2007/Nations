@@ -43,7 +43,7 @@ if (!isset($_SESSION['user_id'])) {
     </style>
 </head>
 <body>
-    <?php include '../../frontend/sidebar.php'; ?>
+    <?php include '../sidebar.php'; ?>
     
     <div class="content">
         <h1>Population</h1>
@@ -55,6 +55,6 @@ if (!isset($_SESSION['user_id'])) {
         
     </div>
 
-    <?php include '../../frontend/footer.php'; ?>
+    <?php include '../footer.php'; ?>
 </body>
 </html>

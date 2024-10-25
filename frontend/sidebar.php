@@ -5,11 +5,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <div class="sidebar">
     <nav>
         <ul>
-            <li><a href="/Nations/frontend/home.php" <?php echo ($current_page == 'home.php') ? 'class="active"' : ''; ?>>Home</a></li>
-            <li><a href="/Nations/frontend/land.php" <?php echo ($current_page == 'land.php') ? 'class="active"' : ''; ?>>Land</a></li>
-            <li><a href="/Nations/frontend/industry.php" <?php echo ($current_page == 'industry.php') ? 'class="active"' : ''; ?>>Industry</a></li>
-            <li><a href="/Nations/frontend/wiki.php" <?php echo ($current_page == 'wiki.php') ? 'class="active"' : ''; ?>>Wiki</a></li>
-            <li><a href="/Nations/frontend/logout.php">Logout</a></li>
+            <li><a href="home.php" <?php echo ($current_page == 'home.php') ? 'class="active"' : ''; ?>>Home</a></li>
+            <li><a href="land.php" <?php echo ($current_page == 'land.php') ? 'class="active"' : ''; ?>>Land</a></li>
+            <li><a href="industry.php" <?php echo ($current_page == 'industry.php') ? 'class="active"' : ''; ?>>Industry</a></li>
+            <li><a href="wiki.php" <?php echo ($current_page == 'wiki.php') ? 'class="active"' : ''; ?>>Wiki</a></li>
+            <li><a href="logout.php">Logout</a></li>
         </ul>
     </nav>
 </div>
