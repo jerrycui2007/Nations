@@ -85,16 +85,17 @@ try {
         $stmt->execute();
     }
 
-    // Increase factory count
-    $stmt = $conn->prepare("UPDATE factories SET $factory_type = $factory_type + 1 WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
+    // Instead of increasing factory count, add to construction queue
+    $construction_time = 30; 
+    $stmt = $conn->prepare("INSERT INTO factory_queue (id, factory_type, minutes_left) VALUES (?, ?, ?)");
+    $stmt->bind_param("isi", $user_id, $factory_type, $construction_time);
     $stmt->execute();
 
     $conn->commit();
 
     echo json_encode([
         'success' => true,
-        'message' => "Successfully built a new $factory_type"
+        'message' => "Successfully started construction of a new $factory_type"
     ]);
 } catch (Exception $e) {
     $conn->rollback();

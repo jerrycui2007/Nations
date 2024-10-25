@@ -23,6 +23,13 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $factories = $result->fetch_assoc();
+
+// Fetch factories under construction
+$stmt = $conn->prepare("SELECT factory_type, minutes_left FROM factory_queue WHERE id = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$factories_under_construction = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 ?>
 
@@ -210,6 +217,26 @@ $stmt->close();
                 <td><button class="button smallButton" onclick="buildFactory('<?php echo 'automobile_factory'; ?>')">Build</button></td>
             </tr>
         </table>
+
+        <h2>Factories Under Construction</h2>
+            <table>
+                <tr>
+                    <th>Factory Type</th>
+                    <th>Time Remaining</th>
+                </tr>
+                <?php if (empty($factories_under_construction)): ?>
+                    <tr>
+                        <td colspan="2">No factories currently under construction.</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($factories_under_construction as $factory): ?>
+                        <tr>
+                            <td><?php echo ucfirst(str_replace('_', ' ', $factory['factory_type'])); ?></td>
+                            <td><?php echo $factory['minutes_left']; ?> minutes</td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </table>
 
 
         <h2>About</h2>
