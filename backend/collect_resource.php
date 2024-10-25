@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db_connection.php';
+require_once 'factory_config.php';
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'User not logged in']);
@@ -40,28 +41,16 @@ try {
     $result = $stmt->get_result();
     $commodities = $result->fetch_assoc();
 
-    // Calculate input and output based on factory type
-    $inputs = [];
-    $outputs = [];
-    if ($factory_type === 'farm') {
-        $inputs[] = ['resource' => 'money', 'amount' => $amount * 7 * $factory_data[$factory_type]];
-        $outputs[] = ['resource' => 'food', 'amount' => $amount * $factory_data[$factory_type]];
+    $factory_config = $FACTORY_CONFIG[$factory_type];
+    $inputs = $factory_config['input'];
+    $outputs = $factory_config['output'];
+
+    foreach ($inputs as &$input) {
+        $input['amount'] *= $amount * $factory_data[$factory_type];
     }
-    elseif ($factory_type === 'windmill') {
-        $inputs[] = ['resource' => 'money', 'amount' => $amount * 2 * $factory_data[$factory_type]];
-        $outputs[] = ['resource' => 'power', 'amount' => $amount * $factory_data[$factory_type]];
+    foreach ($outputs as &$output) {
+        $output['amount'] *= $amount * $factory_data[$factory_type];
     }
-    elseif ($factory_type === 'quarry' || $factory_type === 'sandstone_quarry' || $factory_type === 'sawmill') {
-        $inputs[] = ['resource' => 'money', 'amount' => $amount * 7 * $factory_data[$factory_type]];
-        $outputs[] = ['resource' => 'building_materials', 'amount' => $amount * $factory_data[$factory_type]];
-    }
-    elseif ($factory_type === 'automobile_factory') {
-        $inputs[] = ['resource' => 'money', 'amount' => $amount * 12 * $factory_data[$factory_type]];
-        $inputs[] = ['resource' => 'power', 'amount' => $amount * 10 * $factory_data[$factory_type]];
-        $inputs[] = ['resource' => 'metal', 'amount' => $amount * $factory_data[$factory_type]];
-        $outputs[] = ['resource' => 'consumer_goods', 'amount' => $amount * 6 * $factory_data[$factory_type]];
-    }
-    // Add more conditions for other factory types here
 
     // Check if user has enough resources
     foreach ($inputs as $input) {

@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once '../backend/db_connection.php';
+require_once '../backend/factory_config.php';
+
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -150,73 +152,31 @@ $stmt->close();
                 <?php endif; ?>
             <?php endforeach; ?>
         </table>
+        <?php
+            echo "<h2>Construct New Factories</h2>";
+            echo "<table>";
+            echo "<tr><th>Factory Name</th><th>Input</th><th>Output</th><th>Construction Costs</th><th>Land Requirements</th><th>Construction Time</th><th>Action</th></tr>";
 
-        <h2>Construct New Factories</h2>
-        <table>
-            <tr>
-                <th>Factory Name</th>
-                <th>Input</th>
-                <th>Output</th>
-                <th>Construction Costs</th>
-                <th>Land Requirements</th>
-                <th>Construction Time</th>
-                <th>Action</th>
-            </tr>
-            <tr>
-                <td>Farm</td>
-                <td>$7</td>
-                <td>1 Food</td>
-                <td>$500</td>
-                <td>5 Cleared Land</td>
-                <td>30 minutes</td>
-                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'farm'; ?>')">Build</button></td>
-            </tr>
-            <tr>
-                <td>Windmill</td>
-                <td>$2</td>
-                <td>1 Power</td>
-                <td>$250</td>
-                <td>5 Cleared Land</td>
-                <td>30 minutes</td>
-                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'windmill'; ?>')">Build</button></td>
-            </tr>
-            <tr>
-                <td>Quarry</td>
-                <td>$7</td>
-                <td>1 Building Material</td>
-                <td>$1,000</td>
-                <td>5 Mountains</td>
-                <td>30 minutes</td>
-                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'quarry'; ?>')">Build</button></td>
-            </tr>
-            <tr>
-                <td>Sandstone Quarry</td>
-                <td>$7</td>
-                <td>1 Building Material</td>
-                <td>$1,000</td>
-                <td>5 Desert</td>
-                <td>30 minutes</td>
-                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'sandstone_quarry'; ?>')">Build</button></td>
-            </tr>
-            <tr>
-                <td>Sawmill</td>
-                <td>$7</td>
-                <td>1 Building Material</td>
-                <td>$1,000</td>
-                <td>5 Forest</td>
-                <td>30 minutes</td>
-                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'sawmill'; ?>')">Build</button></td>
-            </tr>
-            <tr>
-                <td>Automobile Factory</td>
-                <td>$12<br>10 Power<br>1 Metal</td>
-                <td>6 Consumer Goods</td>
-                <td>$5,000<br>1,000 Building Materials<br>100 Metal</td>
-                <td>5 Cleared Land</td>
-                <td>30 minutes</td>
-                <td><button class="button smallButton" onclick="buildFactory('<?php echo 'automobile_factory'; ?>')">Build</button></td>
-            </tr>
-        </table>
+            foreach ($FACTORY_CONFIG as $factory_type => $factory) {
+                echo "<tr>";
+                echo "<td>{$factory['name']}</td>";
+                echo "<td>" . implode(", ", array_map(function($input) {
+                    return "{$input['amount']} {$input['resource']}";
+                }, $factory['input'])) . "</td>";
+                echo "<td>" . implode(", ", array_map(function($output) {
+                    return "{$output['amount']} {$output['resource']}";
+                }, $factory['output'])) . "</td>";
+                echo "<td>" . implode("<br>", array_map(function($cost) {
+                    return "{$cost['amount']} {$cost['resource']}";
+                }, $factory['construction_cost'])) . "</td>";
+                echo "<td>{$factory['land']['amount']} " . ucfirst(str_replace('_', ' ', $factory['land']['type'])) . "</td>";
+                echo "<td>{$factory['construction_time']} minutes</td>";
+                echo "<td><button class='button smallButton' onclick='buildFactory(\"{$factory_type}\")'>Build</button></td>";
+                echo "</tr>";
+            }
+
+            echo "</table>";
+        ?>
 
         <h2>Factories Under Construction</h2>
             <table>
