@@ -2,6 +2,7 @@
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/factory_config.php';
+require_once '../backend/resource_config.php';
 
 
 // Check if user is logged in
@@ -160,14 +161,14 @@ $stmt->close();
             foreach ($FACTORY_CONFIG as $factory_type => $factory) {
                 echo "<tr>";
                 echo "<td>{$factory['name']}</td>";
-                echo "<td>" . implode(", ", array_map(function($input) {
-                    return "{$input['amount']} {$input['resource']}";
+                echo "<td>" . implode("<br>", array_map(function($input) use ($RESOURCE_CONFIG) {
+                    return "{$input['amount']} {$RESOURCE_CONFIG[$input['resource']]['display_name']}";
                 }, $factory['input'])) . "</td>";
-                echo "<td>" . implode(", ", array_map(function($output) {
-                    return "{$output['amount']} {$output['resource']}";
+                echo "<td>" . implode("<br>", array_map(function($output) use ($RESOURCE_CONFIG) {
+                    return "{$output['amount']} {$RESOURCE_CONFIG[$output['resource']]['display_name']}";
                 }, $factory['output'])) . "</td>";
-                echo "<td>" . implode("<br>", array_map(function($cost) {
-                    return "{$cost['amount']} {$cost['resource']}";
+                echo "<td>" . implode("<br>", array_map(function($cost) use ($RESOURCE_CONFIG) {
+                    return "{$cost['amount']} {$RESOURCE_CONFIG[$cost['resource']]['display_name']}";
                 }, $factory['construction_cost'])) . "</td>";
                 echo "<td>{$factory['land']['amount']} " . ucfirst(str_replace('_', ' ', $factory['land']['type'])) . "</td>";
                 echo "<td>{$factory['construction_time']} minutes</td>";

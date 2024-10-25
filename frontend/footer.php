@@ -4,6 +4,7 @@ require_once '../backend/calculate_income.php';
 require_once '../backend/calculate_food_consumption.php';
 require_once '../backend/calculate_power_consumption.php';
 require_once '../backend/calculate_consumer_goods_consumption.php';
+require_once '../backend/resource_config.php';
 
 // Fetch user data including population
 $stmt = $conn->prepare("SELECT u.id, u.population, c.* FROM users u JOIN commodities c ON u.id = c.id WHERE u.id = ?");
@@ -13,30 +14,17 @@ $result = $stmt->get_result();
 $user_data = $result->fetch_assoc();
 $stmt->close();
 
-// Calculate income and food consumption
+// Calculate income and consumptions
 $income_result = calculateIncome($user_data);
 $food_consumption_result = calculateFoodConsumption($user_data);
 $power_consumption_result = calculatePowerConsumption($user_data);
 $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_data);
 
-// Define an array of resources to display
-$resources = [
-    'money' =>               'Money',
-    'food' =>                'Food',
-    'power' =>               'Power',
-    'building_materials' =>  'Building Materials',
-    'consumer_goods' =>      'Consumer Goods',
-    'metal' =>               'Metal',
-    'ammunition' =>          'Ammunition',
-    'fuel' =>                'Fuel',
-    'uranium' =>             'Uranium',
-    'whz' =>                 'WhZ'
-];
 ?>
 
 <footer>
     <div class="resources-container">
-        <?php foreach ($resources as $key => $name): ?>
+        <?php foreach ($RESOURCE_CONFIG as $key => $resource): ?>
             <div class="resource">
                 <span class="resource-name" 
                     <?php if ($key === 'money'): ?>
@@ -51,9 +39,15 @@ $resources = [
                     <?php elseif ($key === 'consumer_goods'): ?>
                         id="consumer-goods-label" 
                         data-tooltip="Consumption: <?php echo number_format($consumer_goods_consumption_result['consumption']); ?> per turn"
-                    <?php endif; ?>
-                ><?php echo $name; ?>:</span>
-                <span class="resource-value"><?php echo number_format($user_data[$key]); ?></span>
+                    <?php endif; ?>>
+                    <?php echo $resource['display_name']; ?>:
+                </span>
+                <span class="resource-value" id="<?php echo $key; ?>-value">
+                    <?php 
+                    $value = isset($user_data[$key]) ? $user_data[$key] : 0;
+                    echo number_format($value);
+                    ?>
+                </span>
             </div>
         <?php endforeach; ?>
     </div>
