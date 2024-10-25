@@ -86,6 +86,9 @@ function performHourlyUpdates() {
 
             // New function to update production capacity
             updateProductionCapacity($user_id);
+
+            // Recalculate and update user's points
+            calculatePoints($user_id);
         }
 
         $conn->commit();

@@ -1,5 +1,6 @@
 <?php
 require_once 'db_connection.php';
+require_once 'calculate_points.php';
 
 function performMinuteUpdates() {
     global $conn;
@@ -26,6 +27,8 @@ function performMinuteUpdates() {
             $stmt = $conn->prepare("UPDATE factories SET $factory_type = $factory_type + 1 WHERE id = ?");
             $stmt->bind_param("i", $user_id);
             $stmt->execute();
+
+            calculatePoints($user_id);
 
             // Delete the completed factory from the queue
             $stmt = $conn->prepare("DELETE FROM factory_queue WHERE id = ? AND factory_type = ? AND queue_position = ?");

@@ -30,8 +30,6 @@ $result = $stmt->get_result();
 $land = $result->fetch_assoc();
 $stmt->close();
 
-$points = getPointsForUser($conn, $_SESSION['user_id']);
-
 // Calculate total land
 $total_land = array_sum(array_slice($land, 1)); // Sum all land types, excluding the 'id' column
 
