@@ -48,9 +48,9 @@ if (!isset($_SESSION['user_id'])) {
     <div class="content">
         <h1>Population</h1>
         <p>
-            Your nation starts with 50,000 population, and will grow automatically. The growth rate is 1%, which means that every turn, 
-            your population will increase by 1% of its current value. However, if your Power and Consumer Goods are zero, your population will not grow
-            and stay stagnant. And if your Food is zero, then your population will decrease by 1% of its current value instead.
+            Your nation starts with 50,000 population, and will grow automatically. The growth rate is 0.5%, which means that every turn, 
+            your population will increase by 0.5% of its current value. However, if your Power and Consumer Goods are zero, your population will not grow
+            and stay stagnant. And if your Food is zero, then your population will decrease by 0.5% of its current value instead.
         </p>
         <p>
             In addition, you will require 1 Urban Area for every 1000 population, or else your population will not grow.

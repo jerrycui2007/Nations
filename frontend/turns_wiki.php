@@ -108,7 +108,7 @@ function formatResources($resources) {
             </tr>
             <tr>
                 <td>Income</td>
-                <td>round(Population / 100), only if your nation has sufficient food, power, and consumer goods</td>
+                <td>3 * round(Population / 100), only if your nation has sufficient food, power, and consumer goods</td>
             </tr>
             <tr>
                 <td>Power</td>

@@ -7,14 +7,14 @@ function calculatePopulationGrowth($user) {
     $consumer_goods = $user['consumer_goods'];
     $urban_areas = $user['urban_areas'];
 
-    $growth_rate = 0.01; // 1% growth rate
+    $growth_rate = 0.005; // 0.5% growth rate
     $growth = 0;
 
     if ($food > 0 && $power > 0 && $consumer_goods > 0) {
-        // Population increases by 1%
+        // Population increases 
         $growth = round($population * $growth_rate);
     } elseif ($food == 0) {
-        // Population decreases by 1%
+        // Population decreases
         $growth = -round($population * $growth_rate);
     }
 

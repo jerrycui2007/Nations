@@ -62,6 +62,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_production_capacity->execute();
                     $stmt_production_capacity->close();
 
+                    // Calculate initial GP
+                    // Should probably fix and make more dynamic later
+                    $initial_gp = 0;
+                    
+                    // Population GP (population / 1000)
+                    $initial_gp += round(50000 / 1000); // Starting population is 50,000
+                    
+                    // Land GP (total land)
+                    $initial_gp += (50 + 60 + 25 + 5 + 5); // Starting land: 50 Cleared + 60 Urban + 25 Forest + 5 Rivers + 5 Lakes
+
+                    // Update GP in users table
+                    $stmt_gp = $conn->prepare("UPDATE users SET gp = ? WHERE id = ?");
+                    $stmt_gp->bind_param("ii", $initial_gp, $user_id);
+                    $stmt_gp->execute();
+                    $stmt_gp->close();
+
                     $conn->commit(); // Commit the transaction
 
                     echo "Registration successful!";
