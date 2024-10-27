@@ -71,10 +71,14 @@ $stmt->close();
             </tr>
             <?php
             foreach ($RESOURCE_CONFIG as $resource_key => $resource_data) {
-                if (isset($resource_data['is_natural_resource']) && $resource_data['is_natural_resource'] === true) {
+                if (isset($resource_data['is_natural_resource']) && 
+                    $resource_data['is_natural_resource'] === true && 
+                    isset($user_resources[$resource_key]) && 
+                    $user_resources[$resource_key] > 0) {
+                    
                     echo "<tr>";
                     echo "<td>{$resource_data['display_name']}</td>";
-                    echo "<td>" . number_format($user_resources[$resource_key] ?? 0) . "</td>";
+                    echo "<td>" . number_format($user_resources[$resource_key]) . "</td>";
                     echo "<td>" . ($resource_data['type'] ?? 'Other') . "</td>";
                     echo "</tr>";
                 }
