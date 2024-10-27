@@ -25,30 +25,32 @@ $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_dat
 <footer>
     <div class="resources-container">
         <?php foreach ($RESOURCE_CONFIG as $key => $resource): ?>
-            <div class="resource">
-                <span class="resource-name" 
-                    <?php if ($key === 'money'): ?>
-                        id="money-label" 
-                        data-tooltip="Income: $<?php echo number_format($income_result['increase']); ?> per turn"
-                    <?php elseif ($key === 'food'): ?>
-                        id="food-label" 
-                        data-tooltip="Consumption: <?php echo number_format($food_consumption_result['consumption']); ?> per turn"
-                    <?php elseif ($key === 'power'): ?>
-                        id="power-label" 
-                        data-tooltip="Consumption: <?php echo number_format($power_consumption_result['consumption']); ?> per turn"
-                    <?php elseif ($key === 'consumer_goods'): ?>
-                        id="consumer-goods-label" 
-                        data-tooltip="Consumption: <?php echo number_format($consumer_goods_consumption_result['consumption']); ?> per turn"
-                    <?php endif; ?>>
-                    <?php echo $resource['display_name']; ?>:
-                </span>
-                <span class="resource-value" id="<?php echo $key; ?>-value">
-                    <?php 
-                    $value = isset($user_data[$key]) ? $user_data[$key] : 0;
-                    echo number_format($value);
-                    ?>
-                </span>
-            </div>
+            <?php if (!isset($resource['is_natural_resource']) || $resource['is_natural_resource'] === false): ?>
+                <div class="resource">
+                    <span class="resource-name" 
+                        <?php if ($key === 'money'): ?>
+                            id="money-label" 
+                            data-tooltip="Income: $<?php echo number_format($income_result['increase']); ?> per turn"
+                        <?php elseif ($key === 'food'): ?>
+                            id="food-label" 
+                            data-tooltip="Consumption: <?php echo number_format($food_consumption_result['consumption']); ?> per turn"
+                        <?php elseif ($key === 'power'): ?>
+                            id="power-label" 
+                            data-tooltip="Consumption: <?php echo number_format($power_consumption_result['consumption']); ?> per turn"
+                        <?php elseif ($key === 'consumer_goods'): ?>
+                            id="consumer-goods-label" 
+                            data-tooltip="Consumption: <?php echo number_format($consumer_goods_consumption_result['consumption']); ?> per turn"
+                        <?php endif; ?>>
+                        <?php echo $resource['display_name']; ?>:
+                    </span>
+                    <span class="resource-value" id="<?php echo $key; ?>-value">
+                        <?php 
+                        $value = isset($user_data[$key]) ? $user_data[$key] : 0;
+                        echo number_format($value);
+                        ?>
+                    </span>
+                </div>
+            <?php endif; ?>
         <?php endforeach; ?>
     </div>
 </footer>

@@ -2,6 +2,7 @@
 global $conn;
 session_start();
 require_once 'db_connection.php';
+require_once 'resource_config.php';  // Add this line to include resource configuration
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'User not logged in']);
@@ -59,6 +60,47 @@ try {
         $new_land[$random_type]++;
     }
 
+    // Get all natural resources and their weights
+    $natural_resources = array_filter($RESOURCE_CONFIG, function($resource) {
+        return isset($resource['is_natural_resource']) && $resource['is_natural_resource'] === true;
+    });
+
+    // Create weighted array for random selection
+    $weighted_resources = [];
+    foreach ($natural_resources as $resource_key => $resource_data) {
+        // Default to weight of 0 if discovery_weight is not set
+        $weight = $resource_data['discovery_weight'] ?? 0;
+        for ($i = 0; $i < $weight; $i++) {
+            $weighted_resources[] = $resource_key;
+        }
+    }
+
+    // Add resources for each new piece of land
+    $new_resources = [];
+    $total_new_land = array_sum($new_land);
+    for ($i = 0; $i < $total_new_land * 10; $i++) {
+        $random_resource = $weighted_resources[array_rand($weighted_resources)];
+        if (!isset($new_resources[$random_resource])) {
+            $new_resources[$random_resource] = 0;
+        }
+        $new_resources[$random_resource]++;
+    }
+
+    // Update hidden resources
+    if (!empty($new_resources)) {
+        $update_query = "INSERT INTO hidden_resources (id, " . implode(", ", array_keys($new_resources)) . ") 
+                        VALUES (?" . str_repeat(", ?", count($new_resources)) . ")
+                        ON DUPLICATE KEY UPDATE " . 
+                        implode(", ", array_map(function($key) {
+                            return "$key = $key + VALUES($key)";
+                        }, array_keys($new_resources)));
+
+        $update_values = array_merge([$user_id], array_values($new_resources));
+        $stmt = $conn->prepare($update_query);
+        $stmt->bind_param(str_repeat("i", count($update_values)), ...$update_values);
+        $stmt->execute();
+    }
+
     // Update user's resources
     $stmt = $conn->prepare("UPDATE commodities SET 
                             money = money - ?, 
@@ -96,7 +138,8 @@ try {
     echo json_encode([
         'success' => true,
         'message' => "Successfully expanded borders",
-        'newLand' => $new_land
+        'newLand' => $new_land,
+        'newResources' => $new_resources
     ]);
 } catch (Exception $e) {
     $conn->rollback();
