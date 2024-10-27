@@ -38,6 +38,37 @@ function performMinuteUpdates() {
             log_message("Completed construction of $factory_type for user $user_id (queue position: $queue_position)");
         }
 
+        // Update building queue
+        $stmt = $conn->prepare("SELECT id, building_type, level, minutes_left FROM building_queue");
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        while ($building_upgrade = $result->fetch_assoc()) {
+            $user_id = $building_upgrade['id'];
+            $building_type = $building_upgrade['building_type'];
+            $target_level = $building_upgrade['level'];
+            $minutes_left = $building_upgrade['minutes_left'] - 1;
+
+            if ($minutes_left <= 0) {
+                // Upgrade is complete
+                $stmt = $conn->prepare("UPDATE buildings SET $building_type = ? WHERE id = ?");
+                $stmt->bind_param("ii", $target_level, $user_id);
+                $stmt->execute();
+
+                // Remove from queue
+                $stmt = $conn->prepare("DELETE FROM building_queue WHERE id = ? AND building_type = ?");
+                $stmt->bind_param("is", $user_id, $building_type);
+                $stmt->execute();
+
+                log_message("Completed upgrade of $building_type to level $target_level for user $user_id");
+            } else {
+                // Update remaining time
+                $stmt = $conn->prepare("UPDATE building_queue SET minutes_left = ? WHERE id = ? AND building_type = ?");
+                $stmt->bind_param("iis", $minutes_left, $user_id, $building_type);
+                $stmt->execute();
+            }
+        }
+
         $conn->commit();
         log_message("Minute updates completed successfully");
     } catch (Exception $e) {
