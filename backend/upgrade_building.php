@@ -100,7 +100,7 @@ try {
 
     // Add to construction queue
     $construction_time = $next_level_data['construction_cost']['construction_time'];
-    $stmt = $conn->prepare("INSERT INTO building_queue (id, building_type, target_level, minutes_left) VALUES (?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO building_queue (id, building_type, level, minutes_left) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("isii", $user_id, $building_type, $next_level, $construction_time);
     $stmt->execute();
 

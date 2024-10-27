@@ -78,7 +78,7 @@ try {
     // Add resources for each new piece of land
     $new_resources = [];
     $total_new_land = array_sum($new_land);
-    for ($i = 0; $i < $total_new_land * 10; $i++) {
+    for ($i = 0; $i < $total_new_land * 50; $i++) {
         $random_resource = $weighted_resources[array_rand($weighted_resources)];
         if (!isset($new_resources[$random_resource])) {
             $new_resources[$random_resource] = 0;
