@@ -1,6 +1,8 @@
 <?php
 global $conn;
+session_start();
 require_once '../backend/db_connection.php';
+require_once '../backend/calculate_points.php'; // Include the calculate_points file
 
 // Initialize variables
 $country_name = $leader_name = $email = $password = "";
@@ -62,15 +64,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_production_capacity->execute();
                     $stmt_production_capacity->close();
 
-                    // Calculate initial GP
-                    // Should probably fix and make more dynamic later
-                    $initial_gp = 0;
-                    
-                    // Population GP (population / 1000)
-                    $initial_gp += round(50000 / 1000); // Starting population is 50,000
-                    
-                    // Land GP (total land)
-                    $initial_gp += (50 + 60 + 25 + 5 + 5); // Starting land: 50 Cleared + 60 Urban + 25 Forest + 5 Rivers + 5 Lakes
+                    // Calculate GP using the calculatePoints function
+                    $initial_gp = calculatePoints($user_id); // Calculate GP based on user data
 
                     // Update GP in users table
                     $stmt_gp = $conn->prepare("UPDATE users SET gp = ? WHERE id = ?");

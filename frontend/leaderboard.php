@@ -9,13 +9,14 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Fetch top 100 nations with their ranks
+// Fetch top 100 nations with their ranks and flags
 $stmt = $conn->prepare("
     SELECT 
         id, 
         country_name, 
         leader_name, 
         gp,
+        flag,
         (SELECT COUNT(*) + 1 
          FROM users u2 
          WHERE u2.gp > u1.gp) as ranking
@@ -44,6 +45,7 @@ if (!$user_in_top_100) {
             country_name, 
             leader_name, 
             gp,
+            flag,
             (SELECT COUNT(*) + 1 
              FROM users u2 
              WHERE u2.gp > u1.gp) as ranking
@@ -106,6 +108,11 @@ if (!$user_in_top_100) {
         .nation-link:hover {
             text-decoration: underline;
         }
+        .flag-img {
+            width: 30px; /* Adjust size as needed */
+            height: auto;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -123,9 +130,12 @@ if (!$user_in_top_100) {
             <?php foreach ($top_nations as $nation): ?>
                 <tr <?php if ($nation['id'] == $_SESSION['user_id']) echo 'class="current-user"'; ?>>
                     <td><?php echo number_format($nation['ranking']); ?></td>
-                    <td><a href="view.php?id=<?php echo $nation['id']; ?>" class="nation-link">
-                        <?php echo htmlspecialchars($nation['country_name']); ?>
-                    </a></td>
+                    <td>
+                        <img src="<?php echo htmlspecialchars($nation['flag']); ?>" alt="Flag of <?php echo htmlspecialchars($nation['country_name']); ?>" class="flag-img">
+                        <a href="view.php?id=<?php echo $nation['id']; ?>" class="nation-link">
+                            <?php echo htmlspecialchars($nation['country_name']); ?>
+                        </a>
+                    </td>
                     <td><?php echo htmlspecialchars($nation['leader_name']); ?></td>
                     <td><?php echo number_format($nation['gp']); ?></td>
                 </tr>
@@ -134,9 +144,12 @@ if (!$user_in_top_100) {
             <?php if (!$user_in_top_100): ?>
                 <tr class="current-user">
                     <td><?php echo number_format($user_nation['ranking']); ?></td>
-                    <td><a href="view.php?id=<?php echo $user_nation['id']; ?>" class="nation-link">
-                        <?php echo htmlspecialchars($user_nation['country_name']); ?>
-                    </a></td>
+                    <td>
+                        <img src="<?php echo htmlspecialchars($user_nation['flag']); ?>" alt="Flag of <?php echo htmlspecialchars($user_nation['country_name']); ?>" class="flag-img">
+                        <a href="view.php?id=<?php echo $user_nation['id']; ?>" class="nation-link">
+                            <?php echo htmlspecialchars($user_nation['country_name']); ?>
+                        </a>
+                    </td>
                     <td><?php echo htmlspecialchars($user_nation['leader_name']); ?></td>
                     <td><?php echo number_format($user_nation['gp']); ?></td>
                 </tr>

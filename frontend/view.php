@@ -12,7 +12,7 @@ if ($nation_id === 0) {
 }
 
 // Fetch nation data
-$stmt = $conn->prepare("SELECT country_name, leader_name, population, tier, gp 
+$stmt = $conn->prepare("SELECT country_name, leader_name, population, tier, gp, flag 
                        FROM users 
                        WHERE id = ?");
 $stmt->bind_param("i", $nation_id);
@@ -61,7 +61,6 @@ if (!$nation) {
         }
         th {
             background-color: #f2f2f2;
-            width: 200px;
         }
         tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -73,6 +72,7 @@ if (!$nation) {
     
     <div class="content">
         <h1><?php echo htmlspecialchars($nation['country_name']); ?></h1>
+        <img src="<?php echo htmlspecialchars($nation['flag']); ?>" alt="Flag of <?php echo htmlspecialchars($nation['country_name']); ?>" style="width: 100px; height: auto; margin-bottom: 20px;">
         
         <table>
             <tr>
@@ -88,7 +88,7 @@ if (!$nation) {
                 <td><?php echo number_format($nation['tier']); ?></td>
             </tr>
             <tr>
-                <th>GP</th>
+                <th>Greatness Points</th>
                 <td><?php echo number_format($nation['gp']); ?></td>
             </tr>
         </table>
