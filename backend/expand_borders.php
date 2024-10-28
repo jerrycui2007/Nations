@@ -93,7 +93,7 @@ try {
                         ON DUPLICATE KEY UPDATE " . 
                         implode(", ", array_map(function($key) {
                             return "`$key` = `$key` + VALUES(`$key`)";
-                        }, array_keys($new_resources)));
+                        }, array_keys($new_resources)));a
 
         $update_values = array_merge([$user_id], array_values($new_resources));
         $stmt = $conn->prepare($update_query);
