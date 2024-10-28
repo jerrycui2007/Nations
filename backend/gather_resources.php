@@ -50,7 +50,7 @@ try {
 
     // Get current hidden resources
     $resource_columns = array_keys($transferable_resources);
-    $hidden_query = "SELECT " . implode(", ", $resource_columns) . " FROM hidden_resources WHERE id = ?";
+    $hidden_query = "SELECT `" . implode("`, `", $resource_columns) . "` FROM hidden_resources WHERE id = ?";
     $stmt = $conn->prepare($hidden_query);
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
@@ -64,8 +64,8 @@ try {
 
     foreach ($resource_columns as $resource) {
         if (($hidden_resources[$resource] ?? 0) > 0) {
-            $update_parts[] = "$resource = $resource + ?";
-            $hidden_parts[] = "$resource = 0";
+            $update_parts[] = "`$resource` = `$resource` + ?";
+            $hidden_parts[] = "`$resource` = 0";
             $update_values[] = $hidden_resources[$resource];
         }
     }

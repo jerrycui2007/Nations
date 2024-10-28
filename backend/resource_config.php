@@ -412,6 +412,13 @@ $RESOURCE_CONFIG = [
         'discovery_weight' => 100,
         'tier' => 5
     ],
+    'stonesilver' => [
+        'display_name' => 'Stonesilver',
+        'is_natural_resource' => true,
+        'type' => 'Mined',
+        'discovery_weight' => 100,
+        'tier' => 5
+    ],
     'crude_deep_sea_oil' => [
         'display_name' => 'Crude Deep Sea Oil',
         'is_natural_resource' => true,

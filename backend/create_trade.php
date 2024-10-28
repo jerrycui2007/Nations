@@ -24,7 +24,7 @@ $conn->begin_transaction();
 
 try {
     // Check if user has enough of the resource
-    $stmt = $conn->prepare("SELECT $resource FROM commodities WHERE id = ?");
+    $stmt = $conn->prepare("SELECT `$resource` FROM commodities WHERE id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -40,7 +40,7 @@ try {
     $stmt->execute();
 
     // Subtract the resources from the user's inventory
-    $stmt = $conn->prepare("UPDATE commodities SET $resource = $resource - ? WHERE id = ?");
+    $stmt = $conn->prepare("UPDATE commodities SET `$resource` = `$resource` - ? WHERE id = ?");
     $stmt->bind_param("ii", $amount, $user_id);
     $stmt->execute();
 

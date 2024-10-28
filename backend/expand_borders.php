@@ -50,7 +50,7 @@ try {
     // Calculate new land amount
     $new_land_amount = round($user_data['population'] / 2000);
 
-    // Define eligible land types
+    // Define eligible land types (without backticks in the array)
     $eligible_types = ['cleared_land', 'forest', 'mountain', 'river', 'lake', 'grassland', 'jungle', 'desert', 'tundra'];
 
     // Distribute new land randomly
@@ -88,11 +88,11 @@ try {
 
     // Update hidden resources
     if (!empty($new_resources)) {
-        $update_query = "INSERT INTO hidden_resources (id, " . implode(", ", array_keys($new_resources)) . ") 
+        $update_query = "INSERT INTO hidden_resources (id, `" . implode("`, `", array_keys($new_resources)) . "`) 
                         VALUES (?" . str_repeat(", ?", count($new_resources)) . ")
                         ON DUPLICATE KEY UPDATE " . 
                         implode(", ", array_map(function($key) {
-                            return "$key = $key + VALUES($key)";
+                            return "`$key` = `$key` + VALUES(`$key`)";
                         }, array_keys($new_resources)));
 
         $update_values = array_merge([$user_id], array_values($new_resources));
@@ -117,7 +117,9 @@ try {
     $update_values = [];
     foreach ($new_land as $type => $amount) {
         if ($amount > 0) {
-            $update_parts[] = "$type = $type + ?";
+            // Remove the quotes around the backticks in $eligible_types
+            $clean_type = trim($type, "'`"); // Remove any existing quotes/backticks
+            $update_parts[] = "`{$clean_type}` = `{$clean_type}` + ?";
             $update_values[] = $amount;
         }
     }
