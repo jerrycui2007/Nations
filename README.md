@@ -1,1 +1,1 @@
-A country simulation game I am creating for my first web project. I will hopefully get the game running online as soon as there are playable elements.
+A country simulation game I am creating for my first web project. Game is currently online (but without turn updates) here:  https://jerry.rhhscs.com/frontend/index.php. Join my discord server here for updates: https://discord.gg/CXctN6phAV
