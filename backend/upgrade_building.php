@@ -1,5 +1,9 @@
 <?php
-global $conn;
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+error_log("Upgrade building request received: " . print_r($_POST, true));
+
 session_start();
 require_once 'db_connection.php';
 require_once 'building_config.php';
@@ -11,24 +15,32 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$building_type = $_POST['building_type'];
+$building_type = $_POST['building_type'] ?? '';
+
+error_log("Processing upgrade for user_id: $user_id, building_type: $building_type");
 
 if (!isset($BUILDING_CONFIG[$building_type])) {
     echo json_encode(['success' => false, 'message' => 'Invalid building type']);
     exit();
 }
 
-// Start transaction
-$conn->begin_transaction();
-
 try {
+    // Start transaction
+    $pdo->beginTransaction();
+
     // Get current building level
-    $stmt = $conn->prepare("SELECT $building_type FROM buildings WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $current_level = $result->fetch_assoc()[$building_type];
+    $stmt = $pdo->prepare("SELECT $building_type FROM buildings WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($result === false) {
+        throw new Exception("Could not fetch building data");
+    }
+
+    $current_level = $result[$building_type];
     $next_level = $current_level + 1;
+
+    error_log("Current level: $current_level, Next level: $next_level");
 
     if (!isset($BUILDING_CONFIG[$building_type]['levels'][$next_level])) {
         throw new Exception("Maximum level reached for this building");
@@ -37,11 +49,9 @@ try {
     $next_level_data = $BUILDING_CONFIG[$building_type]['levels'][$next_level];
 
     // Check if an upgrade is already in progress for this building
-    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM building_queue WHERE id = ? AND building_type = ?");
-    $stmt->bind_param("is", $user_id, $building_type);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $upgrade_in_progress = $result->fetch_assoc()['count'] > 0;
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM building_queue WHERE id = ? AND building_type = ?");
+    $stmt->execute([$user_id, $building_type]);
+    $upgrade_in_progress = $stmt->fetch(PDO::FETCH_ASSOC)['count'] > 0;
 
     if ($upgrade_in_progress) {
         throw new Exception("An upgrade for this building is already in progress.");
@@ -53,11 +63,9 @@ try {
         return $resource !== 'construction_time';
     });
     $resource_query = "SELECT " . implode(", ", $resource_columns) . " FROM commodities WHERE id = ?";
-    $stmt = $conn->prepare($resource_query);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user_resources = $result->fetch_assoc();
+    $stmt = $pdo->prepare($resource_query);
+    $stmt->execute([$user_id]);
+    $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
 
     foreach ($next_level_data['construction_cost'] as $resource => $amount) {
         if ($resource !== 'construction_time' && $user_resources[$resource] < $amount) {
@@ -66,11 +74,9 @@ try {
     }
 
     // Check if user has enough land
-    $stmt = $conn->prepare("SELECT cleared_land FROM land WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user_land = $result->fetch_assoc();
+    $stmt = $pdo->prepare("SELECT cleared_land FROM land WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user_land = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user_land['cleared_land'] < $next_level_data['land']['cleared_land']) {
         throw new Exception("Not enough cleared land to upgrade building");
@@ -89,33 +95,37 @@ try {
     $update_query .= implode(", ", $update_parts) . " WHERE id = ?";
     $update_values[] = $user_id;
 
-    $stmt = $conn->prepare($update_query);
-    $stmt->bind_param(str_repeat("i", count($update_values)), ...$update_values);
-    $stmt->execute();
+    $stmt = $pdo->prepare($update_query);
+    $stmt->execute($update_values);
 
     // Deduct land
-    $stmt = $conn->prepare("UPDATE land SET cleared_land = cleared_land - ? WHERE id = ?");
-    $stmt->bind_param("ii", $next_level_data['land']['cleared_land'], $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE land SET cleared_land = cleared_land - ? WHERE id = ?");
+    $stmt->execute([$next_level_data['land']['cleared_land'], $user_id]);
 
     // Add to construction queue
     $construction_time = $next_level_data['construction_cost']['construction_time'];
-    $stmt = $conn->prepare("INSERT INTO building_queue (id, building_type, level, minutes_left) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("isii", $user_id, $building_type, $next_level, $construction_time);
-    $stmt->execute();
+    $stmt = $pdo->prepare("INSERT INTO building_queue (id, building_type, level, minutes_left) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$user_id, $building_type, $next_level, $construction_time]);
 
-    $conn->commit();
+    $pdo->commit();
 
     echo json_encode([
         'success' => true,
         'message' => "Successfully started upgrade of {$BUILDING_CONFIG[$building_type]['name']} to level $next_level"
     ]);
+} catch (PDOException $e) {
+    $pdo->rollBack();
+    error_log("PDO Error in upgrade_building.php: " . $e->getMessage());
+    echo json_encode([
+        'success' => false,
+        'message' => "Database error occurred",
+        'debug' => $e->getMessage()
+    ]);
 } catch (Exception $e) {
-    $conn->rollback();
+    $pdo->rollBack();
+    error_log("General Error in upgrade_building.php: " . $e->getMessage());
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
     ]);
 }
-
-$conn->close();

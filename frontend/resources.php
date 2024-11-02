@@ -11,11 +11,9 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Fetch user's resources
-$stmt = $conn->prepare("SELECT * FROM commodities WHERE id = ?");
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$user_resources = $stmt->get_result()->fetch_assoc();
-$stmt->close();
+$stmt = $pdo->prepare("SELECT * FROM commodities WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -96,11 +94,9 @@ $stmt->close();
             </tr>
             <?php
             // Fetch building levels
-            $stmt = $conn->prepare("SELECT * FROM buildings WHERE id = ?");
-            $stmt->bind_param("i", $_SESSION['user_id']);
-            $stmt->execute();
-            $user_buildings = $stmt->get_result()->fetch_assoc();
-            $stmt->close();
+            $stmt = $pdo->prepare("SELECT * FROM buildings WHERE id = ?");
+            $stmt->execute([$_SESSION['user_id']]);
+            $user_buildings = $stmt->fetch(PDO::FETCH_ASSOC);
 
             foreach ($BUILDING_CONFIG as $building_type => $building_data) {
                 $current_level = $user_buildings[$building_type] ?? 0;

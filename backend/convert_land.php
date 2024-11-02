@@ -1,5 +1,4 @@
 <?php
-global $conn;
 session_start();
 require_once 'db_connection.php';
 
@@ -28,64 +27,44 @@ if (!isset($conversion_costs[$land_type])) {
 $cost_per_unit = $conversion_costs[$land_type];
 $total_cost = $amount * $cost_per_unit;
 
-// Start transaction
-$conn->begin_transaction();
-
 try {
-    // Check if user has enough money and land
-    $stmt = $conn->prepare("SELECT money FROM commodities WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user_money = $result->fetch_assoc()['money'];
+    $pdo->beginTransaction();
 
-    $stmt = $conn->prepare("SELECT $land_type, cleared_land FROM land WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $land_data = $result->fetch_assoc();
+    // Check if user has enough money and land
+    $stmt = $pdo->prepare("SELECT money FROM commodities WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user_money = $stmt->fetch(PDO::FETCH_ASSOC)['money'];
+
+    $stmt = $pdo->prepare("SELECT $land_type, cleared_land FROM land WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $land_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user_money < $total_cost) {
         throw new Exception("Not enough money to convert land");
     }
 
     if ($land_data[$land_type] < $amount) {
-        throw new Exception("Not enough $land_type to convert");
+        throw new Exception("Not enough {$land_type} to convert");
     }
 
     // Update money
-    $stmt = $conn->prepare("UPDATE commodities SET money = money - ? WHERE id = ?");
-    $stmt->bind_param("di", $total_cost, $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE commodities SET money = money - ? WHERE id = ?");
+    $stmt->execute([$total_cost, $user_id]);
 
     // Update land
-    $stmt = $conn->prepare("UPDATE land SET $land_type = $land_type - ?, cleared_land = cleared_land + ? WHERE id = ?");
-    $stmt->bind_param("iii", $amount, $amount, $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE land SET $land_type = $land_type - ?, cleared_land = cleared_land + ? WHERE id = ?");
+    $stmt->execute([$amount, $amount, $user_id]);
 
-    $conn->commit();
-
-    // Fetch updated land data
-    $stmt = $conn->prepare("SELECT $land_type, cleared_land, (cleared_land + urban_areas + forest + mountain + river + lake + grassland + jungle + desert + tundra) AS total_land FROM land WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $updated_land = $result->fetch_assoc();
+    $pdo->commit();
 
     echo json_encode([
         'success' => true,
-        'message' => "Successfully converted $amount $land_type to cleared land",
-        'new_amount' => number_format($updated_land[$land_type]),
-        'new_cleared_land' => number_format($updated_land['cleared_land']),
-        'new_total_land' => number_format($updated_land['total_land'])
+        'message' => "Successfully converted $amount $land_type to cleared land"
     ]);
 } catch (Exception $e) {
-    $conn->rollback();
+    $pdo->rollBack();
     echo json_encode([
-        'success' => false, 
-        'message' => $e->getMessage(),
-        'error_details' => $e->getTraceAsString()
+        'success' => false,
+        'message' => $e->getMessage()
     ]);
 }
-
-$conn->close();

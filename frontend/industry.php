@@ -13,27 +13,25 @@ if (!isset($_SESSION['user_id'])) {
 
 // Fetch factory and production capacity data for the user
 $user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("
-    SELECT f.farm, f.windmill, f.quarry, f.sandstone_quarry, f.sawmill, f.automobile_factory, 
-           p.farm AS farm_capacity, p.windmill AS windmill_capacity, p.quarry AS quarry_capacity, 
-           p.sandstone_quarry AS sandstone_quarry_capacity, p.sawmill AS sawmill_capacity, 
-           p.automobile_factory AS automobile_factory_capacity
+
+// Build dynamic query based on factory_config
+$factory_columns = array_keys($FACTORY_CONFIG);
+$factory_select = implode(', ', array_map(function($type) { return "f.$type"; }, $factory_columns));
+$capacity_select = implode(', ', array_map(function($type) { return "p.$type AS {$type}_capacity"; }, $factory_columns));
+
+$stmt = $pdo->prepare("
+    SELECT $factory_select, $capacity_select
     FROM factories f
     JOIN production_capacity p ON f.id = p.id
     WHERE f.id = ?
 ");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$factories = $result->fetch_assoc();
+$stmt->execute([$user_id]);
+$factories = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Fetch factories under construction
-$stmt = $conn->prepare("SELECT factory_type, minutes_left FROM factory_queue WHERE id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$factories_under_construction = $result->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
+$stmt = $pdo->prepare("SELECT factory_type, minutes_left FROM factory_queue WHERE id = ?");
+$stmt->execute([$user_id]);
+$factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -95,34 +93,27 @@ $stmt->close();
                     $capacity_key = $factory_type . '_capacity';
                     $capacity = $factories[$capacity_key];
                     
-                    // Calculate input and output based on factory type
-                    $inputs = [];
-                    $outputs = [];
-                    if ($factory_type === 'farm') {
-                        $inputs[] = ['resource' => 'Money', 'amount' => $capacity * 7 * $amount];
-                        $outputs[] = ['resource' => 'Food', 'amount' => $capacity * $amount];
-                    }
-                    elseif ($factory_type === 'windmill') {
-                        $inputs[] = ['resource' => 'Money', 'amount' => $capacity * 2 * $amount];
-                        $outputs[] = ['resource' => 'Power', 'amount' => $capacity * $amount];
-                    }
-                    elseif ($factory_type === 'quarry' || $factory_type === 'sandstone_quarry' || $factory_type === 'sawmill') {
-                        $inputs[] = ['resource' => 'Money', 'amount' => $capacity * 7 * $amount];
-                        $outputs[] = ['resource' => 'Building Materials', 'amount' => $capacity * $amount];
-                    }
-                    elseif ($factory_type === 'automobile_factory') {
-                        $inputs[] = ['resource' => 'Money', 'amount' => $capacity * 12 * $amount];
-                        $inputs[] = ['resource' => 'Power', 'amount' => $capacity * 10 * $amount];
-                        $inputs[] = ['resource' => 'Metal', 'amount' => $capacity * $amount];
-                        $outputs[] = ['resource' => 'Consumer Goods', 'amount' => $capacity * 6 * $amount];
-                    }
+                    // Get input/output from factory config
+                    $factory_data = $FACTORY_CONFIG[$factory_type];
+                    $inputs = array_map(function($input) use ($amount, $capacity) {
+                        return [
+                            'resource' => $input['resource'],
+                            'amount' => $input['amount'] * $amount * $capacity
+                        ];
+                    }, $factory_data['input']);
+
+                    $outputs = array_map(function($output) use ($amount, $capacity) {
+                        return [
+                            'resource' => $output['resource'],
+                            'amount' => $output['amount'] * $amount * $capacity
+                        ];
+                    }, $factory_data['output']);
                 ?>
                     <tr>
-                        <td><?php echo ucfirst(str_replace('_', ' ', $factory_type)); ?></td>
+                        <td><?php echo $factory_data['name']; ?></td>
                         <td><?php echo $amount; ?></td>
                         <td>
                             <?php 
-                            $capacity = $factories[$capacity_key];
                             $isDisabled = $capacity == 0 ? 'disabled' : '';
                             ?>
                             <input type="number" id="<?php echo $factory_type; ?>-collect" 
@@ -138,14 +129,14 @@ $stmt->close();
                         <td>
                             <?php 
                             foreach ($inputs as $input) {
-                                echo $input['amount'] . ' ' . $input['resource'] . '<br>';
+                                echo $input['amount'] . ' ' . $RESOURCE_CONFIG[$input['resource']]['display_name'] . '<br>';
                             }
                             ?>
                         </td>
                         <td>
                             <?php 
                             foreach ($outputs as $output) {
-                                echo $output['amount'] . ' ' . $output['resource'] . '<br>';
+                                echo $output['amount'] . ' ' . $RESOURCE_CONFIG[$output['resource']]['display_name'] . '<br>';
                             }
                             ?>
                         </td>
@@ -210,9 +201,7 @@ $stmt->close();
 
     </div>
 
-    <?php include 'footer.php'; 
-    $conn->close();
-    ?>
+    <?php include 'footer.php'; ?>
     
     <script>
     function collectResource(factoryType) {
@@ -253,7 +242,6 @@ $stmt->close();
         const maxCapacity = parseInt(inputElement.max);
         const factoryAmount = parseInt(inputElement.closest('tr').querySelector('td:nth-child(2)').textContent);
         
-        // Ensure the input value doesn't exceed the max capacity
         if (inputValue > maxCapacity) {
             inputElement.value = maxCapacity;
         }
@@ -278,24 +266,22 @@ $stmt->close();
             collectButton.style.cursor = '';
         }
 
-        // Update input and output based on factory type
-        // Update input and output based on factory type
-        if (factoryType === 'farm') {
-            inputCell.innerHTML = `$${inputValue * 7 * factoryAmount}`;
-            outputCell.innerHTML = `${inputValue * factoryAmount} Food`;
-        }
-        else if (factoryType === 'windmill') {
-            inputCell.innerHTML = `$${inputValue * 2 * factoryAmount}`;
-            outputCell.innerHTML = `${inputValue * factoryAmount} Power`;
-        }
-        else if (factoryType === 'quarry' || factoryType === 'sandstone_quarry' || factoryType === 'sawmill') {
-            inputCell.innerHTML = `$${inputValue * 7 * factoryAmount}`;
-            outputCell.innerHTML = `${inputValue * factoryAmount} Building Materials`;
-        }
-        else if (factoryType === 'automobile_factory') {
-            inputCell.innerHTML = `$${inputValue * 12 * factoryAmount}<br>${inputValue * 10 * factoryAmount} Power<br>${inputValue * factoryAmount} Metal`;
-            outputCell.innerHTML = `${inputValue * 6 * factoryAmount} Consumer Goods`;
-        }
+        // Get factory config data
+        fetch('../backend/get_factory_config.php?type=' + factoryType)
+            .then(response => response.json())
+            .then(config => {
+                // Update input display
+                const inputs = config.input.map(input => 
+                    `${input.amount * inputValue * factoryAmount} ${input.resource}`
+                ).join('<br>');
+                inputCell.innerHTML = inputs;
+
+                // Update output display
+                const outputs = config.output.map(output => 
+                    `${output.amount * inputValue * factoryAmount} ${output.resource}`
+                ).join('<br>');
+                outputCell.innerHTML = outputs;
+            });
     }
 
     function buildFactory(factoryType) {

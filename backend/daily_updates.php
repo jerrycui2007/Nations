@@ -2,27 +2,25 @@
 require_once 'db_connection.php';
 
 function performDailyUpdates() {
-    global $conn;
-
-    // Start transaction
-    $conn->begin_transaction();
-
+    global $pdo;
+    
     try {
+        // Start transaction
+        $pdo->beginTransaction();
+        
         // Reset expanded_borders_today for all users
-        $stmt = $conn->prepare("UPDATE land SET expanded_borders_today = 0");
+        $stmt = $pdo->prepare("UPDATE land SET expanded_borders_today = 0");
         $stmt->execute();
-
-        $affected_rows = $stmt->affected_rows;
+        
+        $affected_rows = $stmt->rowCount();
         log_message("Reset expanded_borders_today for {$affected_rows} users");
 
-        $conn->commit();
+        $pdo->commit();
         log_message("Daily updates completed successfully");
     } catch (Exception $e) {
-        $conn->rollback();
+        $pdo->rollBack();
         log_message("Error during daily updates: " . $e->getMessage());
     }
-
-    $conn->close();
 }
 
 function log_message($message) {

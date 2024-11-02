@@ -1,5 +1,5 @@
 <?php
-global $conn;
+global $pdo;
 session_start();
 require_once '../backend/db_connection.php';
 
@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Fetch top 100 nations with their ranks and flags
-$stmt = $conn->prepare("
+$stmt = $pdo->prepare("
     SELECT 
         id, 
         country_name, 
@@ -25,8 +25,7 @@ $stmt = $conn->prepare("
     LIMIT 100
 ");
 $stmt->execute();
-$top_nations = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
+$top_nations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Check if current user is in top 100
 $user_in_top_100 = false;
@@ -39,7 +38,7 @@ foreach ($top_nations as $nation) {
 
 // If user not in top 100, get their rank and info
 if (!$user_in_top_100) {
-    $stmt = $conn->prepare("
+    $stmt = $pdo->prepare("
         SELECT 
             id, 
             country_name, 
@@ -52,10 +51,8 @@ if (!$user_in_top_100) {
         FROM users u1
         WHERE id = ?
     ");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    $user_nation = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
+    $stmt->execute([$_SESSION['user_id']]);
+    $user_nation = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 ?>
 

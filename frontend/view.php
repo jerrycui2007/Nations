@@ -1,5 +1,5 @@
 <?php
-global $conn;
+global $pdo;
 session_start();
 require_once '../backend/db_connection.php';
 
@@ -12,13 +12,11 @@ if ($nation_id === 0) {
 }
 
 // Fetch nation data
-$stmt = $conn->prepare("SELECT country_name, leader_name, population, tier, gp, flag 
+$stmt = $pdo->prepare("SELECT country_name, leader_name, population, tier, gp, flag 
                        FROM users 
                        WHERE id = ?");
-$stmt->bind_param("i", $nation_id);
-$stmt->execute();
-$nation = $stmt->get_result()->fetch_assoc();
-$stmt->close();
+$stmt->execute([$nation_id]);
+$nation = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // If nation doesn't exist, redirect to home
 if (!$nation) {

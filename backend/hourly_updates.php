@@ -9,80 +9,56 @@ require_once 'calculate_points.php';
 require_once 'calculate_tier.php';
 
 function performHourlyUpdates() {
-    global $conn;
+    global $pdo;
 
     // Start transaction
-    $conn->begin_transaction();
+    $pdo->beginTransaction();
 
     try {
         // Fetch all users, their population, and commodities
-        $stmt = $conn->prepare("
+        $stmt = $pdo->prepare("
             SELECT u.id, u.population, c.food, c.power, c.money, c.consumer_goods, l.urban_areas
             FROM users u 
             JOIN commodities c ON u.id = c.id
             JOIN land l ON u.id = l.id
         ");
         $stmt->execute();
-        $result = $stmt->get_result();
-
-        while ($user = $result->fetch_assoc()) {
+        
+        while ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $user_id = $user['id'];
             
             // Calculate income
             $income_result = calculateIncome($user);
 
             if ($income_result['success']) {
-                // Update user's money
-                $new_money = $income_result['new_money'];
-                $update_stmt = $conn->prepare("UPDATE commodities SET money = ? WHERE id = ?");
-                $update_stmt->bind_param("ii", $new_money, $user_id);
-                $update_stmt->execute();
+                $update_stmt = $pdo->prepare("UPDATE commodities SET money = ? WHERE id = ?");
+                $update_stmt->execute([$income_result['new_money'], $user_id]);
             }
 
             // Calculate food consumption
             $food_consumption_result = calculateFoodConsumption($user);
-
-            // Update user's food (new_food is already guaranteed to be non-negative)
-            $new_food = $food_consumption_result['new_food'];
-            $update_stmt = $conn->prepare("UPDATE commodities SET food = ? WHERE id = ?");
-            $update_stmt->bind_param("ii", $new_food, $user_id);
-            $update_stmt->execute();
+            $update_stmt = $pdo->prepare("UPDATE commodities SET food = ? WHERE id = ?");
+            $update_stmt->execute([$food_consumption_result['new_food'], $user_id]);
 
             // Calculate power consumption
             $power_consumption_result = calculatePowerConsumption($user);
-
-            // Update user's power
-            $new_power = $power_consumption_result['new_power'];
-            $update_stmt = $conn->prepare("UPDATE commodities SET power = ? WHERE id = ?");
-            $update_stmt->bind_param("ii", $new_power, $user_id);
-            $update_stmt->execute();
+            $update_stmt = $pdo->prepare("UPDATE commodities SET power = ? WHERE id = ?");
+            $update_stmt->execute([$power_consumption_result['new_power'], $user_id]);
 
             // Calculate consumer goods consumption
             $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user);
-
-            log_message("User ID {$user_id}: " . $consumer_goods_consumption_result['consumption']);
-            log_message($consumer_goods_consumption_result['message']);
-
-            // Update user's consumer goods
-            $new_consumer_goods = $consumer_goods_consumption_result['new_consumer_goods'];
-            $update_stmt = $conn->prepare("UPDATE commodities SET consumer_goods = ? WHERE id = ?");
-            $update_stmt->bind_param("ii", $new_consumer_goods, $user_id);
-            $update_stmt->execute();
+            $update_stmt = $pdo->prepare("UPDATE commodities SET consumer_goods = ? WHERE id = ?");
+            $update_stmt->execute([$consumer_goods_consumption_result['new_consumer_goods'], $user_id]);
 
             // Calculate population growth
             $population_growth_result = calculatePopulationGrowth($user);
-
-            // Update user's population
-            $new_population = $population_growth_result['new_population'];
-            $update_stmt = $conn->prepare("UPDATE users SET population = ? WHERE id = ?");
-            $update_stmt->bind_param("ii", $new_population, $user_id);
-            $update_stmt->execute();
+            $update_stmt = $pdo->prepare("UPDATE users SET population = ? WHERE id = ?");
+            $update_stmt->execute([$population_growth_result['new_population'], $user_id]);
 
             // Calculate and update user's tier
             $new_tier = calculateTier($new_population);
-            $update_stmt = $conn->prepare("UPDATE users SET tier = ? WHERE id = ?");
-            $update_stmt->bind_param("ii", $new_tier, $user_id);
-            $update_stmt->execute();
+            $update_stmt = $pdo->prepare("UPDATE users SET tier = ? WHERE id = ?");
+            $update_stmt->execute([$new_tier, $user_id]);
 
             // New function to update production capacity
             updateProductionCapacity($user_id);
@@ -91,33 +67,27 @@ function performHourlyUpdates() {
             calculatePoints($user_id);
         }
 
-        $conn->commit();
+        $pdo->commit();
     } catch (Exception $e) {
-        $conn->rollback();
+        $pdo->rollBack();
         log_message("Error during hourly updates: " . $e->getMessage());
     }
-
-    $conn->close();
 }
 
 function updateProductionCapacity($user_id) {
-    global $conn;
+    global $pdo;
 
     $factory_types = ['farm', 'windmill', 'quarry', 'sandstone_quarry', 'sawmill', 'automobile_factory'];
 
     // Fetch user's factories
-    $stmt = $conn->prepare("SELECT * FROM factories WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $factories_result = $stmt->get_result();
-    $factories = $factories_result->fetch_assoc();
+    $stmt = $pdo->prepare("SELECT * FROM factories WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $factories = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Fetch user's current production capacity
-    $stmt = $conn->prepare("SELECT * FROM production_capacity WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $capacity_result = $stmt->get_result();
-    $capacities = $capacity_result->fetch_assoc();
+    $stmt = $pdo->prepare("SELECT * FROM production_capacity WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $capacities = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Prepare update statement
     $update_parts = [];
@@ -129,9 +99,8 @@ function updateProductionCapacity($user_id) {
 
     if (!empty($update_parts)) {
         $update_sql = "UPDATE production_capacity SET " . implode(", ", $update_parts) . " WHERE id = ?";
-        $stmt = $conn->prepare($update_sql);
-        $stmt->bind_param("i", $user_id);
-        $stmt->execute();
+        $stmt = $pdo->prepare($update_sql);
+        $stmt->execute([$user_id]);
 
         log_message("Updated production capacity for user $user_id");
     }

@@ -12,11 +12,9 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Fetch user's building levels
-$stmt = $conn->prepare("SELECT * FROM buildings WHERE id = ?");
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$user_buildings = $stmt->get_result()->fetch_assoc();
-$stmt->close();
+$stmt = $pdo->prepare("SELECT * FROM buildings WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user_buildings = $stmt->fetch(PDO::FETCH_ASSOC);
 
 function getResourceDisplayName($resource) {
     global $RESOURCE_CONFIG;
@@ -109,12 +107,10 @@ function getResourceDisplayName($resource) {
         echo "<table>";
         echo "<tr><th>Building</th><th>Upgrading to Level</th><th>Time Remaining</th></tr>";
 
-        $stmt = $conn->prepare("SELECT * FROM building_queue WHERE id = ?");
-        $stmt->bind_param("i", $_SESSION['user_id']);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $stmt = $pdo->prepare("SELECT * FROM building_queue WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
 
-        while ($upgrade = $result->fetch_assoc()) {
+        while ($upgrade = $stmt->fetch(PDO::FETCH_ASSOC)) {
             echo "<tr>";
             echo "<td>{$BUILDING_CONFIG[$upgrade['building_type']]['name']}</td>";
             echo "<td>{$upgrade['level']}</td>";

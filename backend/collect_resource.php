@@ -12,34 +12,28 @@ $user_id = $_SESSION['user_id'];
 $factory_type = $_POST['factory_type'];
 $amount = intval($_POST['amount']);
 
-// Start transaction
-$conn->begin_transaction();
-
 try {
+    // Start transaction
+    $pdo->beginTransaction();
+
     // Fetch factory data
-    $stmt = $conn->prepare("SELECT $factory_type FROM factories WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $factory_data = $result->fetch_assoc();
+    $stmt = $pdo->prepare("SELECT $factory_type FROM factories WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $factory_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Fetch production capacity
-    $stmt = $conn->prepare("SELECT $factory_type AS capacity FROM production_capacity WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $capacity_data = $result->fetch_assoc();
+    $stmt = $pdo->prepare("SELECT $factory_type AS capacity FROM production_capacity WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $capacity_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($amount > $capacity_data['capacity']) {
         throw new Exception("Not enough production capacity");
     }
 
     // Fetch user's commodities
-    $stmt = $conn->prepare("SELECT * FROM commodities WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $commodities = $result->fetch_assoc();
+    $stmt = $pdo->prepare("SELECT * FROM commodities WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $commodities = $stmt->fetch(PDO::FETCH_ASSOC);
 
     $factory_config = $FACTORY_CONFIG[$factory_type];
     $inputs = $factory_config['input'];
@@ -64,37 +58,33 @@ try {
     $update_parts = [];
     $update_values = [];
     foreach ($inputs as $input) {
-        $update_parts[] = "{$input['resource']} = {$input['resource']} - ?";
+        $update_parts[] = "`{$input['resource']}` = `{$input['resource']}` - ?";
         $update_values[] = $input['amount'];
     }
     foreach ($outputs as $output) {
-        $update_parts[] = "{$output['resource']} = {$output['resource']} + ?";
+        $update_parts[] = "`{$output['resource']}` = `{$output['resource']}` + ?";
         $update_values[] = $output['amount'];
     }
     $update_commodities .= implode(", ", $update_parts) . " WHERE id = ?";
     $update_values[] = $user_id;
 
-    $stmt = $conn->prepare($update_commodities);
-    $stmt->bind_param(str_repeat("i", count($update_values)), ...$update_values);
-    $stmt->execute();
+    $stmt = $pdo->prepare($update_commodities);
+    $stmt->execute($update_values);
 
     // Update production capacity
-    $stmt = $conn->prepare("UPDATE production_capacity SET $factory_type = $factory_type - ? WHERE id = ?");
-    $stmt->bind_param("ii", $amount, $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE production_capacity SET `$factory_type` = `$factory_type` - ? WHERE id = ?");
+    $stmt->execute([$amount, $user_id]);
 
-    $conn->commit();
+    $pdo->commit();
 
     echo json_encode([
         'success' => true,
         'message' => "Successfully collected resources from $factory_type"
     ]);
 } catch (Exception $e) {
-    $conn->rollback();
+    $pdo->rollBack();
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
     ]);
 }
-
-$conn->close();

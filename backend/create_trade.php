@@ -1,5 +1,4 @@
 <?php
-global $conn;
 session_start();
 require_once 'db_connection.php';
 require_once 'resource_config.php';
@@ -19,36 +18,37 @@ if (empty($resource) || $amount <= 0 || $price <= 0) {
     exit();
 }
 
-// Start transaction
-$conn->begin_transaction();
-
 try {
+    // Start transaction
+    $pdo->beginTransaction();
+
     // Check if user has enough of the resource
-    $stmt = $conn->prepare("SELECT `$resource` FROM commodities WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user_resources = $result->fetch_assoc();
+    $stmt = $pdo->prepare("SELECT `$resource` FROM commodities WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!isset($user_resources[$resource]) || $user_resources[$resource] < $amount) {
         throw new Exception("You don't have enough " . str_replace('_', ' ', $resource));
     }
 
     // Create the trade offer
-    $stmt = $conn->prepare("INSERT INTO trades (seller_id, resource_offered, amount_offered, price_per_unit, date) VALUES (?, ?, ?, ?, NOW())");
-    $stmt->bind_param("isid", $user_id, $resource, $amount, $price);
-    $stmt->execute();
+    $stmt = $pdo->prepare("INSERT INTO trades (seller_id, resource_offered, amount_offered, price_per_unit, date) 
+                           VALUES (?, ?, ?, ?, NOW())");
+    $stmt->execute([$user_id, $resource, $amount, $price]);
 
     // Subtract the resources from the user's inventory
-    $stmt = $conn->prepare("UPDATE commodities SET `$resource` = `$resource` - ? WHERE id = ?");
-    $stmt->bind_param("ii", $amount, $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE commodities SET `$resource` = `$resource` - ? WHERE id = ?");
+    $stmt->execute([$amount, $user_id]);
 
-    $conn->commit();
-    echo json_encode(['success' => true, 'message' => 'Trade offer created successfully']);
+    $pdo->commit();
+    echo json_encode([
+        'success' => true, 
+        'message' => 'Trade offer created successfully'
+    ]);
 } catch (Exception $e) {
-    $conn->rollback();
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    $pdo->rollBack();
+    echo json_encode([
+        'success' => false, 
+        'message' => $e->getMessage()
+    ]);
 }
-
-$conn->close();

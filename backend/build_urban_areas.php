@@ -1,5 +1,4 @@
 <?php
-global $conn;
 session_start();
 require_once 'db_connection.php';
 
@@ -13,22 +12,18 @@ $amount = intval($_POST['amount']);
 $cost_per_unit = 500;
 $total_cost = $amount * $cost_per_unit;
 
-// Start transaction
-$conn->begin_transaction();
-
 try {
-    // Check if user has enough money and cleared land
-    $stmt = $conn->prepare("SELECT money FROM commodities WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user_money = $result->fetch_assoc()['money'];
+    // Start transaction
+    $pdo->beginTransaction();
 
-    $stmt = $conn->prepare("SELECT cleared_land, urban_areas FROM land WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $land_data = $result->fetch_assoc();
+    // Check if user has enough money and cleared land
+    $stmt = $pdo->prepare("SELECT money FROM commodities WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user_money = $stmt->fetch(PDO::FETCH_ASSOC)['money'];
+
+    $stmt = $pdo->prepare("SELECT cleared_land, urban_areas FROM land WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $land_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user_money < $total_cost) {
         throw new Exception("Not enough money to build Urban Areas");
@@ -39,28 +34,24 @@ try {
     }
 
     // Update money
-    $stmt = $conn->prepare("UPDATE commodities SET money = money - ? WHERE id = ?");
-    $stmt->bind_param("di", $total_cost, $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE commodities SET money = money - ? WHERE id = ?");
+    $stmt->execute([$total_cost, $user_id]);
 
     // Update land
-    $stmt = $conn->prepare("UPDATE land SET cleared_land = cleared_land - ?, urban_areas = urban_areas + ? WHERE id = ?");
-    $stmt->bind_param("iii", $amount, $amount, $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE land SET cleared_land = cleared_land - ?, urban_areas = urban_areas + ? WHERE id = ?");
+    $stmt->execute([$amount, $amount, $user_id]);
 
-    $conn->commit();
+    $pdo->commit();
 
     echo json_encode([
         'success' => true,
         'message' => "Successfully built $amount Urban Areas"
     ]);
 } catch (Exception $e) {
-    $conn->rollback();
+    $pdo->rollBack();
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage(),
         'error_details' => $e->getTraceAsString()
     ]);
 }
-
-$conn->close();

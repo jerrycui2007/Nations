@@ -1,8 +1,7 @@
 <?php
-global $conn;
 session_start();
 require_once '../backend/db_connection.php';
-require_once '../backend/calculate_points.php'; // Include the calculate_points file
+require_once '../backend/calculate_points.php';
 
 // Initialize variables
 $country_name = $leader_name = $email = $password = "";
@@ -13,86 +12,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $country_name = trim($_POST['country_name']);
     $leader_name = trim($_POST['leader_name']);
     $email = trim($_POST['email']);
-    $password = password_hash(trim($_POST['password']), PASSWORD_DEFAULT); // Hash the password
+    $password = password_hash(trim($_POST['password']), PASSWORD_DEFAULT);
 
     // Check if all fields are filled
     if (empty($country_name) || empty($leader_name) || empty($email) || empty($password)) {
         $error = "All fields are required.";
     } else {
-        // Check for unique country_name, leader_name, and email
-        $stmt = $conn->prepare("SELECT * FROM users WHERE country_name = ? OR leader_name = ? OR email = ?");
-        $stmt->bind_param("sss", $country_name, $leader_name, $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        try {
+            // Check for unique country_name, leader_name, and email
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE country_name = ? OR leader_name = ? OR email = ?");
+            $stmt->execute([$country_name, $leader_name, $email]);
 
-        if ($result->num_rows > 0) {
-            $error = "Country name, leader name, or email already exists.";
-        } else {
-            // Start a transaction
-            $conn->begin_transaction();
+            if ($stmt->rowCount() > 0) {
+                $error = "Country name, leader name, or email already exists.";
+            } else {
+                // Start a transaction
+                $pdo->beginTransaction();
 
-            try {
-                // Prepare and bind for users table
-                $stmt = $conn->prepare("INSERT INTO users (country_name, leader_name, email, password) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("ssss", $country_name, $leader_name, $email, $password);
-
-                // Execute and check for errors
-                if ($stmt->execute()) {
-                    $user_id = $conn->insert_id; // Get the ID of the newly inserted user
+                try {
+                    // Insert into users table
+                    $stmt = $pdo->prepare("INSERT INTO users (country_name, leader_name, email, password) VALUES (?, ?, ?, ?)");
+                    $stmt->execute([$country_name, $leader_name, $email, $password]);
+                    $user_id = $pdo->lastInsertId();
 
                     // Insert into commodities table
-                    $stmt_commodities = $conn->prepare("INSERT INTO commodities (id) VALUES (?)");
-                    $stmt_commodities->bind_param("i", $user_id);
-                    $stmt_commodities->execute();
-                    $stmt_commodities->close();
+                    $stmt = $pdo->prepare("INSERT INTO commodities (id) VALUES (?)");
+                    $stmt->execute([$user_id]);
 
                     // Insert into land table
-                    $stmt_land = $conn->prepare("INSERT INTO land (id) VALUES (?)");
-                    $stmt_land->bind_param("i", $user_id);
-                    $stmt_land->execute();
-                    $stmt_land->close();
+                    $stmt = $pdo->prepare("INSERT INTO land (id) VALUES (?)");
+                    $stmt->execute([$user_id]);
 
                     // Insert into factories table
-                    $stmt_factories = $conn->prepare("INSERT INTO factories (id) VALUES (?)");
-                    $stmt_factories->bind_param("i", $user_id);
-                    $stmt_factories->execute();
-                    $stmt_factories->close();
+                    $stmt = $pdo->prepare("INSERT INTO factories (id) VALUES (?)");
+                    $stmt->execute([$user_id]);
 
                     // Insert into production capacity table
-                    $stmt_production_capacity = $conn->prepare("INSERT INTO production_capacity (id) VALUES (?)");
-                    $stmt_production_capacity->bind_param("i", $user_id);
-                    $stmt_production_capacity->execute();
-                    $stmt_production_capacity->close();
+                    $stmt = $pdo->prepare("INSERT INTO production_capacity (id) VALUES (?)");
+                    $stmt->execute([$user_id]);
 
                     // Calculate GP using the calculatePoints function
-                    $initial_gp = calculatePoints($user_id); // Calculate GP based on user data
+                    $initial_gp = calculatePoints($user_id);
+
+                    // Insert into buildings table
+                    $stmt = $pdo->prepare("INSERT INTO buildings (id) VALUES (?)");
+                    $stmt->execute([$user_id]);
 
                     // Update GP in users table
-                    $stmt_gp = $conn->prepare("UPDATE users SET gp = ? WHERE id = ?");
-                    $stmt_gp->bind_param("ii", $initial_gp, $user_id);
-                    $stmt_gp->execute();
-                    $stmt_gp->close();
+                    $stmt = $pdo->prepare("UPDATE users SET gp = ? WHERE id = ?");
+                    $stmt->execute([$initial_gp, $user_id]);
 
-                    $conn->commit(); // Commit the transaction
+                    $pdo->commit();
 
                     echo "Registration successful!";
-                    // Redirect to log in or homepage after registration
                     header("Location: login.php");
                     exit();
-                } else {
-                    throw new Exception("Error: " . $stmt->error);
+                } catch (Exception $e) {
+                    $pdo->rollBack();
+                    $error = "Registration failed. Please try again.";
+                    error_log($e->getMessage());
                 }
-            } catch (Exception $e) {
-                $conn->rollback(); // Rollback the transaction on error
-                $error = $e->getMessage();
             }
-
-            $stmt->close();
+        } catch (PDOException $e) {
+            $error = "An error occurred. Please try again later.";
+            error_log($e->getMessage());
         }
     }
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>

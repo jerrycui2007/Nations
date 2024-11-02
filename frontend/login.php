@@ -14,15 +14,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($leader_name) || empty($password)) {
         $error = "All fields are required.";
     } else {
-        // Prepare and execute the query
-        $stmt = $conn->prepare("SELECT id, country_name, leader_name, password FROM users WHERE leader_name = ?");
-        $stmt->bind_param("s", $leader_name);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        try {
+            // Prepare and execute the query
+            $stmt = $pdo->prepare("SELECT id, country_name, leader_name, password FROM users WHERE leader_name = ?");
+            $stmt->execute([$leader_name]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($result->num_rows == 1) {
-            $user = $result->fetch_assoc();
-            if (password_verify($password, $user['password'])) {
+            if ($user && password_verify($password, $user['password'])) {
                 // Password is correct, start a new session
                 session_start();
                 $_SESSION['user_id'] = $user['id'];
@@ -35,15 +33,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 $error = "Invalid leader name or password.";
             }
-        } else {
-            $error = "Invalid leader name or password.";
+        } catch (PDOException $e) {
+            $error = "An error occurred. Please try again later.";
+            error_log($e->getMessage());
         }
-
-        $stmt->close();
     }
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>

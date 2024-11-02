@@ -1,58 +1,50 @@
 <?php
-global $conn;
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/resource_config.php';
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-// Add this after the login check
-$resource_filter = $_GET['resource_filter'] ?? 'all';
-
-// Modify the trade query
-$query = "
-    SELECT t.trade_id, t.seller_id, t.resource_offered, t.amount_offered, t.price_per_unit, t.date,
-           u.country_name as seller_name
-    FROM trades t
-    JOIN users u ON t.seller_id = u.id
-";
-
-if ($resource_filter !== 'all') {
-    $query .= " WHERE t.resource_offered = ?";
+try {
+    $resource_filter = $_GET['resource_filter'] ?? 'all';
+    
+    // Fetch active trades
+    $query = "SELECT t.trade_id, t.seller_id, t.resource_offered, t.amount_offered, 
+                     t.price_per_unit, t.date, u.country_name as seller_name
+              FROM trades t
+              JOIN users u ON t.seller_id = u.id";
+    
+    $params = [];
+    if ($resource_filter !== 'all') {
+        $query .= " WHERE t.resource_offered = ?";
+        $params[] = $resource_filter;
+    }
+    
+    $query .= " ORDER BY t.price_per_unit ASC";
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->execute($params);
+    $trades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Fetch trade history
+    $stmt = $pdo->prepare("SELECT th.*, 
+                           u_buyer.country_name as buyer_name,
+                           u_seller.country_name as seller_name
+                           FROM trade_history th
+                           JOIN users u_buyer ON th.buyer_id = u_buyer.id
+                           JOIN users u_seller ON th.seller_id = u_seller.id
+                           WHERE buyer_id = ? OR seller_id = ?
+                           ORDER BY date DESC
+                           LIMIT 10");
+    $stmt->execute([$_SESSION['user_id'], $_SESSION['user_id']]);
+    $trade_history = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    $error = "An error occurred while loading trades.";
 }
-
-$query .= " ORDER BY t.price_per_unit ASC";
-
-$stmt = $conn->prepare($query);
-if ($resource_filter !== 'all') {
-    $stmt->bind_param("s", $resource_filter);
-}
-$stmt->execute();
-$trades = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
-
-// Add this after fetching active trades
-// Fetch user's trade history (both as buyer and seller)
-$stmt = $conn->prepare("
-    SELECT th.*, 
-           u_buyer.country_name as buyer_name,
-           u_seller.country_name as seller_name,
-           DATE_FORMAT(th.date_finished, '%M %d, %Y %h:%i %p') as formatted_date
-    FROM trade_history th
-    JOIN users u_buyer ON th.buyer_id = u_buyer.id
-    JOIN users u_seller ON th.seller_id = u_seller.id
-    WHERE th.buyer_id = ? OR th.seller_id = ?
-    ORDER BY th.date_finished DESC
-    LIMIT 50
-");
-$stmt->bind_param("ii", $_SESSION['user_id'], $_SESSION['user_id']);
-$stmt->execute();
-$trade_history = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
 
 function getResourceDisplayName($resource) {
     global $RESOURCE_CONFIG;

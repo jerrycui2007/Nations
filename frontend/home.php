@@ -1,53 +1,48 @@
 <?php
-global $conn;
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/calculate_points.php';
 require_once '../backend/calculate_population_growth.php';
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-// Fetch user data including commodities and GP
-$stmt = $conn->prepare("SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, c.food, c.power, c.consumer_goods, l.urban_areas, u.flag 
-                        FROM users u 
-                        JOIN commodities c ON u.id = c.id 
-                        JOIN land l ON u.id = l.id
-                        WHERE u.id = ?");
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
-$stmt->close();
+try {
+    // Fetch user data
+    $stmt = $pdo->prepare("SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, 
+                           c.food, c.power, c.consumer_goods, l.urban_areas, u.flag 
+                           FROM users u 
+                           JOIN commodities c ON u.id = c.id 
+                           JOIN land l ON u.id = l.id
+                           WHERE u.id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Calculate population growth
-$population_growth_result = calculatePopulationGrowth($user);
-$growth = $population_growth_result['growth'];
+    // Calculate population growth
+    $population_growth_result = calculatePopulationGrowth($user);
+    $growth = $population_growth_result['growth'];
 
-// Handle flag update
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_flag'])) {
-    $new_flag = trim($_POST['new_flag']);
-    
-    // Validate URL
-    if (filter_var($new_flag, FILTER_VALIDATE_URL)) {
-        // Update the flag in the database
-        $stmt = $conn->prepare("UPDATE users SET flag = ? WHERE id = ?");
-        $stmt->bind_param("si", $new_flag, $_SESSION['user_id']);
+    // Handle flag update
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_flag'])) {
+        $new_flag = trim($_POST['new_flag']);
         
-        if ($stmt->execute()) {
-            // Success message
-            $flag_update_message = "Flag updated successfully!";
+        if (filter_var($new_flag, FILTER_VALIDATE_URL)) {
+            $stmt = $pdo->prepare("UPDATE users SET flag = ? WHERE id = ?");
+            if ($stmt->execute([$new_flag, $_SESSION['user_id']])) {
+                $flag_update_message = "Flag updated successfully!";
+                $user['flag'] = $new_flag; // Update the flag in the current page
+            } else {
+                $flag_update_message = "Error updating flag.";
+            }
         } else {
-            // Error message
-            $flag_update_message = "Error updating flag: " . $stmt->error;
+            $flag_update_message = "Invalid URL format.";
         }
-        
-        $stmt->close();
-    } else {
-        $flag_update_message = "Invalid URL format.";
     }
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    $error = "An error occurred while loading the page.";
 }
 ?>
 
@@ -66,9 +61,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_flag'])) {
             padding: 0;
         }
         .content {
-            margin-left: 200px; /* Same as sidebar width */
+            margin-left: 200px;
             padding: 20px;
-            padding-bottom: 60px; /* Add padding to accommodate the footer */
+            padding-bottom: 60px;
         }
         h1 {
             color: #333;
@@ -108,9 +103,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_flag'])) {
         </form>
     </div>
 
-    <?php 
-    include 'footer.php';
-    $conn->close();
-    ?>
+    <?php include 'footer.php'; ?>
 </body>
 </html>

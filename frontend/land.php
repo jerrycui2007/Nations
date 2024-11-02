@@ -1,5 +1,5 @@
 <?php
-global $conn;
+global $pdo;
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/calculate_points.php';
@@ -11,24 +11,18 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Fetch user data
-$stmt = $conn->prepare("SELECT country_name, leader_name, population FROM users WHERE id = ?");
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$stmt->close();
+$stmt = $pdo->prepare("SELECT country_name, leader_name, population FROM users WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 $multiplier = max(1, $user['population'] / 50000);
 $money_cost = round(5000 * $multiplier);
 $resource_cost = round(1000 * $multiplier);
 
 // Fetch land data
-$stmt = $conn->prepare("SELECT * FROM land WHERE id = ?");
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$result = $stmt->get_result();
-$land = $result->fetch_assoc();
-$stmt->close();
+$stmt = $pdo->prepare("SELECT * FROM land WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$land = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Calculate total land
 $total_land = array_sum(array_slice($land, 1)); // Sum all land types, excluding the 'id' column
@@ -76,6 +70,94 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 
             padding: 5px 10px;
         }
     </style>
+    
+    <script>
+        function convertLand(landType) {
+            const amount = document.getElementById(`${landType}-convert`).value;
+            if (amount <= 0) {
+                alert("Please enter a valid amount to convert to Cleared Land.");
+                return;
+            }
+
+            fetch('../backend/convert_land.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `land_type=${landType}&amount=${amount}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred while processing your request. Check the console for more details.');
+            });
+        }
+
+        function buildUrbanAreas() {
+            const amount = document.getElementById('urban-areas-build').value;
+            if (amount <= 0) {
+                alert("Please enter a valid amount to build Urban Areas.");
+                return;
+            }
+
+            fetch('../backend/build_urban_areas.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `amount=${amount}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'An error occurred while processing your request.');
+                    console.error('Error details:', data.error_details);
+                }
+            })
+            .catch((error) => {
+                console.error('Fetch error:', error);
+                alert('An error occurred while processing your request. Check the console for more details.');
+            });
+        }
+
+        function expandBorders() {
+            fetch('../backend/expand_borders.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let message = "You have expanded your borders and gained:\n";
+                    for (const [landType, amount] of Object.entries(data.newLand)) {
+                        if (amount > 0) {
+                            message += `${amount} ${landType.replace('_', ' ')}\n`;
+                        }
+                    }
+                    message += `\nNew Greatness Points: ${data.newGP.toLocaleString()}`;
+                    alert(message);
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Not enough resources to expand borders.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred while processing your request. Check the console for more details.');
+            });
+        }
+    </script>
 </head>
 <body>
     <?php include 'sidebar.php'; ?>
@@ -193,95 +275,8 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 
 
     <?php 
     include 'footer.php';
-    $conn->close();
+    $pdo->close();
     ?>
-
-<script>
-function convertLand(landType) {
-    const amount = document.getElementById(`${landType}-convert`).value;
-    if (amount <= 0) {
-        alert("Please enter a valid amount to convert to Cleared Land.");
-        return;
-    }
-
-    fetch('../backend/convert_land.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `land_type=${landType}&amount=${amount}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            window.location.reload();
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        alert('An error occurred while processing your request. Check the console for more details.');
-    });
-}
-
-function buildUrbanAreas() {
-    const amount = document.getElementById('urban-areas-build').value;
-    if (amount <= 0) {
-        alert("Please enter a valid amount to build Urban Areas.");
-        return;
-    }
-
-    fetch('../backend/build_urban_areas.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `amount=${amount}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            window.location.reload();
-        } else {
-            alert(data.message || 'An error occurred while processing your request.');
-            console.error('Error details:', data.error_details);
-        }
-    })
-    .catch((error) => {
-        console.error('Fetch error:', error);
-        alert('An error occurred while processing your request. Check the console for more details.');
-    });
-}
-
-function expandBorders() {
-    fetch('../backend/expand_borders.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            let message = "You have expanded your borders and gained:\n";
-            for (const [landType, amount] of Object.entries(data.newLand)) {
-                if (amount > 0) {
-                    message += `${amount} ${landType.replace('_', ' ')}\n`;
-                }
-            }
-            alert(message);
-            window.location.reload();
-        } else {
-            alert(data.message || 'Not enough resources to expand borders.');
-        }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        alert('An error occurred while processing your request. Check the console for more details.');
-    });
-}
-</script>
 
 </body>
 </html>

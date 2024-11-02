@@ -1,5 +1,4 @@
 <?php
-global $conn;
 session_start();
 require_once 'db_connection.php';
 
@@ -16,37 +15,38 @@ if ($trade_id <= 0) {
     exit();
 }
 
-// Start transaction
-$conn->begin_transaction();
-
 try {
+    // Start transaction
+    $pdo->beginTransaction();
+
     // Fetch trade details and verify ownership
-    $stmt = $conn->prepare("SELECT * FROM trades WHERE trade_id = ? AND seller_id = ?");
-    $stmt->bind_param("ii", $trade_id, $user_id);
-    $stmt->execute();
-    $trade = $stmt->get_result()->fetch_assoc();
+    $stmt = $pdo->prepare("SELECT * FROM trades WHERE trade_id = ? AND seller_id = ?");
+    $stmt->execute([$trade_id, $user_id]);
+    $trade = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$trade) {
         throw new Exception("Trade not found or you don't have permission to cancel it");
     }
 
     // Return resources to seller
-    $stmt = $conn->prepare("UPDATE commodities 
-                           SET {$trade['resource_offered']} = {$trade['resource_offered']} + ? 
-                           WHERE id = ?");
-    $stmt->bind_param("ii", $trade['amount_offered'], $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE commodities 
+                          SET `{$trade['resource_offered']}` = `{$trade['resource_offered']}` + ? 
+                          WHERE id = ?");
+    $stmt->execute([$trade['amount_offered'], $user_id]);
 
     // Delete the trade
-    $stmt = $conn->prepare("DELETE FROM trades WHERE trade_id = ?");
-    $stmt->bind_param("i", $trade_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("DELETE FROM trades WHERE trade_id = ?");
+    $stmt->execute([$trade_id]);
 
-    $conn->commit();
-    echo json_encode(['success' => true, 'message' => 'Trade cancelled successfully. Resources have been returned to your inventory.']);
+    $pdo->commit();
+    echo json_encode([
+        'success' => true, 
+        'message' => 'Trade cancelled successfully. Resources have been returned to your inventory.'
+    ]);
 } catch (Exception $e) {
-    $conn->rollback();
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    $pdo->rollBack();
+    echo json_encode([
+        'success' => false, 
+        'message' => $e->getMessage()
+    ]);
 }
-
-$conn->close();

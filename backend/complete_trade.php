@@ -1,5 +1,4 @@
 <?php
-global $conn;
 session_start();
 require_once 'db_connection.php';
 
@@ -16,15 +15,14 @@ if ($trade_id <= 0) {
     exit();
 }
 
-// Start transaction
-$conn->begin_transaction();
-
 try {
+    // Start transaction
+    $pdo->beginTransaction();
+
     // Fetch trade details
-    $stmt = $conn->prepare("SELECT * FROM trades WHERE trade_id = ?");
-    $stmt->bind_param("i", $trade_id);
-    $stmt->execute();
-    $trade = $stmt->get_result()->fetch_assoc();
+    $stmt = $pdo->prepare("SELECT * FROM trades WHERE trade_id = ?");
+    $stmt->execute([$trade_id]);
+    $trade = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$trade) {
         throw new Exception("Trade not found");
@@ -38,45 +36,53 @@ try {
     $total_cost = $trade['amount_offered'] * $trade['price_per_unit'];
 
     // Check if buyer has enough money
-    $stmt = $conn->prepare("SELECT money FROM commodities WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $buyer_money = $stmt->get_result()->fetch_assoc()['money'];
+    $stmt = $pdo->prepare("SELECT money FROM commodities WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $buyer_money = $stmt->fetch(PDO::FETCH_ASSOC)['money'];
 
     if ($buyer_money < $total_cost) {
         throw new Exception("You don't have enough money to complete this trade");
     }
 
     // Transfer money from buyer to seller
-    $stmt = $conn->prepare("UPDATE commodities SET money = money - ? WHERE id = ?");
-    $stmt->bind_param("di", $total_cost, $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE commodities SET money = money - ? WHERE id = ?");
+    $stmt->execute([$total_cost, $user_id]);
 
-    $stmt = $conn->prepare("UPDATE commodities SET money = money + ? WHERE id = ?");
-    $stmt->bind_param("di", $total_cost, $trade['seller_id']);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE commodities SET money = money + ? WHERE id = ?");
+    $stmt->execute([$total_cost, $trade['seller_id']]);
 
     // Transfer resources from trade to buyer
-    $stmt = $conn->prepare("UPDATE commodities SET {$trade['resource_offered']} = {$trade['resource_offered']} + ? WHERE id = ?");
-    $stmt->bind_param("ii", $trade['amount_offered'], $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("UPDATE commodities 
+                          SET `{$trade['resource_offered']}` = `{$trade['resource_offered']}` + ? 
+                          WHERE id = ?");
+    $stmt->execute([$trade['amount_offered'], $user_id]);
 
     // Record in trade history
-    $stmt = $conn->prepare("INSERT INTO trade_history (trade_id, buyer_id, seller_id, resource_offered, amount_offered, price_per_unit, date_finished) 
-                           VALUES (?, ?, ?, ?, ?, ?, NOW())");
-    $stmt->bind_param("iiisid", $trade_id, $user_id, $trade['seller_id'], $trade['resource_offered'], $trade['amount_offered'], $trade['price_per_unit']);
-    $stmt->execute();
+    $stmt = $pdo->prepare("INSERT INTO trade_history 
+                          (trade_id, buyer_id, seller_id, resource_offered, amount_offered, price_per_unit, date_finished) 
+                          VALUES (?, ?, ?, ?, ?, ?, NOW())");
+    $stmt->execute([
+        $trade_id,
+        $user_id,
+        $trade['seller_id'],
+        $trade['resource_offered'],
+        $trade['amount_offered'],
+        $trade['price_per_unit']
+    ]);
 
     // Delete the completed trade
-    $stmt = $conn->prepare("DELETE FROM trades WHERE trade_id = ?");
-    $stmt->bind_param("i", $trade_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare("DELETE FROM trades WHERE trade_id = ?");
+    $stmt->execute([$trade_id]);
 
-    $conn->commit();
-    echo json_encode(['success' => true, 'message' => 'Trade completed successfully']);
+    $pdo->commit();
+    echo json_encode([
+        'success' => true, 
+        'message' => 'Trade completed successfully'
+    ]);
 } catch (Exception $e) {
-    $conn->rollback();
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    $pdo->rollBack();
+    echo json_encode([
+        'success' => false, 
+        'message' => $e->getMessage()
+    ]);
 }
-
-$conn->close();

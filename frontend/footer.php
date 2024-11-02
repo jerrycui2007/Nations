@@ -1,5 +1,5 @@
 <?php
-global $conn;
+global $pdo;
 require_once '../backend/calculate_income.php';
 require_once '../backend/calculate_food_consumption.php';
 require_once '../backend/calculate_power_consumption.php';
@@ -7,12 +7,9 @@ require_once '../backend/calculate_consumer_goods_consumption.php';
 require_once '../backend/resource_config.php';
 
 // Fetch user data including population
-$stmt = $conn->prepare("SELECT u.id, u.population, c.* FROM users u JOIN commodities c ON u.id = c.id WHERE u.id = ?");
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$result = $stmt->get_result();
-$user_data = $result->fetch_assoc();
-$stmt->close();
+$stmt = $pdo->prepare("SELECT u.id, u.population, c.* FROM users u JOIN commodities c ON u.id = c.id WHERE u.id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Calculate income and consumptions
 $income_result = calculateIncome($user_data);

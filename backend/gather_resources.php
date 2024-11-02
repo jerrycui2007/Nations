@@ -1,5 +1,5 @@
 <?php
-global $conn;
+global $pdo;
 session_start();
 require_once 'db_connection.php';
 require_once 'resource_config.php';
@@ -26,14 +26,13 @@ if (!isset($building_resource_types[$building_type])) {
     exit();
 }
 
-$conn->begin_transaction();
+$pdo->beginTransaction();
 
 try {
     // Get building level
-    $stmt = $conn->prepare("SELECT $building_type FROM buildings WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $building_level = $stmt->get_result()->fetch_assoc()[$building_type];
+    $stmt = $pdo->prepare("SELECT $building_type FROM buildings WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $building_level = $stmt->fetch(PDO::FETCH_ASSOC)[$building_type];
 
     // Get resources of matching type and tier
     $resource_type = $building_resource_types[$building_type];
@@ -51,10 +50,9 @@ try {
     // Get current hidden resources
     $resource_columns = array_keys($transferable_resources);
     $hidden_query = "SELECT `" . implode("`, `", $resource_columns) . "` FROM hidden_resources WHERE id = ?";
-    $stmt = $conn->prepare($hidden_query);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $hidden_resources = $stmt->get_result()->fetch_assoc();
+    $stmt = $pdo->prepare($hidden_query);
+    $stmt->execute([$user_id]);
+    $hidden_resources = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Prepare updates for both tables
     $update_parts = [];
@@ -76,28 +74,23 @@ try {
 
     // Update commodities
     $commodities_update .= implode(", ", $update_parts) . " WHERE id = ?";
-    $update_values[] = $user_id;
-    $stmt = $conn->prepare($commodities_update);
-    $stmt->bind_param(str_repeat("i", count($update_values)), ...$update_values);
-    $stmt->execute();
+    $stmt = $pdo->prepare($commodities_update);
+    $stmt->execute($update_values);
 
     // Reset hidden resources
     $hidden_update .= implode(", ", $hidden_parts) . " WHERE id = ?";
-    $stmt = $conn->prepare($hidden_update);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
+    $stmt = $pdo->prepare($hidden_update);
+    $stmt->execute([$user_id]);
 
-    $conn->commit();
+    $pdo->commit();
     echo json_encode([
         'success' => true,
         'message' => "Successfully gathered resources"
     ]);
 } catch (Exception $e) {
-    $conn->rollback();
+    $pdo->rollBack();
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
     ]);
 }
-
-$conn->close();
