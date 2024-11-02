@@ -1,15 +1,30 @@
 <?php
-// Database connection settings
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "nations";
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+global $pdo;
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+try {
+    $pdo = new PDO(
+        "mysql:host=localhost;dbname=nations",
+        'root',
+        ''
+    );
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // Helper function for transactions
+    function beginTransaction($pdo) {
+        return $pdo->beginTransaction();
+    }
+    
+    function commitTransaction($pdo) {
+        return $pdo->commit();
+    }
+    
+    function rollbackTransaction($pdo) {
+        return $pdo->rollBack();
+    }
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
 ?>

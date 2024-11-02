@@ -28,13 +28,28 @@ try {
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_flag'])) {
         $new_flag = trim($_POST['new_flag']);
         
+        // Check if it's a valid URL
         if (filter_var($new_flag, FILTER_VALIDATE_URL)) {
-            $stmt = $pdo->prepare("UPDATE users SET flag = ? WHERE id = ?");
-            if ($stmt->execute([$new_flag, $_SESSION['user_id']])) {
-                $flag_update_message = "Flag updated successfully!";
-                $user['flag'] = $new_flag; // Update the flag in the current page
+            // Check if the URL ends with an allowed image extension
+            $valid_extensions = array('.jpg', '.jpeg', '.png');
+            $is_valid_image = false;
+            foreach ($valid_extensions as $ext) {
+                if (strtolower(substr($new_flag, -strlen($ext))) === $ext) {
+                    $is_valid_image = true;
+                    break;
+                }
+            }
+
+            if ($is_valid_image) {
+                $stmt = $pdo->prepare("UPDATE users SET flag = ? WHERE id = ?");
+                if ($stmt->execute([$new_flag, $_SESSION['user_id']])) {
+                    $flag_update_message = "Flag updated successfully!";
+                    $user['flag'] = $new_flag; // Update the flag in the current page
+                } else {
+                    $flag_update_message = "Error updating flag.";
+                }
             } else {
-                $flag_update_message = "Error updating flag.";
+                $flag_update_message = "Invalid image format. URL must end with .jpg, .jpeg, or .png";
             }
         } else {
             $flag_update_message = "Invalid URL format.";
@@ -97,8 +112,8 @@ try {
         <?php if (isset($flag_update_message)): ?>
             <p><?php echo htmlspecialchars($flag_update_message); ?></p>
         <?php endif; ?>
-        <form method="POST" action="">
-            <input type="text" name="new_flag" placeholder="Enter new flag URL" required>
+        <form method="POST" action="" onsubmit="return validateFlagUrl()">
+            <input type="text" name="new_flag" id="new_flag" placeholder="Enter new flag URL" required>
             <button type="submit" class="button">Update Flag</button>
         </form>
     </div>
@@ -106,3 +121,28 @@ try {
     <?php include 'footer.php'; ?>
 </body>
 </html>
+
+<script>
+<?php if (isset($flag_update_message)): ?>
+    alert("<?php echo addslashes($flag_update_message); ?>");
+<?php endif; ?>
+</script>
+
+<script>
+function validateFlagUrl() {
+    const url = document.getElementById('new_flag').value;
+    const validExtensions = ['.jpg', '.jpeg', '.png'];
+    
+    // Check if URL ends with valid extension
+    const hasValidExtension = validExtensions.some(ext => 
+        url.toLowerCase().endsWith(ext)
+    );
+    
+    if (!hasValidExtension) {
+        alert('Invalid image format. URL must end with .jpg, .jpeg, or .png');
+        return false;
+    }
+    
+    return true;
+}
+</script>

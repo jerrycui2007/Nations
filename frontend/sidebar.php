@@ -14,7 +14,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <li><a href="leaderboard.php" <?php echo ($current_page == 'leaderboard.php') ? 'class="active"' : ''; ?>>Leaderboard</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
+        <div class="version-info">v0.1.2-beta</div>
     </nav>
+    
 </div>
 
 <style>
@@ -27,6 +29,20 @@ $current_page = basename($_SERVER['PHP_SELF']);
         top: 0;
         border-right: 1px solid #dee2e6;
         z-index: 500;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar nav {
+        flex-grow: 1;
+    }
+
+    .version-info {
+        padding: 10px;
+        text-align: center;
+        font-size: 0.8em;
+        color: #6c757d;
+        border-top: 1px solid #dee2e6;
     }
 
     .sidebar nav ul {

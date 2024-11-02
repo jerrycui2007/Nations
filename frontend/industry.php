@@ -95,16 +95,18 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     
                     // Get input/output from factory config
                     $factory_data = $FACTORY_CONFIG[$factory_type];
-                    $inputs = array_map(function($input) use ($amount, $capacity) {
+                    $inputs = array_map(function($input) use ($amount, $capacity, $RESOURCE_CONFIG) {
                         return [
                             'resource' => $input['resource'],
+                            'display_name' => $RESOURCE_CONFIG[$input['resource']]['display_name'],
                             'amount' => $input['amount'] * $amount * $capacity
                         ];
                     }, $factory_data['input']);
 
-                    $outputs = array_map(function($output) use ($amount, $capacity) {
+                    $outputs = array_map(function($output) use ($amount, $capacity, $RESOURCE_CONFIG) {
                         return [
                             'resource' => $output['resource'],
+                            'display_name' => $RESOURCE_CONFIG[$output['resource']]['display_name'],
                             'amount' => $output['amount'] * $amount * $capacity
                         ];
                     }, $factory_data['output']);
@@ -129,14 +131,14 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td>
                             <?php 
                             foreach ($inputs as $input) {
-                                echo $input['amount'] . ' ' . $RESOURCE_CONFIG[$input['resource']]['display_name'] . '<br>';
+                                echo "{$input['amount']} {$input['display_name']}<br>";
                             }
                             ?>
                         </td>
                         <td>
                             <?php 
                             foreach ($outputs as $output) {
-                                echo $output['amount'] . ' ' . $RESOURCE_CONFIG[$output['resource']]['display_name'] . '<br>';
+                                echo "{$output['amount']} {$output['display_name']}<br>";
                             }
                             ?>
                         </td>
@@ -272,13 +274,13 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
             .then(config => {
                 // Update input display
                 const inputs = config.input.map(input => 
-                    `${input.amount * inputValue * factoryAmount} ${input.resource}`
+                    `${input.amount * inputValue * factoryAmount} ${input.display_name}`
                 ).join('<br>');
                 inputCell.innerHTML = inputs;
 
                 // Update output display
                 const outputs = config.output.map(output => 
-                    `${output.amount * inputValue * factoryAmount} ${output.resource}`
+                    `${output.amount * inputValue * factoryAmount} ${output.display_name}`
                 ).join('<br>');
                 outputCell.innerHTML = outputs;
             });

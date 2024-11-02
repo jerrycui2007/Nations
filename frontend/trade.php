@@ -277,7 +277,7 @@ function getResourceDisplayName($resource) {
                 $total_value = $history['amount_offered'] * $history['price_per_unit'];
                 ?>
                 <tr style="background-color: <?php echo $is_buyer ? '#ffebee' : '#e8f5e9'; ?>">
-                    <td><?php echo htmlspecialchars($history['formatted_date']); ?></td>
+                    <td><?php echo htmlspecialchars($history['date']); ?></td>
                     <td><?php echo $is_buyer ? 'Purchase' : 'Sale'; ?></td>
                     <td>
                         <a href="view.php?id=<?php echo $is_buyer ? $history['seller_id'] : $history['buyer_id']; ?>" class="nation-link">
