@@ -187,6 +187,9 @@ function getResourceDisplayName($resource) {
                             <option value="">Select Resource</option>
                             <?php
                             foreach ($RESOURCE_CONFIG as $resource_key => $resource_data) {
+                                // Skip money as it's not tradeable
+                                if ($resource_key === 'money') continue;
+                                
                                 echo "<option value=\"{$resource_key}\">" . 
                                      getResourceDisplayName($resource_key) . 
                                      "</option>";
@@ -213,6 +216,9 @@ function getResourceDisplayName($resource) {
                 <option value="all">All Resources</option>
                 <?php
                 foreach ($RESOURCE_CONFIG as $resource_key => $resource_data) {
+                    // Skip money as it's not tradeable
+                    if ($resource_key === 'money') continue;
+                    
                     $selected = ($resource_filter === $resource_key) ? 'selected' : '';
                     echo "<option value=\"{$resource_key}\" {$selected}>" . 
                          getResourceDisplayName($resource_key) . 
