@@ -3,6 +3,7 @@ session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/resource_config.php';
 require_once '../backend/building_config.php';
+require_once 'helpers/resource_display.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -75,8 +76,8 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
                     $user_resources[$resource_key] > 0) {
                     
                     echo "<tr>";
-                    echo "<td>{$resource_data['display_name']}</td>";
-                    echo "<td>" . number_format($user_resources[$resource_key]) . "</td>";
+                    echo "<td>" . getResourceIcon($resource_key) . " {$resource_data['display_name']}</td>";
+                    echo "<td>" . formatNumber($user_resources[$resource_key]) . "</td>";
                     echo "<td>" . ($resource_data['type'] ?? 'Other') . "</td>";
                     echo "</tr>";
                 }
@@ -106,7 +107,7 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
                     echo "<tr>";
                     echo "<td>{$building_data['name']}</td>";
                     echo "<td>{$current_level}</td>";
-                    echo "<td>$" . number_format($cost) . "</td>";
+                    echo "<td>" . getResourceIcon('money') . formatNumber($cost) . "</td>";
                     echo "<td><button class='button smallButton' onclick='gatherResources(\"{$building_type}\")'>Gather Resources</button></td>";
                     echo "</tr>";
                 }

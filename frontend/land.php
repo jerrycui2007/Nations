@@ -172,15 +172,15 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 
             </tr>
             <tr>
                 <td>Total Land</td>
-                <td id="total-land"><?php echo number_format($total_land); ?></td>
+                <td id="total-land"><?php echo formatNumber($total_land); ?></td>
                 <td></td>
             </tr>
             <?php
             $convertible_types = ['forest', 'grassland', 'jungle', 'desert', 'tundra'];
             foreach ($land_types as $type) {
                 echo "<tr>";
-                echo "<td>" . ucwords(str_replace('_', ' ', $type)) . "</td>";
-                echo "<td id='{$type}-amount'>" . number_format($land[$type]) . "</td>";
+                echo "<td>" . getResourceIcon($type) . ucwords(str_replace('_', ' ', $type)) . "</td>";
+                echo "<td id='{$type}-amount'>" . formatNumber($land[$type]) . "</td>";
                 if (in_array($type, $convertible_types)) {
                     echo "<td>";
                     echo "<input type='number' id='{$type}-convert' min='0' max='{$land[$type]}' style='width: 80px;'>";
@@ -218,35 +218,35 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 
                 <th>Cost to Convert to Cleared Land</th>
             </tr>
             <tr>
-                <td>Forest</td>
+                <td><?php echo getResourceIcon('forest') . 'Forest'; ?></td>
                 <td><?php echo getResourceIcon('money') . number_format(100); ?></td>
             </tr>
             <tr>
-                <td>Mountain</td>
+                <td><?php echo getResourceIcon('mountain') . 'Mountain'; ?></td>
                 <td>Cannot convert</td>
             </tr>
             <tr>
-                <td>River</td>
+                <td><?php echo getResourceIcon('river') . 'River'; ?></td>
                 <td>Cannot convert</td>
             </tr>
             <tr>
-                <td>Lake</td>
+                <td><?php echo getResourceIcon('lake') . 'Lake'; ?></td>
                 <td>Cannot convert</td>
             </tr>
             <tr>
-                <td>Grassland</td>
+                <td><?php echo getResourceIcon('grassland') . 'Grassland'; ?></td>
                 <td><?php echo getResourceIcon('money') . number_format(100); ?></td>
             </tr>
             <tr>
-                <td>Jungle</td>
+                <td><?php echo getResourceIcon('jungle') . 'Jungle'; ?></td>
                 <td><?php echo getResourceIcon('money') . number_format(300); ?></td>
             </tr>
             <tr>
-                <td>Desert</td>
+                <td><?php echo getResourceIcon('desert') . 'Desert'; ?></td>
                 <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
             </tr>
             <tr>
-                <td>Tundra</td>
+                <td><?php echo getResourceIcon('tundra') . 'Tundra'; ?></td>
                 <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
             </tr>
         </table>

@@ -140,7 +140,7 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             foreach ($inputs as $input) {
                                 echo getResourceIcon($input['resource']) . 
                                      " <span data-value-container='{$factory_type}-input'>" . 
-                                     number_format($input['amount']) . 
+                                     formatNumber($input['amount']) . 
                                      "</span><br>";
                             }
                             ?>
@@ -150,7 +150,7 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             foreach ($outputs as $output) {
                                 echo getResourceIcon($output['resource']) . 
                                      " <span data-value-container='{$factory_type}-output'>" . 
-                                     number_format($output['amount']) . 
+                                     formatNumber($output['amount']) . 
                                      "</span><br>";
                             }
                             ?>
@@ -176,10 +176,9 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 echo "<td>" . implode("<br>", array_map(function($cost) use ($RESOURCE_CONFIG) {
                     return getResourceIcon($cost['resource']) . " " . number_format($cost['amount']);
                 }, $factory['construction_cost'])) . "</td>";
-                echo "<td>" . $factory['land']['amount'] . " " . 
-                     implode(" ", array_map(function($word) {
-                         return ucfirst($word);
-                     }, explode('_', $factory['land']['type']))) . 
+                echo "<td>" . 
+                     getResourceIcon($factory['land']['type']) . 
+                     number_format($factory['land']['amount']) . 
                      "</td>";
                 echo "<td>{$factory['construction_time']} minutes</td>";
                 echo "<td><button class='button smallButton' onclick='buildFactory(\"{$factory_type}\")'>Build</button></td>";
@@ -292,7 +291,7 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     const amount = input.amount * inputValue * factoryAmount;
                     const valueContainer = document.querySelector(`span[data-value-container='${factoryType}-input']`);
                     if (valueContainer) {
-                        valueContainer.textContent = number_format(amount);
+                        valueContainer.textContent = formatNumber(amount);
                     }
                 });
 
@@ -301,15 +300,25 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     const amount = output.amount * inputValue * factoryAmount;
                     const valueContainer = document.querySelector(`span[data-value-container='${factoryType}-output']`);
                     if (valueContainer) {
-                        valueContainer.textContent = number_format(amount);
+                        valueContainer.textContent = formatNumber(amount);
                     }
                 });
             });
     }
 
     // Add number formatting function
-    function number_format(number) {
-        return new Intl.NumberFormat().format(number);
+    function formatNumber(number) {
+        if ($number < 1000) {
+            return number_format($number);
+        } elseif ($number < 1000000) {
+            return number_format($number / 1000, 1) . 'k';
+        } elseif ($number < 1000000000) {
+            return number_format($number / 1000000, 1) . 'm';
+        } elseif ($number < 1000000000000) {
+            return number_format($number / 1000000000, 1) . 'b';
+        } else {
+            return number_format($number / 1000000000000, 1) . 't';
+        }
     }
 
     function buildFactory(factoryType) {

@@ -1,4 +1,18 @@
 <?php
+function formatNumber($number) {
+    if ($number < 1000) {
+        return number_format($number);
+    } elseif ($number < 1000000) {
+        return number_format($number / 1000, 1) . 'k';
+    } elseif ($number < 1000000000) {
+        return number_format($number / 1000000, 1) . 'm';
+    } elseif ($number < 1000000000000) {
+        return number_format($number / 1000000000, 1) . 'b';
+    } else {
+        return number_format($number / 1000000000000, 1) . 't';
+    }
+}
+
 function getResourceIcon($resource_key, $display_name = null) {
     if ($display_name === null) {
         $display_name = ucwords(str_replace('_', ' ', $resource_key));
@@ -7,7 +21,7 @@ function getResourceIcon($resource_key, $display_name = null) {
 }
 
 function formatResourceWithIcon($resource_key, $amount, $display_name = null) {
-    return getResourceIcon($resource_key, $display_name) . "" . number_format($amount);
+    return getResourceIcon($resource_key, $display_name) . "" . formatNumber($amount);
 }
 ?>
 

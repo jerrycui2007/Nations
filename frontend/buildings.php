@@ -91,11 +91,14 @@ function getResourceDisplayName($resource) {
                 foreach ($next_level_data['construction_cost'] as $resource => $amount) {
                     if ($resource !== 'construction_time') {
                         $display_name = getResourceDisplayName($resource);
-                        echo getResourceIcon($resource, $display_name) . " " . number_format($amount) . "<br>";
+                        echo getResourceIcon($resource, $display_name) . " " . formatNumber($amount) . "<br>";
                     }
                 }
                 echo "</td></tr>";
-                echo "<tr><th>Land Required</th><td>{$next_level_data['land']['cleared_land']} " . getResourceDisplayName('cleared_land') . "</td></tr>";
+                echo "<tr><th>Land Required</th><td>" . 
+                     getResourceIcon('cleared_land') . 
+                     formatNumber($next_level_data['land']['cleared_land']) . 
+                     "</td></tr>";
                 echo "<tr><th>Construction Time</th><td>{$next_level_data['construction_cost']['construction_time']} minutes</td></tr>";
                 echo "<tr><td colspan='2' style='text-align: center;'><button class='button smallButton' onclick='upgradeBuilding(\"{$building_type}\")'>Upgrade to Level {$next_level}</button></td></tr>";
             } else {
