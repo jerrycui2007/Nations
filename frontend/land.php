@@ -295,7 +295,7 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
         function convertLand(landType) {
             const amount = document.getElementById(`${landType}-convert`).value;
             if (amount <= 0) {
-                alert("Please enter a valid amount to convert to Cleared Land.");
+                showToast("Please enter a valid amount to convert to Cleared Land.", "error");
                 return;
             }
 
@@ -309,21 +309,23 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    localStorage.setItem('toastMessage', data.message);
+                    localStorage.setItem('toastType', 'success');
                     window.location.reload();
                 } else {
-                    alert(data.message);
+                    showToast(data.message, "error");
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('An error occurred while processing your request. Check the console for more details.');
+                showToast('An error occurred while processing your request.', "error");
             });
         }
 
         function buildUrbanAreas() {
             const amount = document.getElementById('urban-areas-build').value;
             if (amount <= 0) {
-                alert("Please enter a valid amount to build Urban Areas.");
+                showToast("Please enter a valid amount to build Urban Areas.", "error");
                 return;
             }
 
@@ -337,15 +339,16 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    localStorage.setItem('toastMessage', data.message);
+                    localStorage.setItem('toastType', 'success');
                     window.location.reload();
                 } else {
-                    alert(data.message || 'An error occurred while processing your request.');
-                    console.error('Error details:', data.error_details);
+                    showToast(data.message || 'An error occurred while processing your request.', "error");
                 }
             })
             .catch((error) => {
-                console.error('Fetch error:', error);
-                alert('An error occurred while processing your request. Check the console for more details.');
+                console.error('Error:', error);
+                showToast('An error occurred while processing your request.', "error");
             });
         }
 
@@ -400,18 +403,19 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
                 if (data.success) {
                     showExpansionPopup(data);
                 } else {
-                    alert(data.message || 'Not enough resources to expand borders.');
+                    showToast(data.message || 'Not enough resources to expand borders.', "error");
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('An error occurred while processing your request. Check the console for more details.');
+                showToast('An error occurred while processing your request.', "error");
             });
         }
     </script>
 </head>
 <body>
     <?php include 'sidebar.php'; ?>
+    <?php include 'toast.php'; ?>
     
     <div class="main-content">
         <div class="content">
