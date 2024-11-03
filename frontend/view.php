@@ -68,8 +68,32 @@ if (!$nation) {
 
         .header-right {
             flex: 1;
-            padding-left: 0px;
+            padding-left: 20px;
             border-left: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .info-group {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .info-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .nation-flag {
@@ -86,16 +110,15 @@ if (!$nation) {
             text-align: center;
         }
 
-        .info-label {
-            font-size: 0.9em;
-            opacity: 0.8;
-            margin-bottom: 5px;
+        .tier-icon {
+            height: 1em;
+            width: auto;
+            vertical-align: middle;
         }
 
-        .info-value {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin-bottom: 20px;
+        .tier-number {
+            color: #FFD700;
+            font-size: 0.8em;
         }
     </style>
 </head>
@@ -109,14 +132,24 @@ if (!$nation) {
                 <div class="nation-name"><?php echo htmlspecialchars($nation['country_name']); ?></div>
             </div>
             <div class="header-right">
-                <div class="info-label">Leader</div>
-                <div class="info-value"><?php echo htmlspecialchars($nation['leader_name']); ?></div>
+                <div class="info-group">
+                    <div class="info-label">Leader</div>
+                    <div class="info-value"><?php echo htmlspecialchars($nation['leader_name']); ?></div>
+                </div>
                 
-                <div class="info-label">Population</div>
-                <div class="info-value"><?php echo number_format($nation['population']); ?></div>
+                <div class="info-group">
+                    <div class="info-label">Population</div>
+                    <div class="info-value">
+                        <img src="resources/tier.png" alt="Tier" class="tier-icon">
+                        <span class="tier-number"><?php echo $nation['tier']; ?></span>
+                        <?php echo number_format($nation['population']); ?>
+                    </div>
+                </div>
                 
-                <div class="info-label">GP</div>
-                <div class="info-value"><?php echo number_format($nation['gp']); ?></div>
+                <div class="info-group">
+                    <div class="info-label">GP</div>
+                    <div class="info-value"><?php echo number_format($nation['gp']); ?></div>
+                </div>
             </div>
         </div>
     </div>
