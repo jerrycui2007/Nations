@@ -34,7 +34,7 @@ try {
         // Check if it's a valid URL
         if (filter_var($new_flag, FILTER_VALIDATE_URL)) {
             // Check if the URL ends with an allowed image extension
-            $valid_extensions = array('.jpg', '.jpeg', '.png');
+            $valid_extensions = array('.jpg', '.jpeg', '.png', '.webp');
             $is_valid_image = false;
             
             foreach ($valid_extensions as $ext) {
@@ -53,7 +53,7 @@ try {
                     $flag_update_message = "Error updating flag.";
                 }
             } else {
-                $flag_update_message = "Invalid image format. URL must end with .jpg, .jpeg, or .png";
+                $flag_update_message = "Invalid image format. URL must end with .jpg, .jpeg, .png, or .webp";
             }
         } else {
             $flag_update_message = "Invalid URL format.";
@@ -209,8 +209,64 @@ try {
 
         .panel h2 {
             font-size: 1.5em;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: #333;
+            text-align: left;
+        }
+
+        .flag-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .flag-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        .flag-input:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .flag-message {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .flag-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flag-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .flag-button {
+            padding: 12px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+        }
+
+        .flag-button:hover {
+            background-color: #0056b3;
         }
 
         .resources-container {
@@ -221,6 +277,51 @@ try {
             margin: 0 auto;
             padding: 0 20px;
             margin-left: 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-message {
+            margin: 20px 0;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .modal-button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+        }
+
+        .modal-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -264,11 +365,18 @@ try {
             <div class="panel">
                 <h2>Change Flag</h2>
                 <?php if (isset($flag_update_message)): ?>
-                    <p><?php echo htmlspecialchars($flag_update_message); ?></p>
+                    <div class="flag-message <?php echo strpos($flag_update_message, 'successfully') !== false ? 'success' : 'error'; ?>">
+                        <?php echo htmlspecialchars($flag_update_message); ?>
+                    </div>
                 <?php endif; ?>
-                <form method="POST" action="" onsubmit="return validateFlagUrl()">
-                    <input type="text" name="new_flag" id="new_flag" placeholder="Enter new flag URL" required>
-                    <button type="submit" class="button">Update Flag</button>
+                <form method="POST" action="" id="flagForm" class="flag-form" onsubmit="return handleFlagSubmit(event)">
+                    <input type="text" 
+                           name="new_flag" 
+                           id="new_flag" 
+                           class="flag-input"
+                           placeholder="Enter new flag URL (must end with .jpg, .jpeg, .png, or .webp)" 
+                           required>
+                    <button type="submit" class="flag-button">Update Flag</button>
                 </form>
             </div>
         </div>
@@ -279,16 +387,69 @@ try {
     </div>
 
     <script>
+        async function handleFlagSubmit(event) {
+            event.preventDefault();
+            
+            if (!validateFlagUrl()) {
+                return false;
+            }
+
+            const form = document.getElementById('flagForm');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                const message = doc.querySelector('.flag-message')?.textContent?.trim();
+                
+                if (message) {
+                    showModal(message, () => {
+                        window.location.reload();
+                    });
+                }
+            } catch (error) {
+                showModal('An error occurred while updating the flag.');
+            }
+            
+            return false;
+        }
+
+        function showModal(message, callback = null) {
+            const modal = document.getElementById('alertModal');
+            const modalMessage = document.getElementById('modalMessage');
+            modalMessage.textContent = message;
+            modal.style.display = 'flex';
+            
+            // Store callback for when modal is closed
+            modal.dataset.callback = callback ? 'true' : 'false';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('alertModal');
+            modal.style.display = 'none';
+            
+            // Execute callback if it exists
+            if (modal.dataset.callback === 'true') {
+                window.location.reload();
+            }
+        }
+
         function validateFlagUrl() {
             const url = document.getElementById('new_flag').value;
-            const validExtensions = ['.jpg', '.jpeg', '.png'];
+            const validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
             
             const hasValidExtension = validExtensions.some(ext => 
                 url.toLowerCase().endsWith(ext)
             );
             
             if (!hasValidExtension) {
-                alert('Invalid image format. URL must end with .jpg, .jpeg, or .png');
+                showModal('Invalid image format. URL must end with .jpg, .jpeg, .png, or .webp');
                 return false;
             }
             
@@ -296,8 +457,30 @@ try {
         }
 
         <?php if (isset($flag_update_message)): ?>
-            alert("<?php echo addslashes($flag_update_message); ?>");
+            showModal("<?php echo addslashes($flag_update_message); ?>", () => {
+                window.location.reload();
+            });
         <?php endif; ?>
+
+        document.getElementById('alertModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
     </script>
+
+    <!-- Add this right before the closing </body> tag -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-message" id="modalMessage"></div>
+            <button class="modal-button" onclick="closeModal()">OK</button>
+        </div>
+    </div>
 </body>
 </html>
