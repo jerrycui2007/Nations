@@ -35,61 +35,90 @@ if (!$nation) {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
         }
-        .content {
+
+        .header {
+            background: url('resources/westberg.png') no-repeat center center;
+            background-size: cover;
+            padding: 150px 20px;
+            color: white;
+            position: relative;
             margin-left: 200px;
-            padding: 20px;
-            padding-bottom: 60px;
+            width: calc(100% - 200px);
         }
-        h1 {
-            color: #333;
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+
+        .header-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-right: 0px;
+        }
+
+        .header-right {
+            flex: 1;
+            padding-left: 0px;
+            border-left: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .nation-flag {
+            width: 200px;
+            height: 120px;
+            object-fit: cover;
             margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+
+        .nation-name {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-align: center;
         }
-        th {
-            background-color: #f2f2f2;
+
+        .info-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
         }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+
+        .info-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <?php include 'sidebar.php'; ?>
     
-    <div class="content">
-        <h1><?php echo htmlspecialchars($nation['country_name']); ?></h1>
-        <img src="<?php echo htmlspecialchars($nation['flag']); ?>" alt="Flag of <?php echo htmlspecialchars($nation['country_name']); ?>" style="width: 100px; height: auto; margin-bottom: 20px;">
-        
-        <table>
-            <tr>
-                <th>Leader</th>
-                <td><?php echo htmlspecialchars($nation['leader_name']); ?></td>
-            </tr>
-            <tr>
-                <th>Population</th>
-                <td><?php echo number_format($nation['population']); ?></td>
-            </tr>
-            <tr>
-                <th>Tier</th>
-                <td><?php echo number_format($nation['tier']); ?></td>
-            </tr>
-            <tr>
-                <th>Greatness Points</th>
-                <td><?php echo number_format($nation['gp']); ?></td>
-            </tr>
-        </table>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <img src="<?php echo htmlspecialchars($nation['flag']); ?>" alt="Nation Flag" class="nation-flag">
+                <div class="nation-name"><?php echo htmlspecialchars($nation['country_name']); ?></div>
+            </div>
+            <div class="header-right">
+                <div class="info-label">Leader</div>
+                <div class="info-value"><?php echo htmlspecialchars($nation['leader_name']); ?></div>
+                
+                <div class="info-label">Population</div>
+                <div class="info-value"><?php echo number_format($nation['population']); ?></div>
+                
+                <div class="info-label">GP</div>
+                <div class="info-value"><?php echo number_format($nation['gp']); ?></div>
+            </div>
+        </div>
     </div>
 
     <?php include 'footer.php'; ?>

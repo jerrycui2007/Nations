@@ -3,6 +3,7 @@ session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/calculate_points.php';
 require_once '../backend/calculate_population_growth.php';
+require_once 'helpers/resource_display.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -11,12 +12,14 @@ if (!isset($_SESSION['user_id'])) {
 
 try {
     // Fetch user data
-    $stmt = $pdo->prepare("SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, 
-                           c.food, c.power, c.consumer_goods, l.urban_areas, u.flag 
-                           FROM users u 
-                           JOIN commodities c ON u.id = c.id 
-                           JOIN land l ON u.id = l.id
-                           WHERE u.id = ?");
+    $stmt = $pdo->prepare("
+        SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, 
+               c.food, c.power, c.consumer_goods, l.urban_areas, u.flag 
+        FROM users u 
+        JOIN commodities c ON u.id = c.id 
+        JOIN land l ON u.id = l.id
+        WHERE u.id = ?
+    ");
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -33,6 +36,7 @@ try {
             // Check if the URL ends with an allowed image extension
             $valid_extensions = array('.jpg', '.jpeg', '.png');
             $is_valid_image = false;
+            
             foreach ($valid_extensions as $ext) {
                 if (strtolower(substr($new_flag, -strlen($ext))) === $ext) {
                     $is_valid_image = true;
@@ -44,7 +48,7 @@ try {
                 $stmt = $pdo->prepare("UPDATE users SET flag = ? WHERE id = ?");
                 if ($stmt->execute([$new_flag, $_SESSION['user_id']])) {
                     $flag_update_message = "Flag updated successfully!";
-                    $user['flag'] = $new_flag; // Update the flag in the current page
+                    $user['flag'] = $new_flag;
                 } else {
                     $flag_update_message = "Error updating flag.";
                 }
@@ -71,43 +75,113 @@ try {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
         }
-        .content {
+
+        .header {
+            background: url('resources/westberg.png') no-repeat center center;
+            background-size: cover;
+            padding: 150px 20px;
+            color: white;
+            position: relative;
             margin-left: 200px;
-            padding: 20px;
-            padding-bottom: 60px;
+            width: calc(100% - 200px);
         }
-        h1 {
-            color: #333;
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .header-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-right: 0px;
+        }
+
+        .header-right {
+            flex: 1;
+            padding-left: 0px;
+            border-left: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .nation-flag {
+            width: 200px;
+            height: 120px;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .nation-name {
             font-size: 2.5em;
+            font-weight: bold;
+            text-align: center;
         }
-        .nation-info {
-            margin-top: 20px;
+
+        .info-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
         }
-        .nation-info p {
-            margin: 10px 0;
-            font-size: 1.2em;
+
+        .info-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #333;
         }
     </style>
 </head>
 <body>
     <?php include 'sidebar.php'; ?>
     
-    <div class="content">
-        <h1><?php echo htmlspecialchars($user['country_name']); ?></h1>
-        <img src="<?php echo htmlspecialchars($user['flag']); ?>" alt="Flag of <?php echo htmlspecialchars($user['country_name']); ?>" style="width: 100px; height: auto; margin-bottom: 20px;">
-        
-        <div class="nation-info">
-            <p><strong>Leader:</strong> <?php echo htmlspecialchars($user['leader_name']); ?></p>
-            <p><strong>Population:</strong> <?php echo number_format($user['population']); ?> (<?php echo ($growth >= 0 ? '+' : '') . number_format($growth); ?>)</p>
-            <p><strong>Tier:</strong> <?php echo number_format($user['tier']); ?></p>
-            <p><strong>GP:</strong> <?php echo number_format($user['gp']); ?></p>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <img src="<?php echo htmlspecialchars($user['flag']); ?>" alt="Nation Flag" class="nation-flag">
+                <div class="nation-name"><?php echo htmlspecialchars($user['country_name']); ?></div>
+            </div>
+            <div class="header-right">
+                <div class="info-label">Leader</div>
+                <div class="info-value"><?php echo htmlspecialchars($user['leader_name']); ?></div>
+                
+                <div class="info-label">Population</div>
+                <div class="info-value">
+                    <?php echo number_format($user['population']); ?>
+                    <span style="font-size: 0.6em; color: <?php echo ($growth > 0) ? '#28a745' : '#dc3545'; ?>">
+                        <?php echo ($growth >= 0 ? '+' : '-') . number_format(abs($growth)); ?>
+                    </span>
+                </div>
+                
+                <div class="info-label">GP</div>
+                <div class="info-value"><?php echo formatNumber($user['gp']); ?></div>
+            </div>
         </div>
+    </div>
 
-        <!-- Flag Update Form -->
+    <div class="panel">
         <h2>Change Flag</h2>
         <?php if (isset($flag_update_message)): ?>
             <p><?php echo htmlspecialchars($flag_update_message); ?></p>
@@ -119,30 +193,27 @@ try {
     </div>
 
     <?php include 'footer.php'; ?>
+
+    <script>
+        function validateFlagUrl() {
+            const url = document.getElementById('new_flag').value;
+            const validExtensions = ['.jpg', '.jpeg', '.png'];
+            
+            const hasValidExtension = validExtensions.some(ext => 
+                url.toLowerCase().endsWith(ext)
+            );
+            
+            if (!hasValidExtension) {
+                alert('Invalid image format. URL must end with .jpg, .jpeg, or .png');
+                return false;
+            }
+            
+            return true;
+        }
+
+        <?php if (isset($flag_update_message)): ?>
+            alert("<?php echo addslashes($flag_update_message); ?>");
+        <?php endif; ?>
+    </script>
 </body>
 </html>
-
-<script>
-<?php if (isset($flag_update_message)): ?>
-    alert("<?php echo addslashes($flag_update_message); ?>");
-<?php endif; ?>
-</script>
-
-<script>
-function validateFlagUrl() {
-    const url = document.getElementById('new_flag').value;
-    const validExtensions = ['.jpg', '.jpeg', '.png'];
-    
-    // Check if URL ends with valid extension
-    const hasValidExtension = validExtensions.some(ext => 
-        url.toLowerCase().endsWith(ext)
-    );
-    
-    if (!hasValidExtension) {
-        alert('Invalid image format. URL must end with .jpg, .jpeg, or .png');
-        return false;
-    }
-    
-    return true;
-}
-</script>
