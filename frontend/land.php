@@ -203,6 +203,10 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
             flex-direction: column;
         }
 
+        .expand-borders-card .cost-section {
+            margin-top: 10px;
+        }
+
         .expand-borders-card .action-button {
             margin-top: auto;
         }

@@ -35,6 +35,67 @@ $factories = $stmt->fetch(PDO::FETCH_ASSOC);
 $stmt = $pdo->prepare("SELECT factory_type, minutes_left FROM factory_queue WHERE id = ?");
 $stmt->execute([$user_id]);
 $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch user's current resources
+$stmt = $pdo->prepare("SELECT * FROM commodities c JOIN land l ON c.id = l.id WHERE c.id = ?");
+$stmt->execute([$user_id]);
+$user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
+
+function getFactoryOutputResources($FACTORY_CONFIG, $RESOURCE_CONFIG) {
+    $output_resources = [];
+    
+    // First add all non-natural resources from resource config
+    foreach ($RESOURCE_CONFIG as $resource => $config) {
+        if (isset($config['is_natural_resource']) && $config['is_natural_resource'] === false) {
+            $output_resources[$resource] = $config['display_name'] ?? ucfirst(str_replace('_', ' ', $resource));
+        }
+    }
+    
+    // Then add any additional resources from factory outputs
+    foreach ($FACTORY_CONFIG as $factory) {
+        if (isset($factory['output'])) {
+            foreach ($factory['output'] as $output) {
+                $resource = $output['resource'];
+                if (!isset($output_resources[$resource]) && 
+                    (!isset($RESOURCE_CONFIG[$resource]['is_natural_resource']) || 
+                     $RESOURCE_CONFIG[$resource]['is_natural_resource'] === false)) {
+                    $output_resources[$resource] = $RESOURCE_CONFIG[$resource]['display_name'] ?? 
+                                                 ucfirst(str_replace('_', ' ', $resource));
+                }
+            }
+        }
+    }
+    return $output_resources;
+}
+
+// Get the output resources
+$output_resources = getFactoryOutputResources($FACTORY_CONFIG, $RESOURCE_CONFIG);
+
+// Debug output - remove after confirming
+error_log("Available output resources: " . print_r($output_resources, true));
+
+// Add this helper function at the top of the file
+function getResourceAmount($user_resources, $resource_key) {
+    // Convert to lowercase for consistency
+    $resource_key = strtolower($resource_key);
+    
+    // Try different possible column names
+    $possible_keys = [
+        $resource_key,
+        "`{$resource_key}`",
+        strtoupper($resource_key),
+        str_replace(' ', '_', $resource_key)
+    ];
+
+    foreach ($possible_keys as $key) {
+        if (isset($user_resources[$key])) {
+            return $user_resources[$key];
+        }
+    }
+
+    // If no match found, return 0
+    return 0;
+}
 ?>
 
 <!DOCTYPE html>
@@ -148,7 +209,13 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
             margin-top: 10px;
         }
 
-        .build-button:hover {
+        .build-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .build-button:not(:disabled):hover {
             background-color: #45a049;
         }
 
@@ -176,10 +243,17 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         .factory-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .factory-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
         }
 
         .factory-amount {
@@ -188,6 +262,7 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding: 2px 8px;
             border-radius: 4px;
             font-size: 0.9em;
+            display: inline-block;
         }
 
         .progress-bar {
@@ -222,6 +297,135 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
             margin-bottom: 5px;
             text-align: left;
         }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            visibility: hidden;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .popup-active {
+            visibility: visible;
+        }
+
+        .popup-active .popup-content {
+            transform: scale(1);
+        }
+
+        .popup-button {
+            margin-top: 15px;
+            padding: 8px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .popup-button:hover {
+            background-color: #45a049;
+        }
+
+        .resource-summary {
+            margin: 15px 0;
+            text-align: left;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+
+        .resource-summary-title {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .resource-summary-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 5px 0;
+        }
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-left: 10px;
+            min-width: 150px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .no-results-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+            grid-column: 1 / -1;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        /* Add these new styles */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background-color: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .toast.success {
+            background-color: #4CAF50;
+        }
+
+        .toast.error {
+            background-color: #f44336;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
     </style>
 </head>
 <body>
@@ -230,6 +434,15 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="main-content">
         <div class="content">
             <h1>Industry</h1>
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label for="collect-filter">Filter by output: </label>
+                <select id="collect-filter" onchange="filterFactories('collect')">
+                    <option value="">All</option>
+                    <?php foreach ($output_resources as $resource => $display_name): ?>
+                        <option value="<?php echo $resource; ?>"><?php echo $display_name; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <div class="factory-collection-grid">
                 <?php foreach ($factories as $factory_type => $amount): ?>
                     <?php if (strpos($factory_type, '_capacity') === false && $amount > 0): 
@@ -244,8 +457,8 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     ?>
                         <div class="factory-collection-card">
                             <div class="factory-header">
-                                <div class="factory-name"><?php echo $factory_data['name']; ?></div>
-                                <div class="factory-amount"><?php echo $amount; ?></div>
+                                <span class="factory-name"><?php echo $factory_data['name']; ?></span>
+                                <span class="factory-amount"><?php echo $amount; ?></span>
                             </div>
 
                             <div class="progress-bar">
@@ -253,19 +466,29 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
 
                             <input type="number" 
-                                   class="collection-input" 
-                                   id="<?php echo $factory_type; ?>-collect"
-                                   min="1" 
-                                   max="<?php echo $capacity; ?>" 
-                                   value="<?php echo $capacity; ?>"
-                                   <?php echo $capacity == 0 ? 'disabled' : ''; ?>>
+                                class="collection-input" 
+                                id="<?php echo $factory_type; ?>-collect"
+                                data-factory-amount="<?php echo $amount; ?>"
+                                min="1" 
+                                max="<?php echo $capacity; ?>" 
+                                value="<?php echo $capacity; ?>"
+                                oninput="updateInputOutput('<?php echo $factory_type; ?>')"
+                                <?php echo $capacity == 0 ? 'disabled' : ''; ?>>
 
                             <div class="resource-list">
                                 <div class="resource-label">INPUT</div>
                                 <div class="factory-value">
                                     <?php 
                                     foreach ($factory_data['input'] as $index => $input): 
-                                        echo getResourceIcon($input['resource']) . " " . formatNumber($input['amount'] * $amount * $capacity);
+                                        $base_amount = $input['amount'] * $amount * 24;
+                                        $required_amount = $input['amount'] * $amount * $capacity;
+                                        $current_amount = getResourceAmount($user_resources, $input['resource']);
+                                        $has_enough = $current_amount >= $required_amount;
+                                        $style = $has_enough ? '' : 'color: #dc3545;';
+                                        echo '<span style="' . $style . '" data-base-amount="' . $base_amount . '">' . 
+                                            getResourceIcon($input['resource']) . " " . 
+                                            formatNumber($required_amount) . 
+                                            '</span>';
                                         if ($index < count($factory_data['input']) - 1) echo "  ";
                                     endforeach; 
                                     ?>
@@ -277,7 +500,12 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <div class="factory-value">
                                     <?php 
                                     foreach ($factory_data['output'] as $index => $output): 
-                                        echo getResourceIcon($output['resource']) . " " . formatNumber($output['amount'] * $amount * $capacity);
+                                        $base_amount = $output['amount'] * $amount * 24;
+                                        $output_amount = $output['amount'] * $amount * $capacity;
+                                        echo '<span data-base-amount="' . $base_amount . '">' . 
+                                            getResourceIcon($output['resource']) . " " . 
+                                            formatNumber($output_amount) . 
+                                            '</span>';
                                         if ($index < count($factory_data['output']) - 1) echo "  ";
                                     endforeach; 
                                     ?>
@@ -295,6 +523,15 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <?php
                 echo "<h2>Construct New Factories</h2>";
+                echo "<div style='margin-bottom: 20px; text-align: left;'>";
+                echo "<label for='construct-filter'>Filter by output: </label>";
+                echo "<select id='construct-filter' onchange='filterFactories('construct')'>";
+                echo "<option value=''>All</option>";
+                foreach ($output_resources as $resource => $display_name) {
+                    echo "<option value='$resource'>$display_name</option>";
+                }
+                echo "</select>";
+                echo "</div>";
                 echo "<div class='factory-grid'>";
                 
                 foreach ($FACTORY_CONFIG as $factory_type => $factory) {
@@ -303,16 +540,30 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     
                     echo "<div class='factory-section'>";
                     echo "<div class='factory-section-title'>LAND USAGE</div>";
-                    echo "<div class='factory-value'>" . getResourceIcon($factory['land']['type']) . " {$factory['land']['amount']}</div>";
+                    echo "<div class='factory-value'>";
+                    $current_land = getResourceAmount($user_resources, $factory['land']['type']);
+                    $has_enough_land = $current_land >= $factory['land']['amount'];
+                    $style = $has_enough_land ? '' : 'color: #dc3545;';
+                    echo '<span style="' . $style . '">' . 
+                         getResourceIcon($factory['land']['type']) . " " . 
+                         formatNumber($factory['land']['amount']) . 
+                         '</span>';
+                    echo "</div>";
                     echo "</div>";
                     
                     echo "<div class='factory-section'>";
                     echo "<div class='factory-section-title'>COSTS</div>";
                     echo "<div class='factory-value'>";
-                    foreach ($factory['construction_cost'] as $index => $cost) {
-                        echo getResourceIcon($cost['resource']) . " " . formatNumber($cost['amount']);
+                    foreach ($factory['construction_cost'] as $index => $cost):
+                        $current_amount = getResourceAmount($user_resources, $cost['resource']);
+                        $has_enough = $current_amount >= $cost['amount'];
+                        $style = $has_enough ? '' : 'color: #dc3545;';
+                        echo '<span style="' . $style . '">' . 
+                             getResourceIcon($cost['resource']) . " " . 
+                             formatNumber($cost['amount']) . 
+                             '</span>';
                         if ($index < count($factory['construction_cost']) - 1) echo "  ";
-                    }
+                    endforeach;
                     echo "</div>";
                     echo "</div>";
                     
@@ -345,25 +596,27 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
             ?>
 
             <h2>Factories Under Construction</h2>
-                <table>
-                    <tr>
-                        <th>Factory Type</th>
-                        <th>Time Remaining</th>
-                    </tr>
-                    <?php if (empty($factories_under_construction)): ?>
-                        <tr>
-                            <td colspan="2">No factories currently under construction.</td>
-                        </tr>
-                    <?php else: ?>
-                        <?php foreach ($factories_under_construction as $factory): ?>
-                            <tr>
-                                <td><?php echo ucfirst(str_replace('_', ' ', $factory['factory_type'])); ?></td>
-                                <td><?php echo formatTimeRemaining($factory['minutes_left']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </table>
-
+            <div class="factory-collection-grid">
+                <?php if (empty($factories_under_construction)): ?>
+                    <div class="factory-collection-card">
+                        <div class="factory-header">
+                            <span class="factory-name">No factories under construction</span>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($factories_under_construction as $factory): ?>
+                        <div class="factory-collection-card">
+                            <div class="factory-header">
+                                <span class="factory-name"><?php echo $FACTORY_CONFIG[$factory['factory_type']]['name']; ?></span>
+                            </div>
+                            <div class="factory-section">
+                                <div class="factory-section-title">TIME REMAINING</div>
+                                <div class="factory-value"><?php echo formatTimeRemaining($factory['minutes_left']); ?></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
 
             <h2>About</h2>
             <p>
@@ -381,13 +634,42 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <script>
+    // Replace the showPopup function with this new toast system
+    function showToast(message, type = 'success') {
+        // Create toast container if it doesn't exist
+        let container = document.querySelector('.toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+
+        // Add toast to container
+        container.appendChild(toast);
+
+        // Trigger animation
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        // Remove toast after 5 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
+    }
+
+    // Update the collectResource function
     function collectResource(factoryType) {
         const inputElement = document.getElementById(`${factoryType}-collect`);
         const amount = parseInt(inputElement.value);
         const maxCapacity = parseInt(inputElement.max);
 
         if (amount < 1 || amount > maxCapacity) {
-            alert(`Please enter a value between 1 and ${maxCapacity}.`);
+            showToast(`Please enter a value between 1 and ${maxCapacity}.`, 'error');
             return;
         }
 
@@ -401,70 +683,32 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.message);
+                localStorage.setItem('toastMessage', data.message);
+                localStorage.setItem('toastType', 'success');
                 window.location.reload();
             } else {
-                alert(data.message);
+                showToast(data.message, 'error');
             }
         })
         .catch((error) => {
             console.error('Error:', error);
-            alert('An error occurred while processing your request. Check the console for more details.');
+            showToast('An error occurred while processing your request.', 'error');
         });
     }
 
-    function updateInputOutput(factoryType) {
-        const inputElement = document.getElementById(`${factoryType}-collect`);
-        const inputValue = parseInt(inputElement.value) || 0;
-        const maxCapacity = parseInt(inputElement.max);
-        const factoryCard = inputElement.closest('.factory-collection-card');
-        const factoryAmount = parseInt(factoryCard.querySelector('.factory-amount').textContent);
+    // Add this to check for stored messages on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const message = localStorage.getItem('toastMessage');
+        const type = localStorage.getItem('toastType');
         
-        if (inputValue > maxCapacity) {
-            inputElement.value = maxCapacity;
+        if (message) {
+            showToast(message, type);
+            localStorage.removeItem('toastMessage');
+            localStorage.removeItem('toastType');
         }
+    });
 
-        const collectButton = factoryCard.querySelector('button');
-
-        // Disable input and button if capacity is zero
-        if (maxCapacity === 0) {
-            inputElement.disabled = true;
-            collectButton.disabled = true;
-            inputElement.style.backgroundColor = '#f0f0f0';
-            collectButton.style.backgroundColor = '#f0f0f0';
-            collectButton.style.cursor = 'not-allowed';
-        } else {
-            inputElement.disabled = false;
-            collectButton.disabled = false;
-            inputElement.style.backgroundColor = '';
-            collectButton.style.backgroundColor = '';
-            collectButton.style.cursor = '';
-        }
-
-        // Get factory config data
-        fetch('../backend/get_factory_config.php?type=' + factoryType)
-            .then(response => response.json())
-            .then(config => {
-                // Update input values
-                config.input.forEach((input, index) => {
-                    const amount = input.amount * inputValue * factoryAmount;
-                    const valueContainer = document.querySelector(`span[data-value-container='${factoryType}-input']`);
-                    if (valueContainer) {
-                        valueContainer.textContent = formatNumber(amount);
-                    }
-                });
-
-                // Update output values
-                config.output.forEach((output, index) => {
-                    const amount = output.amount * inputValue * factoryAmount;
-                    const valueContainer = document.querySelector(`span[data-value-container='${factoryType}-output']`);
-                    if (valueContainer) {
-                        valueContainer.textContent = formatNumber(amount);
-                    }
-                });
-            });
-    }
-
+    // Update the buildFactory function similarly
     function buildFactory(factoryType) {
         fetch('../backend/build_factory.php', {
             method: 'POST',
@@ -476,15 +720,16 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.message);
+                localStorage.setItem('toastMessage', data.message);
+                localStorage.setItem('toastType', 'success');
                 window.location.reload();
             } else {
-                alert(data.message);
+                showToast(data.message, 'error');
             }
         })
         .catch((error) => {
             console.error('Error:', error);
-            alert('An error occurred while processing your request. Check the console for more details.');
+            showToast('An error occurred while processing your request.', 'error');
         });
     }
 
@@ -503,16 +748,143 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
 
-    // Add event listeners to all input fields
+    function filterFactories(section) {
+        const filterSelect = document.getElementById(`${section}-filter`);
+        const filter = filterSelect.value;
+        const filterDisplayName = filter ? filterSelect.options[filterSelect.selectedIndex].text : '';
+        
+        // Define grid elements and message text
+        const collectGrid = document.querySelector('.factory-collection-grid');
+        const constructGrid = document.querySelector('.factory-grid');
+        const noResultsMsg = filter ? 
+            `No factories found that produce ${filterDisplayName}` : 
+            'No factories found';
+        
+        if (section === 'collect') {
+            const cards = collectGrid.querySelectorAll('.factory-collection-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                if (!filter) {
+                    card.style.display = '';
+                    visibleCount++;
+                    return;
+                }
+                
+                const outputSection = Array.from(card.getElementsByClassName('resource-list')).find(section => 
+                    section.querySelector('.resource-label')?.textContent.trim() === 'OUTPUT'
+                );
+                
+                if (outputSection && outputSection.querySelector(`img[src*="${filter}_icon"]`)) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Remove existing message if it exists
+            const existingMsg = collectGrid.querySelector('.no-results-message');
+            if (existingMsg) {
+                existingMsg.remove();
+            }
+            
+            // Add message if no visible cards
+            if (visibleCount === 0) {
+                const message = document.createElement('div');
+                message.className = 'no-results-message';
+                message.textContent = noResultsMsg;
+                collectGrid.appendChild(message);
+            }
+            
+        } else if (section === 'construct') {
+            const cards = constructGrid.querySelectorAll('.factory-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                if (!filter) {
+                    card.style.display = '';
+                    visibleCount++;
+                    return;
+                }
+                
+                const outputSections = Array.from(card.getElementsByClassName('factory-section'));
+                const outputSection = outputSections.find(section => 
+                    section.querySelector('.factory-section-title')?.textContent.trim() === 'OUTPUT'
+                );
+                
+                if (outputSection && outputSection.querySelector(`.factory-value img[src*="${filter}_icon"]`)) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Remove existing message if it exists
+            const existingMsg = constructGrid.querySelector('.no-results-message');
+            if (existingMsg) {
+                existingMsg.remove();
+            }
+            
+            // Add message if no visible cards
+            if (visibleCount === 0) {
+                const message = document.createElement('div');
+                message.className = 'no-results-message';
+                message.textContent = noResultsMsg;
+                constructGrid.appendChild(message);
+            }
+        }
+    }
+
+    // Add this to help with debugging
     document.addEventListener('DOMContentLoaded', function() {
-        const inputs = document.querySelectorAll('input[type="number"]');
-        inputs.forEach(input => {
-            const factoryType = input.id.replace('-collect', '');
-            input.addEventListener('input', () => updateInputOutput(factoryType));
-            // Call updateInputOutput initially to set the correct state
-            updateInputOutput(factoryType);
+        ['collect', 'construct'].forEach(section => {
+            const select = document.getElementById(`${section}-filter`);
+            select.addEventListener('change', function() {
+                console.log(`${section} filter changed to: ${this.value}`);
+                filterFactories(section);
+            });
         });
     });
+
+    function updateInputOutput(factoryType) {
+        const inputElement = document.getElementById(`${factoryType}-collect`);
+        const amount = parseInt(inputElement.value) || 0;
+        const factoryAmount = parseInt(inputElement.getAttribute('data-factory-amount')) || 0;
+
+        // Get the factory's input/output sections
+        const card = inputElement.closest('.factory-collection-card');
+        
+        // Update selectors to match the actual HTML structure
+        const resourceLists = card.querySelectorAll('.resource-list');
+        const inputSection = Array.from(resourceLists).find(section => 
+            section.querySelector('.resource-label')?.textContent.trim() === 'INPUT'
+        );
+        const outputSection = Array.from(resourceLists).find(section => 
+            section.querySelector('.resource-label')?.textContent.trim() === 'OUTPUT'
+        );
+
+        if (inputSection) {
+            const inputValues = inputSection.querySelectorAll('.factory-value span');
+            inputValues.forEach(span => {
+                const baseAmount = parseInt(span.getAttribute('data-base-amount'));
+                const newAmount = (baseAmount * amount) / 24;
+                const icon = span.querySelector('img').outerHTML;
+                span.innerHTML = `${icon} ${formatNumber(newAmount)}`;
+            });
+        }
+
+        if (outputSection) {
+            const outputValues = outputSection.querySelectorAll('.factory-value span');
+            outputValues.forEach(span => {
+                const baseAmount = parseInt(span.getAttribute('data-base-amount'));
+                const newAmount = (baseAmount * amount) / 24;
+                const icon = span.querySelector('img').outerHTML;
+                span.innerHTML = `${icon} ${formatNumber(newAmount)}`;
+            });
+        }
+    }
     </script>
 </body>
 </html>

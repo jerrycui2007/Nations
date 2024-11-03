@@ -17,12 +17,12 @@ try {
     $pdo->beginTransaction();
 
     // Fetch factory data
-    $stmt = $pdo->prepare("SELECT $factory_type FROM factories WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT `$factory_type` FROM factories WHERE id = ?");
     $stmt->execute([$user_id]);
     $factory_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Fetch production capacity
-    $stmt = $pdo->prepare("SELECT $factory_type AS capacity FROM production_capacity WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT `$factory_type` AS capacity FROM production_capacity WHERE id = ?");
     $stmt->execute([$user_id]);
     $capacity_data = $stmt->fetch(PDO::FETCH_ASSOC);
 

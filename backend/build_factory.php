@@ -2,6 +2,7 @@
 session_start();
 require_once 'db_connection.php';
 require_once 'factory_config.php';
+require_once 'resource_config.php';
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'User not logged in']);
@@ -39,13 +40,26 @@ try {
 
     // Check if user has enough resources
     foreach ($construction_cost as $resource) {
-        if ($user_resources[$resource['resource']] < $resource['amount']) {
-            throw new Exception("Not enough {$resource['resource']} to build the factory");
+        $resource_name = $resource['resource'];
+        $amount_needed = $resource['amount'];
+        $user_amount = $user_resources[$resource_name];
+
+        if ($user_amount < $amount_needed) {
+            // Get display name from RESOURCE_CONFIG
+            $display_name = isset($RESOURCE_CONFIG[$resource_name]['display_name']) 
+                ? $RESOURCE_CONFIG[$resource_name]['display_name']
+                : ucfirst(str_replace('_', ' ', $resource_name));
+                
+            throw new Exception("Not enough $display_name to build this factory");
         }
     }
 
     if ($user_resources[$land_type] < $land_required) {
-        throw new Exception("Not enough {$land_type} to build the factory");
+        $display_name = isset($RESOURCE_CONFIG[$land_type]['display_name'])
+            ? $RESOURCE_CONFIG[$land_type]['display_name']
+            : ucfirst(str_replace('_', ' ', $land_type));
+            
+        throw new Exception("Not enough $display_name to build this factory");
     }
 
     // Update user's resources
