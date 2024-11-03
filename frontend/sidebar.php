@@ -62,6 +62,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         padding: 12px 24px;
         transition: all 0.3s ease;
         border-left: 4px solid transparent;
+        text-align: left;
     }
 
     .sidebar nav ul li a:hover {

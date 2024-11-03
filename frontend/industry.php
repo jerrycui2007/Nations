@@ -1,9 +1,11 @@
 <?php
-require_once 'helpers/resource_display.php';
+
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/factory_config.php';
 require_once '../backend/resource_config.php';
+require_once 'helpers/resource_display.php';
+require_once 'helpers/time_display.php';
 
 
 // Check if user is logged in
@@ -194,7 +196,7 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                          getResourceIcon($factory['land']['type']) . 
                          number_format($factory['land']['amount']) . 
                          "</td>";
-                    echo "<td>{$factory['construction_time']} minutes</td>";
+                    echo "<td>" . formatTimeRemaining($factory['construction_time']) . "</td>";
                     echo "<td><button class='button smallButton' onclick='buildFactory(\"{$factory_type}\")'>Build</button></td>";
                     echo "</tr>";
                 }
@@ -216,7 +218,7 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php foreach ($factories_under_construction as $factory): ?>
                             <tr>
                                 <td><?php echo ucfirst(str_replace('_', ' ', $factory['factory_type'])); ?></td>
-                                <td><?php echo $factory['minutes_left']; ?> minutes</td>
+                                <td><?php echo formatTimeRemaining($factory['minutes_left']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>

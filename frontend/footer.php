@@ -28,16 +28,18 @@ $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_dat
                     <span class="resource-name" 
                     <?php if ($key === 'money'): ?>
                             id="money-label" 
-                            data-tooltip="Income: <?php echo formatNumber($income_result['increase']); ?> per turn"
+                            data-tooltip="<?php echo htmlspecialchars($resource['display_name'] ?? 'Money'); ?>: Income <?php echo formatNumber($income_result['increase']); ?> per turn"
                         <?php elseif ($key === 'food'): ?>
                             id="food-label" 
-                            data-tooltip="Consumption: <?php echo number_format($food_consumption_result['consumption']); ?> per turn"
+                            data-tooltip="<?php echo htmlspecialchars($resource['display_name'] ?? 'Food'); ?>: Consumption <?php echo number_format($food_consumption_result['consumption']); ?> per turn"
                         <?php elseif ($key === 'power'): ?>
                             id="power-label" 
-                            data-tooltip="Consumption: <?php echo number_format($power_consumption_result['consumption']); ?> per turn"
+                            data-tooltip="<?php echo htmlspecialchars($resource['display_name'] ?? 'Power'); ?>: Consumption <?php echo number_format($power_consumption_result['consumption']); ?> per turn"
                         <?php elseif ($key === 'consumer_goods'): ?>
                             id="consumer-goods-label" 
-                            data-tooltip="Consumption: <?php echo number_format($consumer_goods_consumption_result['consumption']); ?> per turn"
+                            data-tooltip="<?php echo htmlspecialchars($resource['display_name'] ?? 'Consumer Goods'); ?>: Consumption <?php echo number_format($consumer_goods_consumption_result['consumption']); ?> per turn"
+                        <?php else: ?>
+                            data-tooltip="<?php echo htmlspecialchars($resource['display_name'] ?? ucfirst($key)); ?>"
                         <?php endif; ?>>
                         <?php echo getResourceIcon($key); ?>
                     </span>

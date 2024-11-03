@@ -4,6 +4,7 @@ require_once '../backend/db_connection.php';
 require_once '../backend/building_config.php';
 require_once '../backend/resource_config.php';
 require_once 'helpers/resource_display.php';
+require_once 'helpers/time_display.php';
 
 
 // Check if user is logged in
@@ -113,7 +114,7 @@ function getResourceDisplayName($resource) {
                          getResourceIcon('cleared_land') . 
                          formatNumber($next_level_data['land']['cleared_land']) . 
                          "</td></tr>";
-                    echo "<tr><th>Construction Time</th><td>{$next_level_data['construction_cost']['construction_time']} minutes</td></tr>";
+                    echo "<tr><th>Construction Time</th><td>" . formatTimeRemaining($next_level_data['construction_cost']['construction_time']) . "</td></tr>";
                     echo "<tr><td colspan='2' style='text-align: center;'><button class='button smallButton' onclick='upgradeBuilding(\"{$building_type}\")'>Upgrade to Level {$next_level}</button></td></tr>";
                 } else {
                     echo "<tr><td colspan='2'>Maximum level reached</td></tr>";
@@ -132,7 +133,7 @@ function getResourceDisplayName($resource) {
                 echo "<tr>";
                 echo "<td>{$BUILDING_CONFIG[$upgrade['building_type']]['name']}</td>";
                 echo "<td>{$upgrade['level']}</td>";
-                echo "<td>{$upgrade['minutes_left']} minutes</td>";
+                echo "<td>" . formatTimeRemaining($upgrade['minutes_left']) . "</td>";
                 echo "</tr>";
             }
 
