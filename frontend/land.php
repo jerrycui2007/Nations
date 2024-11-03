@@ -3,7 +3,7 @@ global $pdo;
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/calculate_points.php';
-
+require_once 'helpers/resource_display.php';
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -219,7 +219,7 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 
             </tr>
             <tr>
                 <td>Forest</td>
-                <td>$100</td>
+                <td><?php echo getResourceIcon('money') . number_format(100); ?></td>
             </tr>
             <tr>
                 <td>Mountain</td>
@@ -235,19 +235,19 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 
             </tr>
             <tr>
                 <td>Grassland</td>
-                <td>$100</td>
+                <td><?php echo getResourceIcon('money') . number_format(100); ?></td>
             </tr>
             <tr>
                 <td>Jungle</td>
-                <td>$300</td>
+                <td><?php echo getResourceIcon('money') . number_format(300); ?></td>
             </tr>
             <tr>
                 <td>Desert</td>
-                <td>$500</td>
+                <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
             </tr>
             <tr>
                 <td>Tundra</td>
-                <td>$500</td>
+                <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
             </tr>
         </table>
 
@@ -259,15 +259,15 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 
             </tr>
             <tr>
                 <td>Convert Cleared Land to Urban Areas</td>
-                <td>$500</td>
+                <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
             </tr>
             <tr>
                 <td>Expand borders</td>
                 <td>
-                    $<?php echo number_format($money_cost); ?><br>
-                    <?php echo number_format($resource_cost); ?> Food<br>
-                    <?php echo number_format($resource_cost); ?> Building Materials<br>
-                    <?php echo number_format($resource_cost); ?> Consumer Goods
+                    <?php echo getResourceIcon('money') . number_format($money_cost); ?><br>
+                    <?php echo getResourceIcon('food') . number_format($resource_cost); ?><br>
+                    <?php echo getResourceIcon('building_materials') . number_format($resource_cost); ?><br>
+                    <?php echo getResourceIcon('consumer_goods') . number_format($resource_cost); ?>
                 </td>
             </tr>
         </table>
@@ -275,7 +275,6 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 
 
     <?php 
     include 'footer.php';
-    $pdo->close();
     ?>
 
 </body>

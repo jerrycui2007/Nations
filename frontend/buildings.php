@@ -3,6 +3,7 @@ session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/building_config.php';
 require_once '../backend/resource_config.php';
+require_once 'helpers/resource_display.php';
 
 
 // Check if user is logged in
@@ -90,7 +91,7 @@ function getResourceDisplayName($resource) {
                 foreach ($next_level_data['construction_cost'] as $resource => $amount) {
                     if ($resource !== 'construction_time') {
                         $display_name = getResourceDisplayName($resource);
-                        echo "{$amount} {$display_name}<br>";
+                        echo getResourceIcon($resource, $display_name) . " " . number_format($amount) . "<br>";
                     }
                 }
                 echo "</td></tr>";

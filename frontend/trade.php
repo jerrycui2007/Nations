@@ -1,4 +1,5 @@
 <?php
+require_once 'helpers/resource_display.php';
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/resource_config.php';
@@ -246,10 +247,22 @@ function getResourceDisplayName($resource) {
                             <?php echo htmlspecialchars($trade['seller_name']); ?>
                         </a>
                     </td>
-                    <td><?php echo getResourceDisplayName($trade['resource_offered']); ?></td>
-                    <td><?php echo number_format($trade['amount_offered']); ?></td>
-                    <td>$<?php echo number_format($trade['price_per_unit']); ?></td>
-                    <td>$<?php echo number_format($total_price); ?></td>
+                    <td>
+                        <?php echo getResourceIcon($trade['resource_offered']); ?> 
+                        <?php echo number_format($trade['amount_offered']); ?>
+                    </td>
+                    <td>
+                        <?php echo getResourceIcon('money'); ?> 
+                        <?php echo number_format($trade['price_per_unit']); ?>
+                    </td>
+                    <td>
+                        <?php echo getResourceIcon('money'); ?> 
+                        <?php echo number_format($trade['price_per_unit']); ?>
+                    </td>
+                    <td>
+                        <?php echo getResourceIcon('money'); ?> 
+                        <?php echo number_format($total_price); ?>
+                    </td>
                     <td><?php echo date('M j, Y g:i A', strtotime($trade['date'])); ?></td>
                     <td>
                         <?php if ($trade['seller_id'] != $_SESSION['user_id']): ?>

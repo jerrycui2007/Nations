@@ -1,4 +1,5 @@
 <?php
+require_once 'helpers/resource_display.php';
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/factory_config.php';
@@ -72,6 +73,12 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .smallButton {
             padding: 5px 10px;
         }
+        .resource-icon {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
     </style>
 </head>
 <body>
@@ -131,14 +138,20 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td>
                             <?php 
                             foreach ($inputs as $input) {
-                                echo "{$input['amount']} {$input['display_name']}<br>";
+                                echo getResourceIcon($input['resource']) . 
+                                     " <span data-value-container='{$factory_type}-input'>" . 
+                                     number_format($input['amount']) . 
+                                     "</span><br>";
                             }
                             ?>
                         </td>
                         <td>
                             <?php 
                             foreach ($outputs as $output) {
-                                echo "{$output['amount']} {$output['display_name']}<br>";
+                                echo getResourceIcon($output['resource']) . 
+                                     " <span data-value-container='{$factory_type}-output'>" . 
+                                     number_format($output['amount']) . 
+                                     "</span><br>";
                             }
                             ?>
                         </td>
@@ -155,15 +168,19 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 echo "<tr>";
                 echo "<td>{$factory['name']}</td>";
                 echo "<td>" . implode("<br>", array_map(function($input) use ($RESOURCE_CONFIG) {
-                    return "{$input['amount']} {$RESOURCE_CONFIG[$input['resource']]['display_name']}";
+                    return getResourceIcon($input['resource']) . " " . number_format($input['amount']);
                 }, $factory['input'])) . "</td>";
                 echo "<td>" . implode("<br>", array_map(function($output) use ($RESOURCE_CONFIG) {
-                    return "{$output['amount']} {$RESOURCE_CONFIG[$output['resource']]['display_name']}";
+                    return getResourceIcon($output['resource']) . " " . number_format($output['amount']);
                 }, $factory['output'])) . "</td>";
                 echo "<td>" . implode("<br>", array_map(function($cost) use ($RESOURCE_CONFIG) {
-                    return "{$cost['amount']} {$RESOURCE_CONFIG[$cost['resource']]['display_name']}";
+                    return getResourceIcon($cost['resource']) . " " . number_format($cost['amount']);
                 }, $factory['construction_cost'])) . "</td>";
-                echo "<td>{$factory['land']['amount']} " . ucfirst(str_replace('_', ' ', $factory['land']['type'])) . "</td>";
+                echo "<td>" . $factory['land']['amount'] . " " . 
+                     implode(" ", array_map(function($word) {
+                         return ucfirst($word);
+                     }, explode('_', $factory['land']['type']))) . 
+                     "</td>";
                 echo "<td>{$factory['construction_time']} minutes</td>";
                 echo "<td><button class='button smallButton' onclick='buildFactory(\"{$factory_type}\")'>Build</button></td>";
                 echo "</tr>";
@@ -249,8 +266,6 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         const inputRow = inputElement.closest('tr');
-        const inputCell = inputRow.cells[3];
-        const outputCell = inputRow.cells[4];
         const collectButton = inputRow.querySelector('button');
 
         // Disable input and button if capacity is zero
@@ -272,18 +287,29 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
         fetch('../backend/get_factory_config.php?type=' + factoryType)
             .then(response => response.json())
             .then(config => {
-                // Update input display
-                const inputs = config.input.map(input => 
-                    `${input.amount * inputValue * factoryAmount} ${input.display_name}`
-                ).join('<br>');
-                inputCell.innerHTML = inputs;
+                // Update input values
+                config.input.forEach((input, index) => {
+                    const amount = input.amount * inputValue * factoryAmount;
+                    const valueContainer = document.querySelector(`span[data-value-container='${factoryType}-input']`);
+                    if (valueContainer) {
+                        valueContainer.textContent = number_format(amount);
+                    }
+                });
 
-                // Update output display
-                const outputs = config.output.map(output => 
-                    `${output.amount * inputValue * factoryAmount} ${output.display_name}`
-                ).join('<br>');
-                outputCell.innerHTML = outputs;
+                // Update output values
+                config.output.forEach((output, index) => {
+                    const amount = output.amount * inputValue * factoryAmount;
+                    const valueContainer = document.querySelector(`span[data-value-container='${factoryType}-output']`);
+                    if (valueContainer) {
+                        valueContainer.textContent = number_format(amount);
+                    }
+                });
             });
+    }
+
+    // Add number formatting function
+    function number_format(number) {
+        return new Intl.NumberFormat().format(number);
     }
 
     function buildFactory(factoryType) {

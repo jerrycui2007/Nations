@@ -1,4 +1,5 @@
 <?php
+require_once 'helpers/resource_display.php';
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/factory_config.php';
@@ -22,6 +23,14 @@ function formatResources($resources) {
     foreach ($resources as $resource) {
         $displayName = getResourceDisplayName($resource['resource']);
         $formatted[] = "{$resource['amount']} {$displayName}";
+    }
+    return implode(", ", $formatted);
+}
+
+function formatResourcesWithIcons($resources) {
+    $formatted = [];
+    foreach ($resources as $resource) {
+        $formatted[] = getResourceIcon($resource['resource']) . " " . number_format($resource['amount']);
     }
     return implode(", ", $formatted);
 }
@@ -106,9 +115,9 @@ function formatResources($resources) {
                 echo "<tr>";
                 echo "<td>{$factory['name']}</td>";
                 echo "<td>{$factory['tier']}</td>";
-                echo "<td>" . formatResources($factory['input']) . "</td>";
-                echo "<td>" . formatResources($factory['output']) . "</td>";
-                echo "<td>" . formatResources($factory['construction_cost']) . "</td>";
+                echo "<td>" . formatResourcesWithIcons($factory['input']) . "</td>";
+                echo "<td>" . formatResourcesWithIcons($factory['output']) . "</td>";
+                echo "<td>" . formatResourcesWithIcons($factory['construction_cost']) . "</td>";
                 echo "<td>{$factory['land']['amount']} " . getResourceDisplayName($factory['land']['type']) . "</td>";
                 echo "<td>{$factory['construction_time']} minutes</td>";
                 echo "<td>{$factory['gp_value']}</td>";

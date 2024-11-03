@@ -5,6 +5,7 @@ require_once '../backend/calculate_food_consumption.php';
 require_once '../backend/calculate_power_consumption.php';
 require_once '../backend/calculate_consumer_goods_consumption.php';
 require_once '../backend/resource_config.php';
+require_once 'helpers/resource_display.php';
 
 // Fetch user data including population
 $stmt = $pdo->prepare("SELECT u.id, u.population, c.* FROM users u JOIN commodities c ON u.id = c.id WHERE u.id = ?");
@@ -25,7 +26,7 @@ $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_dat
             <?php if (!isset($resource['is_natural_resource']) || $resource['is_natural_resource'] === false): ?>
                 <div class="resource">
                     <span class="resource-name" 
-                        <?php if ($key === 'money'): ?>
+                    <?php if ($key === 'money'): ?>
                             id="money-label" 
                             data-tooltip="Income: $<?php echo number_format($income_result['increase']); ?> per turn"
                         <?php elseif ($key === 'food'): ?>
@@ -38,12 +39,23 @@ $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_dat
                             id="consumer-goods-label" 
                             data-tooltip="Consumption: <?php echo number_format($consumer_goods_consumption_result['consumption']); ?> per turn"
                         <?php endif; ?>>
-                        <?php echo $resource['display_name']; ?>:
+                        <?php echo getResourceIcon($key); ?>
                     </span>
-                    <span class="resource-value" id="<?php echo $key; ?>-value">
+                    <span class="resource-value" id="<?php echo $key; ?>-value"
+                        <?php 
+                        if ($key === 'money' && isset($income_result['increase'])) {
+                            echo 'style="color: ' . ($income_result['increase'] >= 0 ? '#28a745' : '#dc3545') . ';"';
+                        } elseif ($key === 'food' && isset($food_consumption_result['consumption'])) {
+                            echo 'style="color: ' . ($food_consumption_result['consumption'] <= 0 ? '#28a745' : '#dc3545') . ';"';
+                        } elseif ($key === 'power' && isset($power_consumption_result['consumption'])) {
+                            echo 'style="color: ' . ($power_consumption_result['consumption'] <= 0 ? '#28a745' : '#dc3545') . ';"';
+                        } elseif ($key === 'consumer_goods' && isset($consumer_goods_consumption_result['consumption'])) {
+                            echo 'style="color: ' . ($consumer_goods_consumption_result['consumption'] <= 0 ? '#28a745' : '#dc3545') . ';"';
+                        }
+                        ?>>
                         <?php 
                         $value = isset($user_data[$key]) ? $user_data[$key] : 0;
-                        echo number_format($value);
+                        echo ($value == 0) ? '-' : number_format($value);
                         ?>
                     </span>
                 </div>
@@ -102,6 +114,12 @@ $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_dat
     .resource-name[data-tooltip]:hover::after {
         opacity: 1;
         visibility: visible;
+    }
+    .resource-icon {
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+        margin-right: 4px;
     }
 </style>
 
