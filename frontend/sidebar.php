@@ -21,13 +21,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 <style>
     .sidebar {
-        width: 200px;
-        background-color: #f8f9fa;
+        width: 220px;
+        background-color: #2c3e50;
         height: 100vh;
         position: fixed;
         left: 0;
         top: 0;
-        border-right: 1px solid #dee2e6;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
         z-index: 500;
         display: flex;
         flex-direction: column;
@@ -38,11 +38,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
     }
 
     .version-info {
-        padding: 10px;
+        padding: 16px;
         text-align: center;
         font-size: 0.8em;
-        color: #6c757d;
-        border-top: 1px solid #dee2e6;
+        color: #95a5a6;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .sidebar nav ul {
@@ -52,22 +52,26 @@ $current_page = basename($_SERVER['PHP_SELF']);
     }
 
     .sidebar nav ul li {
-        padding: 0;
+        padding: 4px 0;
     }
 
     .sidebar nav ul li a {
         text-decoration: none;
-        color: #333;
+        color: #ecf0f1;
         display: block;
-        padding: 10px 20px;
-        transition: background-color 0.3s;
+        padding: 12px 24px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
     }
 
     .sidebar nav ul li a:hover {
-        background-color: #e9ecef;
+        background-color: #34495e;
+        border-left-color: #3498db;
     }
 
     .sidebar nav ul li a.active {
-        font-weight: bold;
+        background-color: #34495e;
+        border-left-color: #3498db;
+        font-weight: 600;
     }
 </style>

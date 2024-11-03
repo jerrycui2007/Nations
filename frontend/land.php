@@ -44,12 +44,29 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
         }
+
+        .main-content {
+            margin-left: 220px;
+            padding-bottom: 60px; /* Add space for footer */
+        }
+
         .content {
-            margin-left: 200px; /* Same as sidebar width */
-            padding: 20px;
-            padding-bottom: 60px; /* Add padding to accommodate the footer */
+            padding: 40px;
         }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            border-top: 1px solid #dee2e6;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: calc(100% - 220px); /* Viewport width minus sidebar width */
+            z-index: 1000;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -162,120 +179,121 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land','forest', 'mountain', 
 <body>
     <?php include 'sidebar.php'; ?>
     
-    <div class="content">
-        <h1>Land</h1>
-        <table>
-            <tr>
-                <th>Land Type</th>
-                <th>Amount</th>
-                <th>Convert</th>
-            </tr>
-            <tr>
-                <td>Total Land</td>
-                <td id="total-land"><?php echo formatNumber($total_land); ?></td>
-                <td></td>
-            </tr>
-            <?php
-            $convertible_types = ['forest', 'grassland', 'jungle', 'desert', 'tundra'];
-            foreach ($land_types as $type) {
-                echo "<tr>";
-                echo "<td>" . getResourceIcon($type) . ucwords(str_replace('_', ' ', $type)) . "</td>";
-                echo "<td id='{$type}-amount'>" . formatNumber($land[$type]) . "</td>";
-                if (in_array($type, $convertible_types)) {
-                    echo "<td>";
-                    echo "<input type='number' id='{$type}-convert' min='0' max='{$land[$type]}' style='width: 80px;'>";
-                    echo "<button onclick='convertLand(\"{$type}\")' class='button smallButton'>Convert to Cleared Land</button>";
-                    echo "</td>";
-                } elseif ($type === 'urban_areas') {
-                    echo "<td>";
-                    echo "<input type='number' id='urban-areas-build' min='0' max='{$land['cleared_land']}' style='width: 80px;'>";
-                    echo "<button onclick='buildUrbanAreas()' class='button smallButton'>Build Urban Areas</button>";
-                    echo "</td>";
-                } else {
-                    echo "<td></td>";
+    <div class="main-content">
+        <div class="content">
+            <h1>Land</h1>
+            <table>
+                <tr>
+                    <th>Land Type</th>
+                    <th>Amount</th>
+                    <th>Convert</th>
+                </tr>
+                <tr>
+                    <td>Total Land</td>
+                    <td id="total-land"><?php echo formatNumber($total_land); ?></td>
+                    <td></td>
+                </tr>
+                <?php
+                $convertible_types = ['forest', 'grassland', 'jungle', 'desert', 'tundra'];
+                foreach ($land_types as $type) {
+                    echo "<tr>";
+                    echo "<td>" . getResourceIcon($type) . ucwords(str_replace('_', ' ', $type)) . "</td>";
+                    echo "<td id='{$type}-amount'>" . formatNumber($land[$type]) . "</td>";
+                    if (in_array($type, $convertible_types)) {
+                        echo "<td>";
+                        echo "<input type='number' id='{$type}-convert' min='0' max='{$land[$type]}' style='width: 80px;'>";
+                        echo "<button onclick='convertLand(\"{$type}\")' class='button smallButton'>Convert to Cleared Land</button>";
+                        echo "</td>";
+                    } elseif ($type === 'urban_areas') {
+                        echo "<td>";
+                        echo "<input type='number' id='urban-areas-build' min='0' max='{$land['cleared_land']}' style='width: 80px;'>";
+                        echo "<button onclick='buildUrbanAreas()' class='button smallButton'>Build Urban Areas</button>";
+                        echo "</td>";
+                    } else {
+                        echo "<td></td>";
+                    }
+                    echo "</tr>";
                 }
-                echo "</tr>";
-            }
-            ?>
-        </table>
+                ?>
+            </table>
 
-        <button onclick="expandBorders()" class="button">Expand Borders</button>
+            <button onclick="expandBorders()" class="button">Expand Borders</button>
 
-        <h2>About</h2>
-        <p>
-            This table shows the distribution of land types in your country. Most constructions will require Cleared Land to build.
-            You can get Cleared Land by clearing the different types of lands.
-            You will also need to convert Cleared Land to Urban Areas (1000 people per Urban Area), or your population will not grow.
-        </p>
-        <p>
-            After using land, it will be converted to Used Land, regardless of what type it was.
-        </p>
+            <h2>About</h2>
+            <p>
+                This table shows the distribution of land types in your country. Most constructions will require Cleared Land to build.
+                You can get Cleared Land by clearing the different types of lands.
+                You will also need to convert Cleared Land to Urban Areas (1000 people per Urban Area), or your population will not grow.
+            </p>
+            <p>
+                After using land, it will be converted to Used Land, regardless of what type it was.
+            </p>
 
-        <h2>Land Conversion Costs</h2>
-        <table>
-            <tr>
-                <th>Land Type</th>
-                <th>Cost to Convert to Cleared Land</th>
-            </tr>
-            <tr>
-                <td><?php echo getResourceIcon('forest') . 'Forest'; ?></td>
-                <td><?php echo getResourceIcon('money') . number_format(100); ?></td>
-            </tr>
-            <tr>
-                <td><?php echo getResourceIcon('mountain') . 'Mountain'; ?></td>
-                <td>Cannot convert</td>
-            </tr>
-            <tr>
-                <td><?php echo getResourceIcon('river') . 'River'; ?></td>
-                <td>Cannot convert</td>
-            </tr>
-            <tr>
-                <td><?php echo getResourceIcon('lake') . 'Lake'; ?></td>
-                <td>Cannot convert</td>
-            </tr>
-            <tr>
-                <td><?php echo getResourceIcon('grassland') . 'Grassland'; ?></td>
-                <td><?php echo getResourceIcon('money') . number_format(100); ?></td>
-            </tr>
-            <tr>
-                <td><?php echo getResourceIcon('jungle') . 'Jungle'; ?></td>
-                <td><?php echo getResourceIcon('money') . number_format(300); ?></td>
-            </tr>
-            <tr>
-                <td><?php echo getResourceIcon('desert') . 'Desert'; ?></td>
-                <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
-            </tr>
-            <tr>
-                <td><?php echo getResourceIcon('tundra') . 'Tundra'; ?></td>
-                <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
-            </tr>
-        </table>
+            <h2>Land Conversion Costs</h2>
+            <table>
+                <tr>
+                    <th>Land Type</th>
+                    <th>Cost to Convert to Cleared Land</th>
+                </tr>
+                <tr>
+                    <td><?php echo getResourceIcon('forest') . 'Forest'; ?></td>
+                    <td><?php echo getResourceIcon('money') . number_format(100); ?></td>
+                </tr>
+                <tr>
+                    <td><?php echo getResourceIcon('mountain') . 'Mountain'; ?></td>
+                    <td>Cannot convert</td>
+                </tr>
+                <tr>
+                    <td><?php echo getResourceIcon('river') . 'River'; ?></td>
+                    <td>Cannot convert</td>
+                </tr>
+                <tr>
+                    <td><?php echo getResourceIcon('lake') . 'Lake'; ?></td>
+                    <td>Cannot convert</td>
+                </tr>
+                <tr>
+                    <td><?php echo getResourceIcon('grassland') . 'Grassland'; ?></td>
+                    <td><?php echo getResourceIcon('money') . number_format(100); ?></td>
+                </tr>
+                <tr>
+                    <td><?php echo getResourceIcon('jungle') . 'Jungle'; ?></td>
+                    <td><?php echo getResourceIcon('money') . number_format(300); ?></td>
+                </tr>
+                <tr>
+                    <td><?php echo getResourceIcon('desert') . 'Desert'; ?></td>
+                    <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
+                </tr>
+                <tr>
+                    <td><?php echo getResourceIcon('tundra') . 'Tundra'; ?></td>
+                    <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
+                </tr>
+            </table>
 
-        <h2>Other Costs</h2>
-        <table>
-            <tr>
-                <th>Action</th>
-                <th>Cost</th>
-            </tr>
-            <tr>
-                <td>Convert Cleared Land to Urban Areas</td>
-                <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
-            </tr>
-            <tr>
-                <td>Expand borders</td>
-                <td>
-                    <?php echo getResourceIcon('money') . number_format($money_cost); ?><br>
-                    <?php echo getResourceIcon('food') . number_format($resource_cost); ?><br>
-                    <?php echo getResourceIcon('building_materials') . number_format($resource_cost); ?><br>
-                    <?php echo getResourceIcon('consumer_goods') . number_format($resource_cost); ?>
-                </td>
-            </tr>
-        </table>
+            <h2>Other Costs</h2>
+            <table>
+                <tr>
+                    <th>Action</th>
+                    <th>Cost</th>
+                </tr>
+                <tr>
+                    <td>Convert Cleared Land to Urban Areas</td>
+                    <td><?php echo getResourceIcon('money') . number_format(500); ?></td>
+                </tr>
+                <tr>
+                    <td>Expand borders</td>
+                    <td>
+                        <?php echo getResourceIcon('money') . number_format($money_cost); ?><br>
+                        <?php echo getResourceIcon('food') . number_format($resource_cost); ?><br>
+                        <?php echo getResourceIcon('building_materials') . number_format($resource_cost); ?><br>
+                        <?php echo getResourceIcon('consumer_goods') . number_format($resource_cost); ?>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <?php include 'footer.php'; ?>
+        </div>
     </div>
-
-    <?php 
-    include 'footer.php';
-    ?>
-
 </body>
 </html>

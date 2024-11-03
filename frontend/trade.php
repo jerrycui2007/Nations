@@ -68,12 +68,29 @@ function getResourceDisplayName($resource) {
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
         }
+
+        .main-content {
+            margin-left: 220px;
+            padding-bottom: 60px; /* Add space for footer */
+        }
+
         .content {
-            margin-left: 200px;
-            padding: 20px;
-            padding-bottom: 60px;
+            padding: 40px;
         }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            border-top: 1px solid #dee2e6;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: calc(100% - 220px); /* Viewport width minus sidebar width */
+            z-index: 1000;
+        }
+
         h1 {
             color: #333;
         }
@@ -171,153 +188,157 @@ function getResourceDisplayName($resource) {
 <body>
     <?php include 'sidebar.php'; ?>
     
-    <div class="content">
-        <h1>Commodities and Resource Exchange</h1>
-        
-        <form id="createTradeForm" style="margin-bottom: 20px;">
+    <div class="main-content">
+        <div class="content">
+            <h1>Commodities and Resource Exchange</h1>
+            
+            <form id="createTradeForm" style="margin-bottom: 20px;">
+                <table>
+                    <tr>
+                        <th>Resource to Sell</th>
+                        <th>Amount</th>
+                        <th>Price per Unit</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select name="resource" required>
+                                <option value="">Select Resource</option>
+                                <?php
+                                foreach ($RESOURCE_CONFIG as $resource_key => $resource_data) {
+                                    // Skip money as it's not tradeable
+                                    if ($resource_key === 'money') continue;
+                                    
+                                    echo "<option value=\"{$resource_key}\">" . 
+                                         getResourceDisplayName($resource_key) . 
+                                         "</option>";
+                                }
+                                ?>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="amount" min="1" required>
+                        </td>
+                        <td>
+                            <input type="number" name="price" min="1" step="0.01" required>
+                        </td>
+                        <td>
+                            <button type="submit" class="trade-button">Create Trade</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            
+            <div style="margin-bottom: 15px;">
+                <label for="resource_filter">Filter by Resource:</label>
+                <select id="resource_filter" onchange="filterTrades(this.value)" style="margin-left: 10px; padding: 5px;">
+                    <option value="all">All Resources</option>
+                    <?php
+                    foreach ($RESOURCE_CONFIG as $resource_key => $resource_data) {
+                        // Skip money as it's not tradeable
+                        if ($resource_key === 'money') continue;
+                        
+                        $selected = ($resource_filter === $resource_key) ? 'selected' : '';
+                        echo "<option value=\"{$resource_key}\" {$selected}>" . 
+                             getResourceDisplayName($resource_key) . 
+                             "</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+
             <table>
                 <tr>
-                    <th>Resource to Sell</th>
+                    <th>Seller</th>
+                    <th>Resource</th>
                     <th>Amount</th>
                     <th>Price per Unit</th>
+                    <th>Total Price</th>
+                    <th>Date Listed</th>
                     <th>Action</th>
                 </tr>
-                <tr>
-                    <td>
-                        <select name="resource" required>
-                            <option value="">Select Resource</option>
-                            <?php
-                            foreach ($RESOURCE_CONFIG as $resource_key => $resource_data) {
-                                // Skip money as it's not tradeable
-                                if ($resource_key === 'money') continue;
-                                
-                                echo "<option value=\"{$resource_key}\">" . 
-                                     getResourceDisplayName($resource_key) . 
-                                     "</option>";
-                            }
-                            ?>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" name="amount" min="1" required>
-                    </td>
-                    <td>
-                        <input type="number" name="price" min="1" step="0.01" required>
-                    </td>
-                    <td>
-                        <button type="submit" class="trade-button">Create Trade</button>
-                    </td>
-                </tr>
+                <?php foreach ($trades as $trade): ?>
+                    <?php $total_price = $trade['amount_offered'] * $trade['price_per_unit']; ?>
+                    <tr>
+                        <td>
+                            <a href="view.php?id=<?php echo htmlspecialchars($trade['seller_id']); ?>" class="nation-link">
+                                <?php echo htmlspecialchars($trade['seller_name']); ?>
+                            </a>
+                        </td>
+                        <td>
+                            <?php echo getResourceIcon($trade['resource_offered']); ?> 
+                            <?php echo number_format($trade['amount_offered']); ?>
+                        </td>
+                        <td>
+                            <?php echo getResourceIcon('money'); ?> 
+                            <?php echo number_format($trade['price_per_unit']); ?>
+                        </td>
+                        <td>
+                            <?php echo getResourceIcon('money'); ?> 
+                            <?php echo number_format($trade['price_per_unit']); ?>
+                        </td>
+                        <td>
+                            <?php echo getResourceIcon('money'); ?> 
+                            <?php echo number_format($total_price); ?>
+                        </td>
+                        <td><?php echo date('M j, Y g:i A', strtotime($trade['date'])); ?></td>
+                        <td>
+                            <?php if ($trade['seller_id'] != $_SESSION['user_id']): ?>
+                                <button class="trade-button" onclick="completeTrade(<?php echo $trade['trade_id']; ?>, <?php echo $total_price; ?>)">
+                                    Purchase
+                                </button>
+                            <?php else: ?>
+                                <button class="cancel-button" onclick="cancelTrade(<?php echo $trade['trade_id']; ?>)">
+                                    Cancel
+                                </button>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
             </table>
-        </form>
-        
-        <div style="margin-bottom: 15px;">
-            <label for="resource_filter">Filter by Resource:</label>
-            <select id="resource_filter" onchange="filterTrades(this.value)" style="margin-left: 10px; padding: 5px;">
-                <option value="all">All Resources</option>
-                <?php
-                foreach ($RESOURCE_CONFIG as $resource_key => $resource_data) {
-                    // Skip money as it's not tradeable
-                    if ($resource_key === 'money') continue;
-                    
-                    $selected = ($resource_filter === $resource_key) ? 'selected' : '';
-                    echo "<option value=\"{$resource_key}\" {$selected}>" . 
-                         getResourceDisplayName($resource_key) . 
-                         "</option>";
-                }
-                ?>
-            </select>
+
+            <h2>Trade History</h2>
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Other Party</th>
+                    <th>Resource</th>
+                    <th>Amount</th>
+                    <th>Price per Unit</th>
+                    <th>Total Value</th>
+                </tr>
+                <?php foreach ($trade_history as $history): ?>
+                    <?php 
+                    $is_buyer = $history['buyer_id'] == $_SESSION['user_id'];
+                    $total_value = $history['amount_offered'] * $history['price_per_unit'];
+                    ?>
+                    <tr style="background-color: <?php echo $is_buyer ? '#ffebee' : '#e8f5e9'; ?>">
+                        <td><?php echo date('M j, Y g:i A', strtotime($trade['date'])); ?></td>
+                        <td><?php echo $is_buyer ? 'Purchase' : 'Sale'; ?></td>
+                        <td>
+                            <a href="view.php?id=<?php echo $is_buyer ? $history['seller_id'] : $history['buyer_id']; ?>" class="nation-link">
+                                <?php echo htmlspecialchars($is_buyer ? $history['seller_name'] : $history['buyer_name']); ?>
+                            </a>
+                        </td>
+                        <td><?php echo getResourceDisplayName($history['resource_offered']); ?></td>
+                        <td><?php echo number_format($history['amount_offered']); ?></td>
+                        <td>$<?php echo number_format($history['price_per_unit']); ?></td>
+                        <td>$<?php echo number_format($total_value); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                <?php if (empty($trade_history)): ?>
+                    <tr>
+                        <td colspan="7" style="text-align: center;">No trade history found</td>
+                    </tr>
+                <?php endif; ?>
+            </table>
         </div>
 
-        <table>
-            <tr>
-                <th>Seller</th>
-                <th>Resource</th>
-                <th>Amount</th>
-                <th>Price per Unit</th>
-                <th>Total Price</th>
-                <th>Date Listed</th>
-                <th>Action</th>
-            </tr>
-            <?php foreach ($trades as $trade): ?>
-                <?php $total_price = $trade['amount_offered'] * $trade['price_per_unit']; ?>
-                <tr>
-                    <td>
-                        <a href="view.php?id=<?php echo htmlspecialchars($trade['seller_id']); ?>" class="nation-link">
-                            <?php echo htmlspecialchars($trade['seller_name']); ?>
-                        </a>
-                    </td>
-                    <td>
-                        <?php echo getResourceIcon($trade['resource_offered']); ?> 
-                        <?php echo number_format($trade['amount_offered']); ?>
-                    </td>
-                    <td>
-                        <?php echo getResourceIcon('money'); ?> 
-                        <?php echo number_format($trade['price_per_unit']); ?>
-                    </td>
-                    <td>
-                        <?php echo getResourceIcon('money'); ?> 
-                        <?php echo number_format($trade['price_per_unit']); ?>
-                    </td>
-                    <td>
-                        <?php echo getResourceIcon('money'); ?> 
-                        <?php echo number_format($total_price); ?>
-                    </td>
-                    <td><?php echo date('M j, Y g:i A', strtotime($trade['date'])); ?></td>
-                    <td>
-                        <?php if ($trade['seller_id'] != $_SESSION['user_id']): ?>
-                            <button class="trade-button" onclick="completeTrade(<?php echo $trade['trade_id']; ?>, <?php echo $total_price; ?>)">
-                                Purchase
-                            </button>
-                        <?php else: ?>
-                            <button class="cancel-button" onclick="cancelTrade(<?php echo $trade['trade_id']; ?>)">
-                                Cancel
-                            </button>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-
-        <h2>Trade History</h2>
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Other Party</th>
-                <th>Resource</th>
-                <th>Amount</th>
-                <th>Price per Unit</th>
-                <th>Total Value</th>
-            </tr>
-            <?php foreach ($trade_history as $history): ?>
-                <?php 
-                $is_buyer = $history['buyer_id'] == $_SESSION['user_id'];
-                $total_value = $history['amount_offered'] * $history['price_per_unit'];
-                ?>
-                <tr style="background-color: <?php echo $is_buyer ? '#ffebee' : '#e8f5e9'; ?>">
-                    <td><?php echo date('M j, Y g:i A', strtotime($trade['date'])); ?></td>
-                    <td><?php echo $is_buyer ? 'Purchase' : 'Sale'; ?></td>
-                    <td>
-                        <a href="view.php?id=<?php echo $is_buyer ? $history['seller_id'] : $history['buyer_id']; ?>" class="nation-link">
-                            <?php echo htmlspecialchars($is_buyer ? $history['seller_name'] : $history['buyer_name']); ?>
-                        </a>
-                    </td>
-                    <td><?php echo getResourceDisplayName($history['resource_offered']); ?></td>
-                    <td><?php echo number_format($history['amount_offered']); ?></td>
-                    <td>$<?php echo number_format($history['price_per_unit']); ?></td>
-                    <td>$<?php echo number_format($total_value); ?></td>
-                </tr>
-            <?php endforeach; ?>
-            <?php if (empty($trade_history)): ?>
-                <tr>
-                    <td colspan="7" style="text-align: center;">No trade history found</td>
-                </tr>
-            <?php endif; ?>
-        </table>
+        <div class="footer">
+            <?php include 'footer.php'; ?>
+        </div>
     </div>
-
-    <?php include 'footer.php'; ?>
 
     <script>
     function completeTrade(tradeId, totalPrice) {

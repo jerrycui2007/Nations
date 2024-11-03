@@ -33,15 +33,28 @@ function getResourceDisplayName($resource) {
     <link rel="stylesheet" type="text/css" href="design/style.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding-bottom: 60px; /* Add space for footer */
         }
         .content {
-            margin-left: 200px; /* Same as sidebar width */
-            padding: 20px;
-            padding-bottom: 60px; /* Add padding to accommodate the footer */
+            padding: 40px;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            border-top: 1px solid #dee2e6;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: calc(100% - 220px); /* Viewport width minus sidebar width */
+            z-index: 1000;
         }
         h1, h2 {
             color: #333;
@@ -71,63 +84,67 @@ function getResourceDisplayName($resource) {
 <body>
     <?php include 'sidebar.php'; ?>
     
-    <div class="content">
-        <h1>Buildings</h1>
-        <?php
-        foreach ($BUILDING_CONFIG as $building_type => $building_data) {
-            $current_level = $user_buildings[$building_type] ?? 0;
-            $next_level = $current_level + 1;
-            $next_level_data = $building_data['levels'][$next_level] ?? null;
+    <div class="main-content">
+        <div class="content">
+            <h1>Buildings</h1>
+            <?php
+            foreach ($BUILDING_CONFIG as $building_type => $building_data) {
+                $current_level = $user_buildings[$building_type] ?? 0;
+                $next_level = $current_level + 1;
+                $next_level_data = $building_data['levels'][$next_level] ?? null;
 
-            
-            
-            echo "<h2>{$building_data['name']}</h2>";
-            echo "<table>";
-            echo "<tr><th>Current Level</th><td>{$current_level}</td></tr>";
-            
-            if ($next_level_data) {
-                echo "<tr><th>Required Tier</th><td>{$next_level_data['minimum_tier']}</td></tr>";
-                echo "<tr><th>Upgrade Costs</th><td>";
-                foreach ($next_level_data['construction_cost'] as $resource => $amount) {
-                    if ($resource !== 'construction_time') {
-                        $display_name = getResourceDisplayName($resource);
-                        echo getResourceIcon($resource, $display_name) . " " . formatNumber($amount) . "<br>";
+                
+                
+                echo "<h2>{$building_data['name']}</h2>";
+                echo "<table>";
+                echo "<tr><th>Current Level</th><td>{$current_level}</td></tr>";
+                
+                if ($next_level_data) {
+                    echo "<tr><th>Required Tier</th><td>{$next_level_data['minimum_tier']}</td></tr>";
+                    echo "<tr><th>Upgrade Costs</th><td>";
+                    foreach ($next_level_data['construction_cost'] as $resource => $amount) {
+                        if ($resource !== 'construction_time') {
+                            $display_name = getResourceDisplayName($resource);
+                            echo getResourceIcon($resource, $display_name) . " " . formatNumber($amount) . "<br>";
+                        }
                     }
+                    echo "</td></tr>";
+                    echo "<tr><th>Land Required</th><td>" . 
+                         getResourceIcon('cleared_land') . 
+                         formatNumber($next_level_data['land']['cleared_land']) . 
+                         "</td></tr>";
+                    echo "<tr><th>Construction Time</th><td>{$next_level_data['construction_cost']['construction_time']} minutes</td></tr>";
+                    echo "<tr><td colspan='2' style='text-align: center;'><button class='button smallButton' onclick='upgradeBuilding(\"{$building_type}\")'>Upgrade to Level {$next_level}</button></td></tr>";
+                } else {
+                    echo "<tr><td colspan='2'>Maximum level reached</td></tr>";
                 }
-                echo "</td></tr>";
-                echo "<tr><th>Land Required</th><td>" . 
-                     getResourceIcon('cleared_land') . 
-                     formatNumber($next_level_data['land']['cleared_land']) . 
-                     "</td></tr>";
-                echo "<tr><th>Construction Time</th><td>{$next_level_data['construction_cost']['construction_time']} minutes</td></tr>";
-                echo "<tr><td colspan='2' style='text-align: center;'><button class='button smallButton' onclick='upgradeBuilding(\"{$building_type}\")'>Upgrade to Level {$next_level}</button></td></tr>";
-            } else {
-                echo "<tr><td colspan='2'>Maximum level reached</td></tr>";
+                
+                echo "</table>";
             }
-            
+            echo "<h2>Ongoing Upgrades</h2>";
+            echo "<table>";
+            echo "<tr><th>Building</th><th>Upgrading to Level</th><th>Time Remaining</th></tr>";
+
+            $stmt = $pdo->prepare("SELECT * FROM building_queue WHERE id = ?");
+            $stmt->execute([$_SESSION['user_id']]);
+
+            while ($upgrade = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                echo "<tr>";
+                echo "<td>{$BUILDING_CONFIG[$upgrade['building_type']]['name']}</td>";
+                echo "<td>{$upgrade['level']}</td>";
+                echo "<td>{$upgrade['minutes_left']} minutes</td>";
+                echo "</tr>";
+            }
+
             echo "</table>";
-        }
-        echo "<h2>Ongoing Upgrades</h2>";
-        echo "<table>";
-        echo "<tr><th>Building</th><th>Upgrading to Level</th><th>Time Remaining</th></tr>";
+            ?>
 
-        $stmt = $pdo->prepare("SELECT * FROM building_queue WHERE id = ?");
-        $stmt->execute([$_SESSION['user_id']]);
+        </div>
 
-        while ($upgrade = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            echo "<tr>";
-            echo "<td>{$BUILDING_CONFIG[$upgrade['building_type']]['name']}</td>";
-            echo "<td>{$upgrade['level']}</td>";
-            echo "<td>{$upgrade['minutes_left']} minutes</td>";
-            echo "</tr>";
-        }
-
-        echo "</table>";
-        ?>
-
+        <div class="footer">
+            <?php include 'footer.php'; ?>
+        </div>
     </div>
-
-    <?php include 'footer.php'; ?>
 
     <script>
     function upgradeBuilding(buildingType) {

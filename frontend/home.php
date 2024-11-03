@@ -78,6 +78,28 @@ try {
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+            min-height: 100vh;
+            display: flex;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 200px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 200px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
         .header {
@@ -86,8 +108,19 @@ try {
             padding: 150px 20px;
             color: white;
             position: relative;
-            margin-left: 200px;
-            width: calc(100% - 200px);
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            border-top: 1px solid #dee2e6;
+            width: 100%;
+            margin-left: 0;
         }
 
         .header-content {
@@ -179,55 +212,71 @@ try {
             margin-bottom: 10px;
             color: #333;
         }
+
+        .resources-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            margin-left: 0;
+        }
     </style>
 </head>
 <body>
     <?php include 'sidebar.php'; ?>
     
-    <div class="header">
-        <div class="header-content">
-            <div class="header-left">
-                <img src="<?php echo htmlspecialchars($user['flag']); ?>" alt="Nation Flag" class="nation-flag">
-                <div class="nation-name"><?php echo htmlspecialchars($user['country_name']); ?></div>
-            </div>
-            <div class="header-right">
-                <div class="info-group">
-                    <div class="info-label">Leader</div>
-                    <div class="info-value"><?php echo htmlspecialchars($user['leader_name']); ?></div>
+    <div class="main-content">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <img src="<?php echo htmlspecialchars($user['flag']); ?>" alt="Nation Flag" class="nation-flag">
+                    <div class="nation-name"><?php echo htmlspecialchars($user['country_name']); ?></div>
                 </div>
-                
-                <div class="info-group">
-                    <div class="info-label">Population</div>
-                    <div class="info-value">
-                        <img src="resources/tier.png" alt="Tier" class="tier-icon">
-                        <span class="tier-number"><?php echo $user['tier']; ?></span>
-                        <?php echo number_format($user['population']); ?>
-                        <span style="font-size: 0.6em; color: <?php echo ($growth > 0) ? '#28a745' : '#dc3545'; ?>">
-                            <?php echo ($growth >= 0 ? '+' : '-') . number_format(abs($growth)); ?>
-                        </span>
+                <div class="header-right">
+                    <div class="info-group">
+                        <div class="info-label">Leader</div>
+                        <div class="info-value"><?php echo htmlspecialchars($user['leader_name']); ?></div>
                     </div>
-                </div>
-                
-                <div class="info-group">
-                    <div class="info-label">GP</div>
-                    <div class="info-value"><?php echo formatNumber($user['gp']); ?></div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">Population</div>
+                        <div class="info-value">
+                            <img src="resources/tier.png" alt="Tier" class="tier-icon">
+                            <span class="tier-number"><?php echo $user['tier']; ?></span>
+                            <?php echo number_format($user['population']); ?>
+                            <span style="font-size: 0.6em; color: <?php echo ($growth > 0) ? '#28a745' : '#dc3545'; ?>">
+                                <?php echo ($growth >= 0 ? '+' : '-') . number_format(abs($growth)); ?>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">GP</div>
+                        <div class="info-value"><?php echo formatNumber($user['gp']); ?></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="panel">
-        <h2>Change Flag</h2>
-        <?php if (isset($flag_update_message)): ?>
-            <p><?php echo htmlspecialchars($flag_update_message); ?></p>
-        <?php endif; ?>
-        <form method="POST" action="" onsubmit="return validateFlagUrl()">
-            <input type="text" name="new_flag" id="new_flag" placeholder="Enter new flag URL" required>
-            <button type="submit" class="button">Update Flag</button>
-        </form>
-    </div>
+        <div class="content">
+            <div class="panel">
+                <h2>Change Flag</h2>
+                <?php if (isset($flag_update_message)): ?>
+                    <p><?php echo htmlspecialchars($flag_update_message); ?></p>
+                <?php endif; ?>
+                <form method="POST" action="" onsubmit="return validateFlagUrl()">
+                    <input type="text" name="new_flag" id="new_flag" placeholder="Enter new flag URL" required>
+                    <button type="submit" class="button">Update Flag</button>
+                </form>
+            </div>
+        </div>
 
-    <?php include 'footer.php'; ?>
+        <div class="footer">
+            <?php include 'footer.php'; ?>
+        </div>
+    </div>
 
     <script>
         function validateFlagUrl() {

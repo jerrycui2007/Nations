@@ -44,15 +44,28 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" type="text/css" href="design/style.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding-bottom: 60px; /* Add space for footer */
         }
         .content {
-            margin-left: 200px; /* Same as sidebar width */
-            padding: 20px;
-            padding-bottom: 60px; /* Add padding to accommodate the footer */
+            padding: 40px;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            border-top: 1px solid #dee2e6;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: calc(100% - 220px); /* Viewport width minus sidebar width */
+            z-index: 1000;
         }
         table {
             width: 100%;
@@ -84,143 +97,147 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <?php include 'sidebar.php'; ?>
     
-    <div class="content">
-        <h1>Industry</h1>
-        <table>
-            <tr>
-                <th>Factory Type</th>
-                <th>Amount</th>
-                <th>Production Capacity</th>
-                <th>Input</th>
-                <th>Output</th>
-            </tr>
-            <?php foreach ($factories as $factory_type => $amount): ?>
-                <?php 
-                if (strpos($factory_type, '_capacity') === false && $amount > 0): 
-                    $capacity_key = $factory_type . '_capacity';
-                    $capacity = $factories[$capacity_key];
-                    
-                    // Get input/output from factory config
-                    $factory_data = $FACTORY_CONFIG[$factory_type];
-                    $inputs = array_map(function($input) use ($amount, $capacity, $RESOURCE_CONFIG) {
-                        return [
-                            'resource' => $input['resource'],
-                            'display_name' => $RESOURCE_CONFIG[$input['resource']]['display_name'],
-                            'amount' => $input['amount'] * $amount * $capacity
-                        ];
-                    }, $factory_data['input']);
-
-                    $outputs = array_map(function($output) use ($amount, $capacity, $RESOURCE_CONFIG) {
-                        return [
-                            'resource' => $output['resource'],
-                            'display_name' => $RESOURCE_CONFIG[$output['resource']]['display_name'],
-                            'amount' => $output['amount'] * $amount * $capacity
-                        ];
-                    }, $factory_data['output']);
-                ?>
-                    <tr>
-                        <td><?php echo $factory_data['name']; ?></td>
-                        <td><?php echo $amount; ?></td>
-                        <td>
-                            <?php 
-                            $isDisabled = $capacity == 0 ? 'disabled' : '';
-                            ?>
-                            <input type="number" id="<?php echo $factory_type; ?>-collect" 
-                                   min="1" max="<?php echo $capacity; ?>" 
-                                   style="width: 60px;" <?php echo $isDisabled; ?>>
-                            / <?php echo $capacity; ?>
-                            <button class="button smallButton" 
-                                    onclick="collectResource('<?php echo $factory_type; ?>')" 
-                                    <?php echo $isDisabled; ?>>
-                                Collect
-                            </button>
-                        </td>
-                        <td>
-                            <?php 
-                            foreach ($inputs as $input) {
-                                echo getResourceIcon($input['resource']) . 
-                                     " <span data-value-container='{$factory_type}-input'>" . 
-                                     formatNumber($input['amount']) . 
-                                     "</span><br>";
-                            }
-                            ?>
-                        </td>
-                        <td>
-                            <?php 
-                            foreach ($outputs as $output) {
-                                echo getResourceIcon($output['resource']) . 
-                                     " <span data-value-container='{$factory_type}-output'>" . 
-                                     formatNumber($output['amount']) . 
-                                     "</span><br>";
-                            }
-                            ?>
-                        </td>
-                    </tr>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </table>
-        <?php
-            echo "<h2>Construct New Factories</h2>";
-            echo "<table>";
-            echo "<tr><th>Factory Name</th><th>Input</th><th>Output</th><th>Construction Costs</th><th>Land Requirements</th><th>Construction Time</th><th>Action</th></tr>";
-
-            foreach ($FACTORY_CONFIG as $factory_type => $factory) {
-                echo "<tr>";
-                echo "<td>{$factory['name']}</td>";
-                echo "<td>" . implode("<br>", array_map(function($input) use ($RESOURCE_CONFIG) {
-                    return getResourceIcon($input['resource']) . " " . number_format($input['amount']);
-                }, $factory['input'])) . "</td>";
-                echo "<td>" . implode("<br>", array_map(function($output) use ($RESOURCE_CONFIG) {
-                    return getResourceIcon($output['resource']) . " " . number_format($output['amount']);
-                }, $factory['output'])) . "</td>";
-                echo "<td>" . implode("<br>", array_map(function($cost) use ($RESOURCE_CONFIG) {
-                    return getResourceIcon($cost['resource']) . " " . number_format($cost['amount']);
-                }, $factory['construction_cost'])) . "</td>";
-                echo "<td>" . 
-                     getResourceIcon($factory['land']['type']) . 
-                     number_format($factory['land']['amount']) . 
-                     "</td>";
-                echo "<td>{$factory['construction_time']} minutes</td>";
-                echo "<td><button class='button smallButton' onclick='buildFactory(\"{$factory_type}\")'>Build</button></td>";
-                echo "</tr>";
-            }
-
-            echo "</table>";
-        ?>
-
-        <h2>Factories Under Construction</h2>
+    <div class="main-content">
+        <div class="content">
+            <h1>Industry</h1>
             <table>
                 <tr>
                     <th>Factory Type</th>
-                    <th>Time Remaining</th>
+                    <th>Amount</th>
+                    <th>Production Capacity</th>
+                    <th>Input</th>
+                    <th>Output</th>
                 </tr>
-                <?php if (empty($factories_under_construction)): ?>
-                    <tr>
-                        <td colspan="2">No factories currently under construction.</td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($factories_under_construction as $factory): ?>
+                <?php foreach ($factories as $factory_type => $amount): ?>
+                    <?php 
+                    if (strpos($factory_type, '_capacity') === false && $amount > 0): 
+                        $capacity_key = $factory_type . '_capacity';
+                        $capacity = $factories[$capacity_key];
+                        
+                        // Get input/output from factory config
+                        $factory_data = $FACTORY_CONFIG[$factory_type];
+                        $inputs = array_map(function($input) use ($amount, $capacity, $RESOURCE_CONFIG) {
+                            return [
+                                'resource' => $input['resource'],
+                                'display_name' => $RESOURCE_CONFIG[$input['resource']]['display_name'],
+                                'amount' => $input['amount'] * $amount * $capacity
+                            ];
+                        }, $factory_data['input']);
+
+                        $outputs = array_map(function($output) use ($amount, $capacity, $RESOURCE_CONFIG) {
+                            return [
+                                'resource' => $output['resource'],
+                                'display_name' => $RESOURCE_CONFIG[$output['resource']]['display_name'],
+                                'amount' => $output['amount'] * $amount * $capacity
+                            ];
+                        }, $factory_data['output']);
+                    ?>
                         <tr>
-                            <td><?php echo ucfirst(str_replace('_', ' ', $factory['factory_type'])); ?></td>
-                            <td><?php echo $factory['minutes_left']; ?> minutes</td>
+                            <td><?php echo $factory_data['name']; ?></td>
+                            <td><?php echo $amount; ?></td>
+                            <td>
+                                <?php 
+                                $isDisabled = $capacity == 0 ? 'disabled' : '';
+                                ?>
+                                <input type="number" id="<?php echo $factory_type; ?>-collect" 
+                                       min="1" max="<?php echo $capacity; ?>" 
+                                       style="width: 60px;" <?php echo $isDisabled; ?>>
+                                / <?php echo $capacity; ?>
+                                <button class="button smallButton" 
+                                        onclick="collectResource('<?php echo $factory_type; ?>')" 
+                                        <?php echo $isDisabled; ?>>
+                                    Collect
+                                </button>
+                            </td>
+                            <td>
+                                <?php 
+                                foreach ($inputs as $input) {
+                                    echo getResourceIcon($input['resource']) . 
+                                         " <span data-value-container='{$factory_type}-input'>" . 
+                                         formatNumber($input['amount']) . 
+                                         "</span><br>";
+                                }
+                                ?>
+                            </td>
+                            <td>
+                                <?php 
+                                foreach ($outputs as $output) {
+                                    echo getResourceIcon($output['resource']) . 
+                                         " <span data-value-container='{$factory_type}-output'>" . 
+                                         formatNumber($output['amount']) . 
+                                         "</span><br>";
+                                }
+                                ?>
+                            </td>
                         </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </table>
+            <?php
+                echo "<h2>Construct New Factories</h2>";
+                echo "<table>";
+                echo "<tr><th>Factory Name</th><th>Input</th><th>Output</th><th>Construction Costs</th><th>Land Requirements</th><th>Construction Time</th><th>Action</th></tr>";
+
+                foreach ($FACTORY_CONFIG as $factory_type => $factory) {
+                    echo "<tr>";
+                    echo "<td>{$factory['name']}</td>";
+                    echo "<td>" . implode("<br>", array_map(function($input) use ($RESOURCE_CONFIG) {
+                        return getResourceIcon($input['resource']) . " " . number_format($input['amount']);
+                    }, $factory['input'])) . "</td>";
+                    echo "<td>" . implode("<br>", array_map(function($output) use ($RESOURCE_CONFIG) {
+                        return getResourceIcon($output['resource']) . " " . number_format($output['amount']);
+                    }, $factory['output'])) . "</td>";
+                    echo "<td>" . implode("<br>", array_map(function($cost) use ($RESOURCE_CONFIG) {
+                        return getResourceIcon($cost['resource']) . " " . number_format($cost['amount']);
+                    }, $factory['construction_cost'])) . "</td>";
+                    echo "<td>" . 
+                         getResourceIcon($factory['land']['type']) . 
+                         number_format($factory['land']['amount']) . 
+                         "</td>";
+                    echo "<td>{$factory['construction_time']} minutes</td>";
+                    echo "<td><button class='button smallButton' onclick='buildFactory(\"{$factory_type}\")'>Build</button></td>";
+                    echo "</tr>";
+                }
+
+                echo "</table>";
+            ?>
+
+            <h2>Factories Under Construction</h2>
+                <table>
+                    <tr>
+                        <th>Factory Type</th>
+                        <th>Time Remaining</th>
+                    </tr>
+                    <?php if (empty($factories_under_construction)): ?>
+                        <tr>
+                            <td colspan="2">No factories currently under construction.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($factories_under_construction as $factory): ?>
+                            <tr>
+                                <td><?php echo ucfirst(str_replace('_', ' ', $factory['factory_type'])); ?></td>
+                                <td><?php echo $factory['minutes_left']; ?> minutes</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </table>
 
 
-        <h2>About</h2>
-        <p>
-            This page lists your factories and their production capacity.
-            You can collect resources from your factories by clicking the "Collect" button.
-            The input and output of each factory is also shown.
-            Factory capacity is updated every hour, to a maximum of 24. You can choose how much capacity you want to collect from each factory.
-        </p>
+            <h2>About</h2>
+            <p>
+                This page lists your factories and their production capacity.
+                You can collect resources from your factories by clicking the "Collect" button.
+                The input and output of each factory is also shown.
+                Factory capacity is updated every hour, to a maximum of 24. You can choose how much capacity you want to collect from each factory.
+            </p>
 
+        </div>
+
+        <div class="footer">
+            <?php include 'footer.php'; ?>
+        </div>
     </div>
 
-    <?php include 'footer.php'; ?>
-    
     <script>
     function collectResource(factoryType) {
         const inputElement = document.getElementById(`${factoryType}-collect`);

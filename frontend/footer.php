@@ -28,7 +28,7 @@ $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_dat
                     <span class="resource-name" 
                     <?php if ($key === 'money'): ?>
                             id="money-label" 
-                            data-tooltip="Income: <?php echo getResourceIcon('money') . formatNumber($income_result['increase']); ?> per turn"
+                            data-tooltip="Income: <?php echo formatNumber($income_result['increase']); ?> per turn"
                         <?php elseif ($key === 'food'): ?>
                             id="food-label" 
                             data-tooltip="Consumption: <?php echo number_format($food_consumption_result['consumption']); ?> per turn"
@@ -65,21 +65,13 @@ $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_dat
 </footer>
 
 <style>
-    footer {
-        background-color: #f8f9fa;
-        padding: 10px 0;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        border-top: 1px solid #dee2e6;
-        z-index: 999;
-    }
     .resources-container {
         display: flex;
         justify-content: space-around;
         flex-wrap: wrap;
         max-width: 1200px;
         margin: 0 auto;
+        padding: 0 20px;
     }
     .resource {
         margin: 5px 10px;
