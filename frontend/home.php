@@ -279,49 +279,39 @@ try {
             margin-left: 0;
         }
 
-        .modal {
-            display: none;
+        .toast-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
         }
 
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            position: relative;
-        }
-
-        .modal-message {
-            margin: 20px 0;
-            font-size: 1.1em;
-            color: #333;
-        }
-
-        .modal-button {
-            padding: 10px 20px;
-            background-color: #007BFF;
+        .toast {
+            background-color: #333;
             color: white;
-            border: none;
+            padding: 12px 24px;
             border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.2s;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .modal-button:hover {
-            background-color: #0056b3;
+        .toast.success {
+            background-color: #4CAF50;
+        }
+
+        .toast.error {
+            background-color: #f44336;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
         }
     </style>
 </head>
@@ -387,6 +377,49 @@ try {
     </div>
 
     <script>
+        function showToast(message, type = 'success') {
+            // Create toast container if it doesn't exist
+            let container = document.querySelector('.toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+
+            // Add toast to container
+            container.appendChild(toast);
+
+            // Trigger animation
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            // Remove toast after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        function validateFlagUrl() {
+            const url = document.getElementById('new_flag').value;
+            const validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+            
+            const hasValidExtension = validExtensions.some(ext => 
+                url.toLowerCase().endsWith(ext)
+            );
+            
+            if (!hasValidExtension) {
+                showToast('Invalid image format. URL must end with .jpg, .jpeg, .png, or .webp', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+
         async function handleFlagSubmit(event) {
             event.preventDefault();
             
@@ -409,78 +442,22 @@ try {
                 const message = doc.querySelector('.flag-message')?.textContent?.trim();
                 
                 if (message) {
-                    showModal(message, () => {
-                        window.location.reload();
-                    });
+                    showToast(message, message.includes('successfully') ? 'success' : 'error');
+                    if (message.includes('successfully')) {
+                        setTimeout(() => window.location.reload(), 1000);
+                    }
                 }
             } catch (error) {
-                showModal('An error occurred while updating the flag.');
+                showToast('An error occurred while updating the flag.', 'error');
             }
             
             return false;
         }
 
-        function showModal(message, callback = null) {
-            const modal = document.getElementById('alertModal');
-            const modalMessage = document.getElementById('modalMessage');
-            modalMessage.textContent = message;
-            modal.style.display = 'flex';
-            
-            // Store callback for when modal is closed
-            modal.dataset.callback = callback ? 'true' : 'false';
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('alertModal');
-            modal.style.display = 'none';
-            
-            // Execute callback if it exists
-            if (modal.dataset.callback === 'true') {
-                window.location.reload();
-            }
-        }
-
-        function validateFlagUrl() {
-            const url = document.getElementById('new_flag').value;
-            const validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
-            
-            const hasValidExtension = validExtensions.some(ext => 
-                url.toLowerCase().endsWith(ext)
-            );
-            
-            if (!hasValidExtension) {
-                showModal('Invalid image format. URL must end with .jpg, .jpeg, .png, or .webp');
-                return false;
-            }
-            
-            return true;
-        }
-
         <?php if (isset($flag_update_message)): ?>
-            showModal("<?php echo addslashes($flag_update_message); ?>", () => {
-                window.location.reload();
-            });
+            showToast("<?php echo addslashes($flag_update_message); ?>", 
+                "<?php echo strpos($flag_update_message, 'successfully') !== false ? 'success' : 'error'; ?>");
         <?php endif; ?>
-
-        document.getElementById('alertModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeModal();
-            }
-        });
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeModal();
-            }
-        });
     </script>
-
-    <!-- Add this right before the closing </body> tag -->
-    <div id="alertModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-message" id="modalMessage"></div>
-            <button class="modal-button" onclick="closeModal()">OK</button>
-        </div>
-    </div>
 </body>
 </html>

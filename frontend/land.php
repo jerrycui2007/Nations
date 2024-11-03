@@ -210,6 +210,85 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
         .expand-borders-card .action-button {
             margin-top: auto;
         }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            visibility: hidden;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .popup-active {
+            visibility: visible;
+        }
+
+        .popup-active .popup-content {
+            transform: scale(1);
+        }
+
+        .popup-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .popup-list {
+            margin: 15px 0;
+        }
+
+        .popup-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 1.1em;
+        }
+
+        .popup-gp {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .popup-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 1em;
+        }
+
+        .popup-button:hover {
+            background-color: #45a049;
+        }
     </style>
     
     <script>
@@ -270,6 +349,45 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
             });
         }
 
+        function showExpansionPopup(data) {
+            const overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+            
+            const content = document.createElement('div');
+            content.className = 'popup-content';
+            
+            let html = `
+                <div class="popup-title">Border Expansion Results</div>
+                <div class="popup-list">
+            `;
+            
+            for (const [landType, amount] of Object.entries(data.newLand)) {
+                if (amount > 0) {
+                    const formattedType = landType.replace(/_/g, ' ');
+                    html += `
+                        <div class="popup-item">
+                            <img src="resources/${landType}_icon.png" alt="${formattedType}" class="resource-icon">
+                            <span>${amount.toLocaleString()} ${formattedType}</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += `
+                </div>
+                <div class="popup-gp">
+                    New Greatness Points: ${data.newGP.toLocaleString()}
+                </div>
+                <button class="popup-button" onclick="location.reload()">Continue</button>
+            `;
+            
+            content.innerHTML = html;
+            overlay.appendChild(content);
+            document.body.appendChild(overlay);
+            
+            setTimeout(() => overlay.classList.add('popup-active'), 10);
+        }
+
         function expandBorders() {
             fetch('../backend/expand_borders.php', {
                 method: 'POST',
@@ -280,15 +398,7 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    let message = "You have expanded your borders and gained:\n";
-                    for (const [landType, amount] of Object.entries(data.newLand)) {
-                        if (amount > 0) {
-                            message += `${amount} ${landType.replace('_', ' ')}\n`;
-                        }
-                    }
-                    message += `\nNew Greatness Points: ${data.newGP.toLocaleString()}`;
-                    alert(message);
-                    window.location.reload();
+                    showExpansionPopup(data);
                 } else {
                     alert(data.message || 'Not enough resources to expand borders.');
                 }

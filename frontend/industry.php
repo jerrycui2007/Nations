@@ -885,6 +885,84 @@ function getResourceAmount($user_resources, $resource_key) {
             });
         }
     }
+
+    function convertLand(landType) {
+        const amount = document.getElementById(`${landType}-convert`).value;
+        if (amount <= 0) {
+            showToast("Please enter a valid amount to convert to Cleared Land.", "error");
+            return;
+        }
+
+        fetch('../backend/convert_land.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `land_type=${landType}&amount=${amount}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                showToast(data.message, "error");
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            showToast('An error occurred while processing your request.', "error");
+        });
+    }
+
+    function buildUrbanAreas() {
+        const amount = document.getElementById('urban-areas-build').value;
+        if (amount <= 0) {
+            showToast("Please enter a valid amount to build Urban Areas.", "error");
+            return;
+        }
+
+        fetch('../backend/build_urban_areas.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `amount=${amount}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                showToast(data.message || 'An error occurred while processing your request.', "error");
+                console.error('Error details:', data.error_details);
+            }
+        })
+        .catch((error) => {
+            console.error('Fetch error:', error);
+            showToast('An error occurred while processing your request.', "error");
+        });
+    }
+
+    function expandBorders() {
+        fetch('../backend/expand_borders.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showExpansionPopup(data);
+            } else {
+                showToast(data.message || 'Not enough resources to expand borders.', "error");
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            showToast('An error occurred while processing your request.', "error");
+        });
+    }
     </script>
 </body>
 </html>
