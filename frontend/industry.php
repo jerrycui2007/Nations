@@ -94,6 +94,134 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
             vertical-align: middle;
             margin-right: 4px;
         }
+        .factory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .factory-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .factory-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: left;
+        }
+
+        .factory-section {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .factory-section-title {
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .factory-value {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-align: left;
+        }
+
+        .build-button {
+            width: 100%;
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .build-button:hover {
+            background-color: #45a049;
+        }
+
+        .build-time {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .factory-collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .factory-collection-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .factory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .factory-amount {
+            background: #ff4444;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #ddd;
+            margin-bottom: 15px;
+            border-radius: 2px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .collection-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .resource-list {
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .resource-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -102,106 +230,118 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="main-content">
         <div class="content">
             <h1>Industry</h1>
-            <table>
-                <tr>
-                    <th>Factory Type</th>
-                    <th>Amount</th>
-                    <th>Production Capacity</th>
-                    <th>Input</th>
-                    <th>Output</th>
-                </tr>
+            <div class="factory-collection-grid">
                 <?php foreach ($factories as $factory_type => $amount): ?>
-                    <?php 
-                    if (strpos($factory_type, '_capacity') === false && $amount > 0): 
+                    <?php if (strpos($factory_type, '_capacity') === false && $amount > 0): 
                         $capacity_key = $factory_type . '_capacity';
                         $capacity = $factories[$capacity_key];
-                        
-                        // Get input/output from factory config
                         $factory_data = $FACTORY_CONFIG[$factory_type];
-                        $inputs = array_map(function($input) use ($amount, $capacity, $RESOURCE_CONFIG) {
-                            return [
-                                'resource' => $input['resource'],
-                                'display_name' => $RESOURCE_CONFIG[$input['resource']]['display_name'],
-                                'amount' => $input['amount'] * $amount * $capacity
-                            ];
-                        }, $factory_data['input']);
-
-                        $outputs = array_map(function($output) use ($amount, $capacity, $RESOURCE_CONFIG) {
-                            return [
-                                'resource' => $output['resource'],
-                                'display_name' => $RESOURCE_CONFIG[$output['resource']]['display_name'],
-                                'amount' => $output['amount'] * $amount * $capacity
-                            ];
-                        }, $factory_data['output']);
+                        $progress_percent = ($capacity / 24) * 100;
+                        
+                        // Calculate color gradient from red to green based on progress
+                        $hue = ($progress_percent / 100) * 120; // 0 = red, 120 = green
+                        $progress_color = "hsl({$hue}, 70%, 45%)";
                     ?>
-                        <tr>
-                            <td><?php echo $factory_data['name']; ?></td>
-                            <td><?php echo $amount; ?></td>
-                            <td>
-                                <?php 
-                                $isDisabled = $capacity == 0 ? 'disabled' : '';
-                                ?>
-                                <input type="number" id="<?php echo $factory_type; ?>-collect" 
-                                       min="1" max="<?php echo $capacity; ?>" 
-                                       style="width: 60px;" <?php echo $isDisabled; ?>>
-                                / <?php echo $capacity; ?>
-                                <button class="button smallButton" 
-                                        onclick="collectResource('<?php echo $factory_type; ?>')" 
-                                        <?php echo $isDisabled; ?>>
-                                    Collect
-                                </button>
-                            </td>
-                            <td>
-                                <?php 
-                                foreach ($inputs as $input) {
-                                    echo getResourceIcon($input['resource']) . 
-                                         " <span data-value-container='{$factory_type}-input'>" . 
-                                         formatNumber($input['amount']) . 
-                                         "</span><br>";
-                                }
-                                ?>
-                            </td>
-                            <td>
-                                <?php 
-                                foreach ($outputs as $output) {
-                                    echo getResourceIcon($output['resource']) . 
-                                         " <span data-value-container='{$factory_type}-output'>" . 
-                                         formatNumber($output['amount']) . 
-                                         "</span><br>";
-                                }
-                                ?>
-                            </td>
-                        </tr>
+                        <div class="factory-collection-card">
+                            <div class="factory-header">
+                                <div class="factory-name"><?php echo $factory_data['name']; ?></div>
+                                <div class="factory-amount"><?php echo $amount; ?></div>
+                            </div>
+
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: <?php echo $progress_percent; ?>%; background-color: <?php echo $progress_color; ?>"></div>
+                            </div>
+
+                            <input type="number" 
+                                   class="collection-input" 
+                                   id="<?php echo $factory_type; ?>-collect"
+                                   min="1" 
+                                   max="<?php echo $capacity; ?>" 
+                                   value="<?php echo $capacity; ?>"
+                                   <?php echo $capacity == 0 ? 'disabled' : ''; ?>>
+
+                            <div class="resource-list">
+                                <div class="resource-label">INPUT</div>
+                                <div class="factory-value">
+                                    <?php 
+                                    foreach ($factory_data['input'] as $index => $input): 
+                                        echo getResourceIcon($input['resource']) . " " . formatNumber($input['amount'] * $amount * $capacity);
+                                        if ($index < count($factory_data['input']) - 1) echo "  ";
+                                    endforeach; 
+                                    ?>
+                                </div>
+                            </div>
+
+                            <div class="resource-list">
+                                <div class="resource-label">OUTPUT</div>
+                                <div class="factory-value">
+                                    <?php 
+                                    foreach ($factory_data['output'] as $index => $output): 
+                                        echo getResourceIcon($output['resource']) . " " . formatNumber($output['amount'] * $amount * $capacity);
+                                        if ($index < count($factory_data['output']) - 1) echo "  ";
+                                    endforeach; 
+                                    ?>
+                                </div>
+                            </div>
+
+                            <button class="build-button" 
+                                    onclick="collectResource('<?php echo $factory_type; ?>')"
+                                    <?php echo $capacity == 0 ? 'disabled' : ''; ?>>
+                                COLLECT
+                            </button>
+                        </div>
                     <?php endif; ?>
                 <?php endforeach; ?>
-            </table>
+            </div>
             <?php
                 echo "<h2>Construct New Factories</h2>";
-                echo "<table>";
-                echo "<tr><th>Factory Name</th><th>Input</th><th>Output</th><th>Construction Costs</th><th>Land Requirements</th><th>Construction Time</th><th>Action</th></tr>";
-
+                echo "<div class='factory-grid'>";
+                
                 foreach ($FACTORY_CONFIG as $factory_type => $factory) {
-                    echo "<tr>";
-                    echo "<td>{$factory['name']}</td>";
-                    echo "<td>" . implode("<br>", array_map(function($input) use ($RESOURCE_CONFIG) {
-                        return getResourceIcon($input['resource']) . " " . number_format($input['amount']);
-                    }, $factory['input'])) . "</td>";
-                    echo "<td>" . implode("<br>", array_map(function($output) use ($RESOURCE_CONFIG) {
-                        return getResourceIcon($output['resource']) . " " . number_format($output['amount']);
-                    }, $factory['output'])) . "</td>";
-                    echo "<td>" . implode("<br>", array_map(function($cost) use ($RESOURCE_CONFIG) {
-                        return getResourceIcon($cost['resource']) . " " . number_format($cost['amount']);
-                    }, $factory['construction_cost'])) . "</td>";
-                    echo "<td>" . 
-                         getResourceIcon($factory['land']['type']) . 
-                         number_format($factory['land']['amount']) . 
-                         "</td>";
-                    echo "<td>" . formatTimeRemaining($factory['construction_time']) . "</td>";
-                    echo "<td><button class='button smallButton' onclick='buildFactory(\"{$factory_type}\")'>Build</button></td>";
-                    echo "</tr>";
+                    echo "<div class='factory-card'>";
+                    echo "<div class='factory-name'>{$factory['name']}</div>";
+                    
+                    echo "<div class='factory-section'>";
+                    echo "<div class='factory-section-title'>LAND USAGE</div>";
+                    echo "<div class='factory-value'>" . getResourceIcon($factory['land']['type']) . " {$factory['land']['amount']}</div>";
+                    echo "</div>";
+                    
+                    echo "<div class='factory-section'>";
+                    echo "<div class='factory-section-title'>COSTS</div>";
+                    echo "<div class='factory-value'>";
+                    foreach ($factory['construction_cost'] as $index => $cost) {
+                        echo getResourceIcon($cost['resource']) . " " . formatNumber($cost['amount']);
+                        if ($index < count($factory['construction_cost']) - 1) echo "  ";
+                    }
+                    echo "</div>";
+                    echo "</div>";
+                    
+                    echo "<div class='factory-section'>";
+                    echo "<div class='factory-section-title'>INPUT</div>";
+                    echo "<div class='factory-value'>";
+                    foreach ($factory['input'] as $index => $input) {
+                        echo getResourceIcon($input['resource']) . " " . formatNumber($input['amount']);
+                        if ($index < count($factory['input']) - 1) echo "  ";
+                    }
+                    echo "</div>";
+                    echo "</div>";
+                    
+                    echo "<div class='factory-section'>";
+                    echo "<div class='factory-section-title'>OUTPUT</div>";
+                    echo "<div class='factory-value'>";
+                    foreach ($factory['output'] as $index => $output) {
+                        echo getResourceIcon($output['resource']) . " " . formatNumber($output['amount']);
+                        if ($index < count($factory['output']) - 1) echo "  ";
+                    }
+                    echo "</div>";
+                    echo "</div>";
+                    
+                    echo "<button class='build-button' onclick='buildFactory(\"{$factory_type}\")'>BUILD</button>";
+                    echo "<div class='build-time'>" . formatTimeRemaining($factory['construction_time']) . "</div>";
+                    echo "</div>";
                 }
-
-                echo "</table>";
+                
+                echo "</div>";
             ?>
 
             <h2>Factories Under Construction</h2>
@@ -277,14 +417,14 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
         const inputElement = document.getElementById(`${factoryType}-collect`);
         const inputValue = parseInt(inputElement.value) || 0;
         const maxCapacity = parseInt(inputElement.max);
-        const factoryAmount = parseInt(inputElement.closest('tr').querySelector('td:nth-child(2)').textContent);
+        const factoryCard = inputElement.closest('.factory-collection-card');
+        const factoryAmount = parseInt(factoryCard.querySelector('.factory-amount').textContent);
         
         if (inputValue > maxCapacity) {
             inputElement.value = maxCapacity;
         }
 
-        const inputRow = inputElement.closest('tr');
-        const collectButton = inputRow.querySelector('button');
+        const collectButton = factoryCard.querySelector('button');
 
         // Disable input and button if capacity is zero
         if (maxCapacity === 0) {
@@ -325,21 +465,6 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
     }
 
-    // Add number formatting function
-    function formatNumber(number) {
-        if ($number < 1000) {
-            return number_format($number);
-        } elseif ($number < 1000000) {
-            return number_format($number / 1000, 1) . 'k';
-        } elseif ($number < 1000000000) {
-            return number_format($number / 1000000, 1) . 'm';
-        } elseif ($number < 1000000000000) {
-            return number_format($number / 1000000000, 1) . 'b';
-        } else {
-            return number_format($number / 1000000000000, 1) . 't';
-        }
-    }
-
     function buildFactory(factoryType) {
         fetch('../backend/build_factory.php', {
             method: 'POST',
@@ -361,6 +486,21 @@ $factories_under_construction = $stmt->fetchAll(PDO::FETCH_ASSOC);
             console.error('Error:', error);
             alert('An error occurred while processing your request. Check the console for more details.');
         });
+    }
+
+    // Add number formatting function
+    function formatNumber(number) {
+        if (number < 1000) {
+            return number.toLocaleString();
+        } else if (number < 1000000) {
+            return (number / 1000).toFixed(1) + 'k';
+        } else if (number < 1000000000) {
+            return (number / 1000000).toFixed(1) + 'm';
+        } else if (number < 1000000000000) {
+            return (number / 1000000000).toFixed(1) + 'b';
+        } else {
+            return (number / 1000000000000).toFixed(1) + 't';
+        }
     }
 
     // Add event listeners to all input fields

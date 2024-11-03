@@ -40,14 +40,18 @@ if (!$nation) {
             background-color: #f4f4f4;
         }
 
+        .main-content {
+            margin-left: 220px;
+            padding-bottom: 60px; /* Add space for footer */
+        }
+
         .header {
             background: url('resources/westberg.png') no-repeat center center;
             background-size: cover;
             padding: 150px 20px;
             color: white;
             position: relative;
-            margin-left: 200px;
-            width: calc(100% - 200px);
+            width: 100%; /* Changed from fixed width */
         }
 
         .header-content {
@@ -120,40 +124,55 @@ if (!$nation) {
             color: #FFD700;
             font-size: 0.8em;
         }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            border-top: 1px solid #dee2e6;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: calc(100% - 220px);
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
     <?php include 'sidebar.php'; ?>
     
-    <div class="header">
-        <div class="header-content">
-            <div class="header-left">
-                <img src="<?php echo htmlspecialchars($nation['flag']); ?>" alt="Nation Flag" class="nation-flag">
-                <div class="nation-name"><?php echo htmlspecialchars($nation['country_name']); ?></div>
-            </div>
-            <div class="header-right">
-                <div class="info-group">
-                    <div class="info-label">Leader</div>
-                    <div class="info-value"><?php echo htmlspecialchars($nation['leader_name']); ?></div>
+    <div class="main-content">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <img src="<?php echo htmlspecialchars($nation['flag']); ?>" alt="Nation Flag" class="nation-flag">
+                    <div class="nation-name"><?php echo htmlspecialchars($nation['country_name']); ?></div>
                 </div>
-                
-                <div class="info-group">
-                    <div class="info-label">Population</div>
-                    <div class="info-value">
-                        <img src="resources/tier.png" alt="Tier" class="tier-icon">
-                        <span class="tier-number"><?php echo $nation['tier']; ?></span>
-                        <?php echo number_format($nation['population']); ?>
+                <div class="header-right">
+                    <div class="info-group">
+                        <div class="info-label">Leader</div>
+                        <div class="info-value"><?php echo htmlspecialchars($nation['leader_name']); ?></div>
                     </div>
-                </div>
-                
-                <div class="info-group">
-                    <div class="info-label">GP</div>
-                    <div class="info-value"><?php echo number_format($nation['gp']); ?></div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">Population</div>
+                        <div class="info-value">
+                            <img src="resources/tier.png" alt="Tier" class="tier-icon">
+                            <span class="tier-number"><?php echo $nation['tier']; ?></span>
+                            <?php echo number_format($nation['population']); ?>
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">GP</div>
+                        <div class="info-value"><?php echo number_format($nation['gp']); ?></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <?php include 'footer.php'; ?>
+        <div class="footer">
+            <?php include 'footer.php'; ?>
+        </div>
+    </div>
 </body>
 </html>

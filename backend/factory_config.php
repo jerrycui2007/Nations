@@ -79,7 +79,7 @@ $FACTORY_CONFIG = [
     ],
     'silk_factory' => [
         'tier' => 1,
-        'name' => 'Silk Factory',
+        'name' => 'Fancy Uniform Factory',
         'input' => [['resource' => 'money', 'amount' => 4],
                     ['resource' => 'power', 'amount' => 12]],
         'output' => [['resource' => 'consumer_goods', 'amount' => 2]],
