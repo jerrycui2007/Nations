@@ -3,6 +3,7 @@ require_once 'helpers/resource_display.php';
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/resource_config.php';
+require_once 'toast.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -183,6 +184,36 @@ function getResourceDisplayName($resource) {
             font-weight: bold;
             color: #333;
         }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background-color: #333;
+            color: white;
+            border-radius: 4px;
+            padding: 12px 24px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .toast.error {
+            border-left: 4px solid #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -267,11 +298,11 @@ function getResourceDisplayName($resource) {
                         </td>
                         <td>
                             <?php echo getResourceIcon($trade['resource_offered']); ?> 
-                            <?php echo number_format($trade['amount_offered']); ?>
+                            <?php echo htmlspecialchars($RESOURCE_CONFIG[$trade['resource_offered']]['display_name']); ?>
                         </td>
                         <td>
-                            <?php echo getResourceIcon('money'); ?> 
-                            <?php echo number_format($trade['price_per_unit']); ?>
+                            <?php echo getResourceIcon($trade['resource_offered']); ?> 
+                            <?php echo number_format($trade['amount_offered']); ?>
                         </td>
                         <td>
                             <?php echo getResourceIcon('money'); ?> 
@@ -314,7 +345,7 @@ function getResourceDisplayName($resource) {
                     $total_value = $history['amount_offered'] * $history['price_per_unit'];
                     ?>
                     <tr style="background-color: <?php echo $is_buyer ? '#ffebee' : '#e8f5e9'; ?>">
-                        <td><?php echo date('M j, Y g:i A', strtotime($trade['date'])); ?></td>
+                        <td><?php echo date('M j, Y g:i A', strtotime($history['date_finished'])); ?></td>
                         <td><?php echo $is_buyer ? 'Purchase' : 'Sale'; ?></td>
                         <td>
                             <a href="view.php?id=<?php echo $is_buyer ? $history['seller_id'] : $history['buyer_id']; ?>" class="nation-link">
@@ -340,29 +371,47 @@ function getResourceDisplayName($resource) {
         </div>
     </div>
 
+    <div class="toast-container"></div>
+
     <script>
-    function completeTrade(tradeId, totalPrice) {
-    if (confirm(`Are you sure you want to complete this trade? Total cost: $${totalPrice.toLocaleString()}`)) {
-        fetch('../backend/complete_trade.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `trade_id=${tradeId}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            if (data.success) {
-                window.location.reload();
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while completing the trade.');
-        });
+    function showToast(message, type = 'success') {
+        const container = document.querySelector('.toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+
+        container.appendChild(toast);
+
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
     }
-}
+
+    function completeTrade(tradeId, totalPrice) {
+        if (confirm(`Are you sure you want to complete this trade? Total cost: $${totalPrice.toLocaleString()}`)) {
+            fetch('../backend/complete_trade.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `trade_id=${tradeId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                showToast(data.message, data.success ? 'success' : 'error');
+                if (data.success) {
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('An error occurred while completing the trade.', 'error');
+            });
+        }
+    }
 
     function cancelTrade(tradeId) {
         if (confirm('Are you sure you want to cancel this trade? The resources will be returned to your inventory.')) {
@@ -375,14 +424,14 @@ function getResourceDisplayName($resource) {
             })
             .then(response => response.json())
             .then(data => {
-                alert(data.message);
+                showToast(data.message, data.success ? 'success' : 'error');
                 if (data.success) {
-                    window.location.reload();
+                    setTimeout(() => window.location.reload(), 1000);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while canceling the trade.');
+                showToast('An error occurred while canceling the trade.', 'error');
             });
         }
     }
@@ -402,14 +451,14 @@ function getResourceDisplayName($resource) {
         })
         .then(response => response.json())
         .then(data => {
-            alert(data.message);
+            showToast(data.message, data.success ? 'success' : 'error');
             if (data.success) {
-                window.location.reload();
+                setTimeout(() => window.location.reload(), 1000);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while creating the trade.');
+            showToast('An error occurred while creating the trade.', 'error');
         });
     });
     </script>
