@@ -24,7 +24,7 @@ $money_cost = round(5000 * $multiplier);
 $resource_cost = round(1000 * $multiplier);
 
 // Fetch user resources
-$stmt = $pdo->prepare("SELECT money FROM commodities WHERE id = ?");
+$stmt = $pdo->prepare("SELECT money, food, building_materials, consumer_goods FROM commodities WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -494,16 +494,20 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
                 <div class="cost-section">
                     <div class="cost-label">EXPANSION COST</div>
                     <div class="cost-value">
-                        <span class="cost-item" data-base-amount="<?php echo $money_cost; ?>">
+                        <span class="cost-item" data-base-amount="<?php echo $money_cost; ?>" 
+                              style="<?php echo ($user_resources['money'] < $money_cost) ? 'color: #ff4444;' : ''; ?>">
                             <?php echo getResourceIcon('money') . formatNumber($money_cost); ?>
                         </span>
-                        <span class="cost-item" data-base-amount="<?php echo $resource_cost; ?>">
+                        <span class="cost-item" data-base-amount="<?php echo $resource_cost; ?>"
+                              style="<?php echo ($user_resources['food'] < $resource_cost) ? 'color: #ff4444;' : ''; ?>">
                             <?php echo getResourceIcon('food') . formatNumber($resource_cost); ?>
                         </span>
-                        <span class="cost-item" data-base-amount="<?php echo $resource_cost; ?>">
+                        <span class="cost-item" data-base-amount="<?php echo $resource_cost; ?>"
+                              style="<?php echo ($user_resources['building_materials'] < $resource_cost) ? 'color: #ff4444;' : ''; ?>">
                             <?php echo getResourceIcon('building_materials') . formatNumber($resource_cost); ?>
                         </span>
-                        <span class="cost-item" data-base-amount="<?php echo $resource_cost; ?>">
+                        <span class="cost-item" data-base-amount="<?php echo $resource_cost; ?>"
+                              style="<?php echo ($user_resources['consumer_goods'] < $resource_cost) ? 'color: #ff4444;' : ''; ?>">
                             <?php echo getResourceIcon('consumer_goods') . formatNumber($resource_cost); ?>
                         </span>
                     </div>

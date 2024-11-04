@@ -23,6 +23,11 @@ $stmt = $pdo->prepare("SELECT * FROM commodities WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// Fetch user's land
+$stmt = $pdo->prepare("SELECT * FROM land WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user_land = $stmt->fetch(PDO::FETCH_ASSOC);
+
 function getResourceDisplayName($resource) {
     global $RESOURCE_CONFIG;
     return isset($RESOURCE_CONFIG[$resource]['display_name']) ? $RESOURCE_CONFIG[$resource]['display_name'] : ucwords(str_replace('_', ' ', $resource));
@@ -246,8 +251,8 @@ foreach ($BUILDING_CONFIG as $building_type => $building_data) {
         echo "<div class='building-section'>";
         echo "<div class='building-section-title'>LAND REQUIRED</div>";
         $required_land = $next_level_data['land']['cleared_land'];
-        $user_land = $user_resources['cleared_land'] ?? 0;
-        $land_style = $user_land < $required_land ? 'color: #ff4444;' : '';
+        $user_land_amount = $user_land['cleared_land'] ?? 0;
+        $land_style = $user_land_amount < $required_land ? 'color: #ff4444;' : '';
         echo "<div class='building-value' style='{$land_style}'>" . getResourceIcon('cleared_land') . formatNumber($required_land) . "</div>";
         echo "</div>";
         
@@ -264,7 +269,7 @@ foreach ($BUILDING_CONFIG as $building_type => $building_data) {
                 break;
             }
         }
-        if ($user_land < $required_land) {
+        if ($user_land_amount < $required_land) {
             $can_upgrade = false;
         }
         
