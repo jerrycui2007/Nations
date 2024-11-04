@@ -18,6 +18,11 @@ $stmt = $pdo->prepare("SELECT * FROM buildings WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user_buildings = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// Fetch user's resources
+$stmt = $pdo->prepare("SELECT * FROM commodities WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
+
 function getResourceDisplayName($resource) {
     global $RESOURCE_CONFIG;
     return isset($RESOURCE_CONFIG[$resource]['display_name']) ? $RESOURCE_CONFIG[$resource]['display_name'] : ucwords(str_replace('_', ' ', $resource));
@@ -80,65 +85,223 @@ function getResourceDisplayName($resource) {
             padding: 5px 10px;
             font-size: 14px;
         }
+        .building-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .building-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .building-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: left;
+        }
+
+        .building-section {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .building-section-title {
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .building-value {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-align: left;
+        }
+
+        .upgrade-button {
+            width: 100%;
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .upgrade-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .upgrade-button:not(:disabled):hover {
+            background-color: #45a049;
+        }
+
+        .ongoing-upgrades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .upgrade-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .upgrade-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .upgrade-info {
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .factory-header {
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .factory-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .resource-list {
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .resource-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
+    <?php include 'toast.php'; ?>
     <?php include 'sidebar.php'; ?>
     
     <div class="main-content">
         <div class="content">
             <h1>Buildings</h1>
-            <?php
-            foreach ($BUILDING_CONFIG as $building_type => $building_data) {
-                $current_level = $user_buildings[$building_type] ?? 0;
-                $next_level = $current_level + 1;
-                $next_level_data = $building_data['levels'][$next_level] ?? null;
-
-                
-                
-                echo "<h2>{$building_data['name']}</h2>";
-                echo "<table>";
-                echo "<tr><th>Current Level</th><td>{$current_level}</td></tr>";
-                
-                if ($next_level_data) {
-                    echo "<tr><th>Required Tier</th><td>{$next_level_data['minimum_tier']}</td></tr>";
-                    echo "<tr><th>Upgrade Costs</th><td>";
-                    foreach ($next_level_data['construction_cost'] as $resource => $amount) {
-                        if ($resource !== 'construction_time') {
-                            $display_name = getResourceDisplayName($resource);
-                            echo getResourceIcon($resource, $display_name) . " " . formatNumber($amount) . "<br>";
-                        }
-                    }
-                    echo "</td></tr>";
-                    echo "<tr><th>Land Required</th><td>" . 
-                         getResourceIcon('cleared_land') . 
-                         formatNumber($next_level_data['land']['cleared_land']) . 
-                         "</td></tr>";
-                    echo "<tr><th>Construction Time</th><td>" . formatTimeRemaining($next_level_data['construction_cost']['construction_time']) . "</td></tr>";
-                    echo "<tr><td colspan='2' style='text-align: center;'><button class='button smallButton' onclick='upgradeBuilding(\"{$building_type}\")'>Upgrade to Level {$next_level}</button></td></tr>";
-                } else {
-                    echo "<tr><td colspan='2'>Maximum level reached</td></tr>";
-                }
-                
-                echo "</table>";
+            <div class="building-grid">
+<?php
+foreach ($BUILDING_CONFIG as $building_type => $building_data) {
+    $current_level = $user_buildings[$building_type] ?? 0;
+    $next_level = $current_level + 1;
+    $next_level_data = $building_data['levels'][$next_level] ?? null;
+    
+    echo "<div class='building-card'>";
+    echo "<div class='building-name'>{$building_data['name']}</div>";
+    
+    echo "<div class='building-section'>";
+    echo "<div class='building-section-title'>CURRENT LEVEL</div>";
+    echo "<div class='building-value'>{$current_level}</div>";
+    echo "</div>";
+    
+    if ($next_level_data) {
+        echo "<div class='building-section'>";
+        echo "<div class='building-section-title'>REQUIRED TIER</div>";
+        echo "<div class='building-value'>{$next_level_data['minimum_tier']}</div>";
+        echo "</div>";
+        
+        echo "<div class='building-section'>";
+        echo "<div class='building-section-title'>UPGRADE COSTS</div>";
+        echo "<div class='building-value'>";
+        foreach ($next_level_data['construction_cost'] as $resource => $amount) {
+            if ($resource !== 'construction_time') {
+                $display_name = getResourceDisplayName($resource);
+                $user_amount = $user_resources[$resource] ?? 0;
+                $style = $user_amount < $amount ? 'color: #ff4444;' : '';
+                echo "<div style='{$style}'>" . getResourceIcon($resource, $display_name) . " " . formatNumber($amount) . "</div>";
             }
-            echo "<h2>Ongoing Upgrades</h2>";
-            echo "<table>";
-            echo "<tr><th>Building</th><th>Upgrading to Level</th><th>Time Remaining</th></tr>";
-
-            $stmt = $pdo->prepare("SELECT * FROM building_queue WHERE id = ?");
-            $stmt->execute([$_SESSION['user_id']]);
-
-            while ($upgrade = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                echo "<tr>";
-                echo "<td>{$BUILDING_CONFIG[$upgrade['building_type']]['name']}</td>";
-                echo "<td>{$upgrade['level']}</td>";
-                echo "<td>" . formatTimeRemaining($upgrade['minutes_left']) . "</td>";
-                echo "</tr>";
+        }
+        echo "</div></div>";
+        
+        echo "<div class='building-section'>";
+        echo "<div class='building-section-title'>LAND REQUIRED</div>";
+        $required_land = $next_level_data['land']['cleared_land'];
+        $user_land = $user_resources['cleared_land'] ?? 0;
+        $land_style = $user_land < $required_land ? 'color: #ff4444;' : '';
+        echo "<div class='building-value' style='{$land_style}'>" . getResourceIcon('cleared_land') . formatNumber($required_land) . "</div>";
+        echo "</div>";
+        
+        echo "<div class='building-section'>";
+        echo "<div class='building-section-title'>CONSTRUCTION TIME</div>";
+        echo "<div class='building-value'>" . formatTimeRemaining($next_level_data['construction_cost']['construction_time']) . "</div>";
+        echo "</div>";
+        
+        // Disable button if requirements not met
+        $can_upgrade = true;
+        foreach ($next_level_data['construction_cost'] as $resource => $amount) {
+            if ($resource !== 'construction_time' && ($user_resources[$resource] ?? 0) < $amount) {
+                $can_upgrade = false;
+                break;
             }
+        }
+        if ($user_land < $required_land) {
+            $can_upgrade = false;
+        }
+        
+        $button_disabled = $can_upgrade ? '' : 'disabled';
+        echo "<button class='upgrade-button' {$button_disabled} onclick='upgradeBuilding(\"{$building_type}\")'>Upgrade to Level {$next_level}</button>";
+    } else {
+        echo "<div class='building-section'>";
+        echo "<div class='building-value'>Maximum level reached</div>";
+        echo "</div>";
+    }
+    
+    echo "</div>";
+}
+?>
+</div>
 
-            echo "</table>";
-            ?>
+            <h2>Ongoing Upgrades</h2>
+            <div class="ongoing-upgrades-grid">
+<?php
+$stmt = $pdo->prepare("SELECT * FROM building_queue WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+
+while ($upgrade = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    echo "<div class='upgrade-card'>";
+    echo "<div class='upgrade-title'>{$BUILDING_CONFIG[$upgrade['building_type']]['name']}</div>";
+    echo "<div class='upgrade-info'>Upgrading to Level {$upgrade['level']}</div>";
+    echo "<div class='upgrade-info'>" . formatTimeRemaining($upgrade['minutes_left']) . " remaining</div>";
+    echo "</div>";
+}
+
+if ($stmt->rowCount() == 0) {
+    echo "<div class='upgrade-card'>";
+    echo "<div class='upgrade-info'>No ongoing upgrades</div>";
+    echo "</div>";
+}
+?>
+</div>
 
         </div>
 
@@ -159,15 +322,16 @@ function getResourceDisplayName($resource) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.message);
+                localStorage.setItem('toastMessage', data.message);
+                localStorage.setItem('toastType', 'success');
                 window.location.reload();
             } else {
-                alert(data.message);
+                showToast(data.message || 'An error occurred while upgrading the building.', 'error');
             }
         })
         .catch((error) => {
             console.error('Error:', error);
-            alert('An error occurred while processing your request.');
+            showToast('An error occurred while processing your request.', 'error');
         });
     }
     </script>
