@@ -17,7 +17,7 @@ $building_type = $_POST['building_type'] ?? '';
 $building_resource_types = [
     'geologist_building' => 'Mined',
     'zoologist_building' => 'Fauna',
-    'herbalist_building' => 'Animal',
+    'herbalist_building' => 'Fauna',
     'marine_biologist_building' => 'Marine Animal'
 ];
 
@@ -33,6 +33,18 @@ try {
     $stmt = $pdo->prepare("SELECT $building_type FROM buildings WHERE id = ?");
     $stmt->execute([$user_id]);
     $building_level = $stmt->fetch(PDO::FETCH_ASSOC)[$building_type];
+
+    // Add after getting building level (around line 35)
+    $cost = $building_level * 1000;  // Same cost calculation as shown in resources.php
+
+    // Check if user has enough money
+    $stmt = $pdo->prepare("SELECT money FROM commodities WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user_money = $stmt->fetch(PDO::FETCH_ASSOC)['money'];
+
+    if ($user_money < $cost) {
+        throw new Exception("Not enough money to gather resources");
+    }
 
     // Get resources of matching type and tier
     $resource_type = $building_resource_types[$building_type];
@@ -50,14 +62,16 @@ try {
     // Get current hidden resources
     $resource_columns = array_keys($transferable_resources);
     $hidden_query = "SELECT `" . implode("`, `", $resource_columns) . "` FROM hidden_resources WHERE id = ?";
+    error_log("Hidden resources query: " . $hidden_query);  // Debug log
     $stmt = $pdo->prepare($hidden_query);
     $stmt->execute([$user_id]);
     $hidden_resources = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Prepare updates for both tables
     $update_parts = [];
-    $update_values = [];
-    $commodities_update = "UPDATE commodities SET ";
+    $hidden_parts = [];
+    $update_values = [$cost];  // Start with cost as first parameter
+    $commodities_update = "UPDATE commodities SET money = money - ?, ";
     $hidden_update = "UPDATE hidden_resources SET ";
 
     foreach ($resource_columns as $resource) {
@@ -74,10 +88,11 @@ try {
 
     // Update commodities
     $commodities_update .= implode(", ", $update_parts) . " WHERE id = ?";
+    $update_values[] = $user_id;  // Add user_id for WHERE clause
     $stmt = $pdo->prepare($commodities_update);
     $stmt->execute($update_values);
 
-    // Reset hidden resources
+    // Reset hidden resources (no parameters needed since we're setting to 0)
     $hidden_update .= implode(", ", $hidden_parts) . " WHERE id = ?";
     $stmt = $pdo->prepare($hidden_update);
     $stmt->execute([$user_id]);

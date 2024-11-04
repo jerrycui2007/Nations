@@ -4,6 +4,7 @@ require_once '../backend/db_connection.php';
 require_once '../backend/resource_config.php';
 require_once '../backend/building_config.php';
 require_once 'helpers/resource_display.php';
+require_once 'toast.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -68,6 +69,160 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .resource-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .resource-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .resource-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+
+        .resource-amount {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .resource-type {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+            text-align: left;
+        }
+
+        .building-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .building-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .building-header {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .building-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+
+        .building-level {
+            color: #666;
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .building-cost {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .gather-button {
+            width: 100%;
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .gather-button:hover {
+            background-color: #45a049;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 4px;
+            padding: 12px 24px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .toast.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .no-results-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+            grid-column: 1 / -1;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-left: 10px;
+            min-width: 150px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -76,12 +231,32 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
     <div class="main-content">
         <div class="content">
             <h1>Natural Resources</h1>
-            <table>
-                <tr>
-                    <th>Resource</th>
-                    <th>Amount</th>
-                    <th>Type</th>
-                </tr>
+
+<?php
+// Get unique resource types
+$resource_types = [];
+foreach ($RESOURCE_CONFIG as $resource_key => $resource_data) {
+    if (isset($resource_data['is_natural_resource']) && 
+        $resource_data['is_natural_resource'] === true && 
+        isset($resource_data['type'])) {
+        $resource_types[$resource_data['type']] = true;
+    }
+}
+$resource_types = array_keys($resource_types);
+sort($resource_types);
+?>
+
+<div style="margin-bottom: 20px; text-align: left;">
+    <label for="resource-filter">Filter by type: </label>
+    <select id="resource-filter" onchange="filterResources(this.value)">
+        <option value="">All Types</option>
+        <?php foreach ($resource_types as $type): ?>
+            <option value="<?php echo htmlspecialchars($type); ?>"><?php echo htmlspecialchars($type); ?></option>
+        <?php endforeach; ?>
+    </select>
+</div>
+
+            <div class="resource-grid">
                 <?php
                 foreach ($RESOURCE_CONFIG as $resource_key => $resource_data) {
                     if (isset($resource_data['is_natural_resource']) && 
@@ -89,24 +264,21 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
                         isset($user_resources[$resource_key]) && 
                         $user_resources[$resource_key] > 0) {
                         
-                        echo "<tr>";
-                        echo "<td>" . getResourceIcon($resource_key) . " {$resource_data['display_name']}</td>";
-                        echo "<td>" . formatNumber($user_resources[$resource_key]) . "</td>";
-                        echo "<td>" . ($resource_data['type'] ?? 'Other') . "</td>";
-                        echo "</tr>";
+                        echo "<div class='resource-card'>";
+                        echo "<div class='resource-header'>";
+                        echo "<div class='resource-name'>" . getResourceIcon($resource_key) . " {$resource_data['display_name']}</div>";
+                        echo "<div class='resource-amount'>" . formatNumber($user_resources[$resource_key]) . "</div>";
+                        echo "</div>";
+                        echo "<div class='resource-type'>Type: " . ($resource_data['type'] ?? 'Other') . "</div>";
+                        echo "<div class='resource-type'>Tier: " . ($resource_data['tier'] ?? 'N/A') . "</div>";
+                        echo "</div>";
                     }
                 }
                 ?>
-            </table>
+            </div>
 
             <h2>Research Buildings</h2>
-            <table>
-                <tr>
-                    <th>Building</th>
-                    <th>Level</th>
-                    <th>Cost</th>
-                    <th>Action</th>
-                </tr>
+            <div class="building-grid">
                 <?php
                 // Fetch building levels
                 $stmt = $pdo->prepare("SELECT * FROM buildings WHERE id = ?");
@@ -118,16 +290,26 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
                     
                     if ($current_level > 0) {
                         $cost = $current_level * 1000;
-                        echo "<tr>";
-                        echo "<td>{$building_data['name']}</td>";
-                        echo "<td>{$current_level}</td>";
-                        echo "<td>" . getResourceIcon('money') . formatNumber($cost) . "</td>";
-                        echo "<td><button class='button smallButton' onclick='gatherResources(\"{$building_type}\")'>Gather Resources</button></td>";
-                        echo "</tr>";
+                        $can_afford = ($user_resources['money'] ?? 0) >= $cost;
+                        
+                        echo "<div class='building-card'>";
+                        echo "<div class='building-header'>";
+                        echo "<div class='building-name'>{$building_data['name']}</div>";
+                        echo "<div class='building-level'>Level: {$current_level}</div>";
+                        echo "<div class='building-cost'>";
+                        echo "<span style='color: " . ($can_afford ? '#333' : '#dc3545') . "'>" . 
+                             getResourceIcon('money') . formatNumber($cost) . 
+                             "</span>";
+                        echo "</div>";
+                        echo "<td><button class='gather-button' " . 
+                             ($can_afford ? '' : 'disabled') . 
+                             " onclick='gatherResources(\"{$building_type}\")'>Gather Resources</button></td>";
+                        echo "</div>";
+                        echo "</div>";
                     }
                 }
                 ?>
-            </table>
+            </div>
 
             <script>
             function gatherResources(buildingType) {
@@ -141,16 +323,45 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert(data.message);
+                        localStorage.setItem('toastMessage', data.message);
+                        localStorage.setItem('toastType', 'success');
                         window.location.reload();
                     } else {
-                        alert(data.message);
+                        showToast(data.message, 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while gathering resources');
+                    showToast('An error occurred while gathering resources', 'error');
                 });
+            }
+
+            function filterResources(type) {
+                const resourceCards = document.querySelectorAll('.resource-card');
+                let visibleCount = 0;
+                
+                resourceCards.forEach(card => {
+                    const cardType = card.querySelector('.resource-type').textContent.replace('Type: ', '');
+                    if (!type || cardType === type) {
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Add "no results" message if needed
+                const existingMsg = document.querySelector('.no-results-message');
+                if (existingMsg) {
+                    existingMsg.remove();
+                }
+                
+                if (visibleCount === 0) {
+                    const message = document.createElement('div');
+                    message.className = 'no-results-message';
+                    message.textContent = 'No resources found for this type';
+                    document.querySelector('.resource-grid').appendChild(message);
+                }
             }
             </script>
 
