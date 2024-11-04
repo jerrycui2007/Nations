@@ -23,6 +23,11 @@ $multiplier = max(1, $user['population'] / 50000);
 $money_cost = round(5000 * $multiplier);
 $resource_cost = round(1000 * $multiplier);
 
+// Fetch user resources
+$stmt = $pdo->prepare("SELECT money FROM commodities WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
+
 // Fetch land data
 $stmt = $pdo->prepare("SELECT * FROM land WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
@@ -289,6 +294,10 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
         .popup-button:hover {
             background-color: #45a049;
         }
+
+        .cost-item {
+            transition: color 0.3s ease;
+        }
     </style>
     
     <script>
@@ -411,6 +420,58 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
                 showToast('An error occurred while processing your request.', "error");
             });
         }
+
+        function formatNumber(number) {
+            return number.toLocaleString();
+        }
+
+        function updateCosts(inputElement) {
+            const amount = parseInt(inputElement.value) || 0;
+            const type = inputElement.id.replace('-convert', '').replace('-build', '');
+            const costSpan = document.getElementById(`${type}-cost`);
+            
+            if (!costSpan) return;
+            
+            const baseCost = parseInt(costSpan.getAttribute('data-base-amount'));
+            const totalCost = baseCost * amount;
+            
+            // Get user's current money from the page
+            const userMoney = <?php echo $user_resources['money'] ?? 0; ?>;
+            
+            // Update the cost display
+            const icon = costSpan.querySelector('img').outerHTML;
+            costSpan.innerHTML = `${icon} ${formatNumber(amount > 0 ? totalCost : baseCost)}`;
+            
+            // Update color based on affordability
+            costSpan.style.color = totalCost > userMoney ? '#ff4444' : '';
+            
+            // If this is part of a card with multiple resources (like expand borders)
+            const costSection = costSpan.closest('.cost-section');
+            if (costSection) {
+                const allCosts = costSection.querySelectorAll('.cost-item');
+                allCosts.forEach(costItem => {
+                    const baseAmount = parseInt(costItem.getAttribute('data-base-amount'));
+                    const newAmount = amount > 0 ? baseAmount * amount : baseAmount;
+                    const itemIcon = costItem.querySelector('img').outerHTML;
+                    costItem.innerHTML = `${itemIcon} ${formatNumber(newAmount)}`;
+                    
+                    // Update color if it's more than user can afford
+                    if (costItem.querySelector('img').alt === 'Money') {
+                        costItem.style.color = newAmount > userMoney ? '#ff4444' : '';
+                    }
+                });
+            }
+        }
+
+        // Add event listeners to all conversion inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const convertInputs = document.querySelectorAll('.land-input');
+            convertInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    updateCosts(this);
+                });
+            });
+        });
     </script>
 </head>
 <body>
@@ -433,10 +494,18 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
                 <div class="cost-section">
                     <div class="cost-label">EXPANSION COST</div>
                     <div class="cost-value">
-                        <span class="cost-item"><?php echo getResourceIcon('money') . formatNumber($money_cost); ?></span>
-                        <span class="cost-item"><?php echo getResourceIcon('food') . formatNumber($resource_cost); ?></span>
-                        <span class="cost-item"><?php echo getResourceIcon('building_materials') . formatNumber($resource_cost); ?></span>
-                        <span class="cost-item"><?php echo getResourceIcon('consumer_goods') . formatNumber($resource_cost); ?></span>
+                        <span class="cost-item" data-base-amount="<?php echo $money_cost; ?>">
+                            <?php echo getResourceIcon('money') . formatNumber($money_cost); ?>
+                        </span>
+                        <span class="cost-item" data-base-amount="<?php echo $resource_cost; ?>">
+                            <?php echo getResourceIcon('food') . formatNumber($resource_cost); ?>
+                        </span>
+                        <span class="cost-item" data-base-amount="<?php echo $resource_cost; ?>">
+                            <?php echo getResourceIcon('building_materials') . formatNumber($resource_cost); ?>
+                        </span>
+                        <span class="cost-item" data-base-amount="<?php echo $resource_cost; ?>">
+                            <?php echo getResourceIcon('consumer_goods') . formatNumber($resource_cost); ?>
+                        </span>
                     </div>
                 </div>
                 <button onclick="expandBorders()" class="action-button">Expand Borders</button>
@@ -465,7 +534,9 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
                                     case 'jungle': $cost = 300; break;
                                     case 'desert': case 'tundra': $cost = 500; break;
                                 }
-                                echo getResourceIcon('money') . formatNumber($cost);
+                                echo "<span class='cost-item' data-base-amount='{$cost}' id='{$type}-cost'>" . 
+                                     getResourceIcon('money') . formatNumber($cost) . 
+                                     "</span>";
                                 ?>
                             </div>
                         </div>
@@ -485,7 +556,9 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
                         <div class="cost-section">
                             <div class="cost-label">BUILD COST</div>
                             <div class="cost-value">
-                                <?php echo getResourceIcon('money') . formatNumber(500); ?>
+                                <?php echo "<span class='cost-item' data-base-amount='500' id='urban-areas-cost'>" . 
+                                          getResourceIcon('money') . formatNumber(500) . 
+                                          "</span>"; ?>
                             </div>
                         </div>
                         <div class="land-action">
