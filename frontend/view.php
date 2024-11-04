@@ -12,7 +12,7 @@ if ($nation_id === 0) {
 }
 
 // Fetch nation data
-$stmt = $pdo->prepare("SELECT country_name, leader_name, population, tier, gp, flag 
+$stmt = $pdo->prepare("SELECT country_name, leader_name, population, tier, gp, flag, description 
                        FROM users 
                        WHERE id = ?");
 $stmt->execute([$nation_id]);
@@ -135,6 +135,34 @@ if (!$nation) {
             width: calc(100% - 220px);
             z-index: 1000;
         }
+
+        .description-panel {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .description-panel h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .empty-description {
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .nation-description {
+            line-height: 1.6;
+            color: #333;
+            white-space: pre-line;
+        }
     </style>
 </head>
 <body>
@@ -167,6 +195,17 @@ if (!$nation) {
                         <div class="info-value"><?php echo number_format($nation['gp']); ?></div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="panel description-panel">
+                <h2>About <?php echo htmlspecialchars($nation['country_name']); ?></h2>
+                <?php if (!isset($nation['description']) || $nation['description'] === null || trim($nation['description']) === ''): ?>
+                    <p class="empty-description">This nation has not set a description yet.</p>
+                <?php else: ?>
+                    <p class="nation-description"><?php echo nl2br(htmlspecialchars($nation['description'])); ?></p>
+                <?php endif; ?>
             </div>
         </div>
 

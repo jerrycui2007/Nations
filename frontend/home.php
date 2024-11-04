@@ -10,10 +10,13 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+$user = null; // Initialize user variable
+$error = null;
+
 try {
     // Fetch user data
     $stmt = $pdo->prepare("
-        SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, 
+        SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, u.description,
                c.food, c.power, c.consumer_goods, l.urban_areas, u.flag 
         FROM users u 
         JOIN commodities c ON u.id = c.id 
@@ -22,6 +25,10 @@ try {
     ");
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        throw new Exception("User data not found");
+    }
 
     // Calculate population growth
     $population_growth_result = calculatePopulationGrowth($user);
@@ -59,9 +66,31 @@ try {
             $flag_update_message = "Invalid URL format.";
         }
     }
+
+    // Handle description update
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_description'])) {
+        $new_description = trim($_POST['new_description']);
+        
+        $stmt = $pdo->prepare("UPDATE users SET description = ? WHERE id = ?");
+        if ($stmt->execute([$new_description, $_SESSION['user_id']])) {
+            $description_update_message = "Description updated successfully!";
+            $user['description'] = $new_description;
+        } else {
+            $description_update_message = "Error updating description.";
+        }
+    }
 } catch (PDOException $e) {
     error_log($e->getMessage());
     $error = "An error occurred while loading the page.";
+} catch (Exception $e) {
+    error_log($e->getMessage());
+    $error = "An error occurred while loading the page.";
+}
+
+// If there's an error, we should handle it appropriately
+if ($error) {
+    // You might want to redirect to an error page or display the error message
+    die($error); // This is a simple solution - you might want something more elegant
 }
 ?>
 
@@ -313,6 +342,35 @@ try {
             opacity: 1;
             transform: translateX(0);
         }
+
+        .description-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .description-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+            resize: vertical;
+            font-family: Arial, sans-serif;
+        }
+
+        .description-input:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .empty-description {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -367,6 +425,29 @@ try {
                            placeholder="Enter new flag URL (must end with .jpg, .jpeg, .png, or .webp)" 
                            required>
                     <button type="submit" class="flag-button">Update Flag</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h2>Country Description</h2>
+                <?php if (isset($description_update_message)): ?>
+                    <div class="flag-message <?php echo strpos($description_update_message, 'successfully') !== false ? 'success' : 'error'; ?>">
+                        <?php echo htmlspecialchars($description_update_message); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if (!isset($user['description']) || $user['description'] === null || trim($user['description']) === ''): ?>
+                    <p class="empty-description">No description set. Add a description to tell others about your country!</p>
+                <?php endif; ?>
+                
+                <form method="POST" action="" id="descriptionForm" class="description-form" onsubmit="return handleDescriptionSubmit(event)">
+                    <textarea 
+                        name="new_description" 
+                        id="new_description" 
+                        class="description-input" 
+                        placeholder="Enter your country's description..."
+                        rows="6"><?php echo isset($user['description']) ? htmlspecialchars($user['description']) : ''; ?></textarea>
+                    <button type="submit" class="flag-button">Update Description</button>
                 </form>
             </div>
         </div>
@@ -449,6 +530,36 @@ try {
                 }
             } catch (error) {
                 showToast('An error occurred while updating the flag.', 'error');
+            }
+            
+            return false;
+        }
+
+        async function handleDescriptionSubmit(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('descriptionForm');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                const message = doc.querySelector('.flag-message')?.textContent?.trim();
+                
+                if (message) {
+                    showToast(message, message.includes('successfully') ? 'success' : 'error');
+                    if (message.includes('successfully')) {
+                        setTimeout(() => window.location.reload(), 1000);
+                    }
+                }
+            } catch (error) {
+                showToast('An error occurred while updating the description.', 'error');
             }
             
             return false;
