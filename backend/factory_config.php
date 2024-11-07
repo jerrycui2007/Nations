@@ -51,6 +51,28 @@ $FACTORY_CONFIG = [
         'construction_time' => 30,
         'gp_value' => 1
     ],
+    'concrete_factory' => [
+        'tier' => 1,
+        'name' => 'Concrete Factory',
+        'input' => [['resource' => 'money', 'amount' => 10]],
+        'output' => [['resource' => 'building_materials', 'amount' => 1]],
+        'construction_cost' => [['resource' => 'money', 'amount' => 1000]],
+        'land' => ['type' => 'cleared_land', 'amount' => 10],
+        'construction_time' => 30,
+        'gp_value' => 1
+    ],
+    'stationery_factory' => [
+        'tier' => 1,
+        'name' => 'Stationery Factory',
+        'input' => [['resource' => 'money', 'amount' => 3],
+                    ['resource' => 'power', 'amount' => 13]],
+        'output' => [['resource' => 'consumer_goods', 'amount' => 1]],
+        'construction_cost' => [['resource' => 'money', 'amount' => 1000],
+                                ['resource' => 'building_materials', 'amount' => 250]],
+        'land' => ['type' => 'cleared_land', 'amount' => 5],
+        'construction_time' => 60,
+        'gp_value' => 1
+    ],
     'ciderworks' => [
         'tier' => 1,
         'name' => 'Ciderworks',

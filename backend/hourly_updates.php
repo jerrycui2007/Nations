@@ -75,9 +75,10 @@ function performHourlyUpdates() {
 }
 
 function updateProductionCapacity($user_id) {
-    global $pdo;
+    global $pdo, $FACTORY_CONFIG;
 
-    $factory_types = ['farm', 'windmill', 'quarry', 'sandstone_quarry', 'sawmill', 'automobile_factory'];
+    // Get all factory types from FACTORY_CONFIG
+    $factory_types = array_keys($FACTORY_CONFIG);
 
     // Fetch user's factories
     $stmt = $pdo->prepare("SELECT * FROM factories WHERE id = ?");

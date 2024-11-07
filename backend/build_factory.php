@@ -72,6 +72,8 @@ try {
     }
     $update_parts[] = "`{$land_type}` = `{$land_type}` - ?";
     $update_values[] = $land_required;
+    $update_parts[] = "cleared_land = cleared_land - ?";
+    $update_values[] = $land_required;
     $update_parts[] = "used_land = used_land + ?";
     $update_values[] = $land_required;
     

@@ -342,7 +342,6 @@ if ($error) {
             opacity: 1;
             transform: translateX(0);
         }
-
         .description-form {
             display: flex;
             flex-direction: column;
@@ -370,6 +369,72 @@ if ($error) {
             color: #666;
             font-style: italic;
             margin-bottom: 15px;
+        }
+
+        .gp-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1100;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .gp-popup h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .gp-breakdown {
+            margin: 15px 0;
+        }
+
+        .gp-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .gp-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+        }
+
+        .gp-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1050;
+        }
+
+        .gp-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #666;
+        }
+
+        .gp-close:hover {
+            color: #333;
+        }
+
+        .gp-label {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -402,8 +467,8 @@ if ($error) {
                     </div>
                     
                     <div class="info-group">
-                        <div class="info-label">GP</div>
-                        <div class="info-value"><?php echo formatNumber($user['gp']); ?></div>
+                        <div class="info-label gp-label" onclick="showGPBreakdown()">GP</div>
+                        <div class="info-value gp-label" onclick="showGPBreakdown()"><?php echo formatNumber($user['gp']); ?></div>
                     </div>
                 </div>
             </div>
@@ -569,6 +634,72 @@ if ($error) {
             showToast("<?php echo addslashes($flag_update_message); ?>", 
                 "<?php echo strpos($flag_update_message, 'successfully') !== false ? 'success' : 'error'; ?>");
         <?php endif; ?>
+
+        function showGPBreakdown() {
+            fetch('../backend/get_gp_breakdown.php')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('population-gp').textContent = formatNumber(data.population_gp);
+                    document.getElementById('land-gp').textContent = formatNumber(data.land_gp);
+                    document.getElementById('factory-gp').textContent = formatNumber(data.factory_gp);
+                    document.getElementById('building-gp').textContent = formatNumber(data.building_gp);
+                    document.getElementById('total-gp').textContent = formatNumber(data.total_gp);
+                    
+                    document.querySelector('.gp-overlay').style.display = 'block';
+                    document.querySelector('.gp-popup').style.display = 'block';
+                });
+        }
+
+        function closeGPPopup() {
+            document.querySelector('.gp-overlay').style.display = 'none';
+            document.querySelector('.gp-popup').style.display = 'none';
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat().format(num);
+        }
+
+        // Add this wrapper around the event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeButton = document.querySelector('.gp-close');
+            const overlay = document.querySelector('.gp-overlay');
+            
+            if (closeButton) {
+                closeButton.addEventListener('click', closeGPPopup);
+            }
+            
+            if (overlay) {
+                overlay.addEventListener('click', closeGPPopup);
+            }
+        });
     </script>
+    <div class="gp-overlay"></div>
+    <div class="gp-popup">
+        <span class="gp-close">&times;</span>
+        <h2>GP Breakdown</h2>
+        <div class="gp-breakdown">
+            <div class="gp-item">
+                <span>Population</span>
+                <span id="population-gp">0</span>
+            </div>
+            <div class="gp-item">
+                <span>Land</span>
+                <span id="land-gp">0</span>
+            </div>
+            <div class="gp-item">
+                <span>Factories</span>
+                <span id="factory-gp">0</span>
+            </div>
+            <div class="gp-item">
+                <span>Buildings</span>
+                <span id="building-gp">0</span>
+            </div>
+            <div class="gp-item">
+                <span>Total GP</span>
+                <span id="total-gp">0</span>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
+

@@ -421,13 +421,23 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
             });
         }
 
-        function formatNumber(number) {
-            return number.toLocaleString();
+        function formatNumberDisplay(number) {
+            if (number < 1000) {
+                return number.toLocaleString();
+            } else if (number < 1000000) {
+                return (number / 1000).toFixed(1) + 'k';
+            } else if (number < 1000000000) {
+                return (number / 1000000).toFixed(1) + 'm';
+            } else if (number < 1000000000000) {
+                return (number / 1000000000).toFixed(1) + 'b';
+            } else {
+                return (number / 1000000000000).toFixed(1) + 't';
+            }
         }
 
         function updateCosts(inputElement) {
             const amount = parseInt(inputElement.value) || 0;
-            const type = inputElement.id.replace('-convert', '').replace('-build', '');
+            const type = inputElement.id.replace('-convert', '').replace('-build', '').replace('-amount', '');
             const costSpan = document.getElementById(`${type}-cost`);
             
             if (!costSpan) return;
@@ -440,7 +450,7 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
             
             // Update the cost display
             const icon = costSpan.querySelector('img').outerHTML;
-            costSpan.innerHTML = `${icon} ${formatNumber(amount > 0 ? totalCost : baseCost)}`;
+            costSpan.innerHTML = `${icon} ${formatNumberDisplay(amount > 0 ? totalCost : baseCost)}`;
             
             // Update color based on affordability
             costSpan.style.color = totalCost > userMoney ? '#ff4444' : '';
@@ -453,7 +463,7 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
                     const baseAmount = parseInt(costItem.getAttribute('data-base-amount'));
                     const newAmount = amount > 0 ? baseAmount * amount : baseAmount;
                     const itemIcon = costItem.querySelector('img').outerHTML;
-                    costItem.innerHTML = `${itemIcon} ${formatNumber(newAmount)}`;
+                    costItem.innerHTML = `${itemIcon} ${formatNumberDisplay(newAmount)}`;
                     
                     // Update color if it's more than user can afford
                     if (costItem.querySelector('img').alt === 'Money') {
@@ -472,6 +482,36 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
                 });
             });
         });
+
+        function buyLand() {
+            const amount = document.getElementById('buy-cleared-land-amount').value;
+            if (amount <= 0) {
+                showToast("Please enter a valid amount to buy.", "error");
+                return;
+            }
+
+            fetch('../backend/buy_cleared_land.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `amount=${amount}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem('toastMessage', data.message);
+                    localStorage.setItem('toastType', 'success');
+                    window.location.reload();
+                } else {
+                    showToast(data.message, "error");
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                showToast('An error occurred while processing your request.', "error");
+            });
+        }
     </script>
 </head>
 <body>
@@ -513,6 +553,35 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
                     </div>
                 </div>
                 <button onclick="expandBorders()" class="action-button">Expand Borders</button>
+            </div>
+
+            <div class="land-card">
+                <div class="land-header">
+                    <div class="land-name">
+                        <?php echo getResourceIcon('cleared_land') . 'Buy Cleared Land'; ?>
+                    </div>
+                </div>
+                <div class="cost-section">
+                    <div class="cost-label">PURCHASE COST</div>
+                    <div class="cost-value">
+                        <span class="cost-item" data-base-amount="1000" id="buy-cleared-land-cost" 
+                              style="<?php echo ($user_resources['money'] < 1000) ? 'color: #ff4444;' : ''; ?>">
+                            <?php echo getResourceIcon('money') . formatNumber(1000); ?>
+                        </span>
+                    </div>
+                </div>
+                <div class="land-action">
+                    <input type="number" 
+                        class="land-input" 
+                        id="buy-cleared-land-amount" 
+                        min="0" 
+                        placeholder="Amount to buy"
+                        oninput="updateCosts(this)">
+                    <button class="action-button" 
+                            onclick="buyLand()">
+                        Buy Cleared Land
+                    </button>
+                </div>
             </div>
 
             <?php foreach ($land_types as $type): 

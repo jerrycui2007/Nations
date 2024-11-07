@@ -4,8 +4,8 @@ function calculateFoodConsumption($user) {
     $population = $user['population'];
     $food = $user['food'];
     
-    // Calculate food consumption (1 for every 1000 population, rounded)
-    $food_consumption = round($population / 1000);
+    // Calculate food consumption (1 for every 5000 population, rounded)
+    $food_consumption = round($population / 5000);
 
     // Ensure food doesn't go negative
     $new_food = max(0, $food - $food_consumption);

@@ -13,53 +13,50 @@ function performMinuteUpdates() {
         $stmt = $pdo->prepare("UPDATE factory_queue SET minutes_left = minutes_left - 1 WHERE minutes_left > 0");
         $stmt->execute();
 
-        // Fetch completed factories
-        $stmt = $pdo->prepare("SELECT id, factory_type, queue_position FROM factory_queue WHERE minutes_left <= 0");
+        // Decrement minutes_left for all entries in building_queue
+        $stmt = $pdo->prepare("UPDATE building_queue SET minutes_left = minutes_left - 1 WHERE minutes_left > 0");
         $stmt->execute();
+
+        // Fetch completed factories
+        $stmt_fetch = $pdo->prepare("SELECT id, factory_type, queue_position FROM factory_queue WHERE minutes_left <= 0");
+        $stmt_fetch->execute();
         
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $stmt_fetch->fetch(PDO::FETCH_ASSOC)) {
             $user_id = $row['id'];
             $factory_type = $row['factory_type'];
             $queue_position = $row['queue_position'];
 
             // Add the completed factory to the user's factories
-            $stmt = $pdo->prepare("UPDATE factories SET $factory_type = $factory_type + 1 WHERE id = ?");
-            $stmt->execute([$user_id]);
+            $stmt_update = $pdo->prepare("UPDATE factories SET $factory_type = $factory_type + 1 WHERE id = ?");
+            $stmt_update->execute([$user_id]);
 
             calculatePoints($user_id);
 
             // Delete the completed factory from the queue
-            $stmt = $pdo->prepare("DELETE FROM factory_queue WHERE id = ? AND factory_type = ? AND queue_position = ?");
-            $stmt->execute([$user_id, $factory_type, $queue_position]);
+            $stmt_delete = $pdo->prepare("DELETE FROM factory_queue WHERE id = ? AND factory_type = ? AND queue_position = ?");
+            $stmt_delete->execute([$user_id, $factory_type, $queue_position]);
 
             log_message("Completed construction of $factory_type for user $user_id (queue position: $queue_position)");
         }
 
         // Update building queue
-        $stmt = $pdo->prepare("SELECT id, building_type, level, minutes_left FROM building_queue");
+        $stmt = $pdo->prepare("SELECT id, building_type, level, minutes_left FROM building_queue WHERE minutes_left <= 0");
         $stmt->execute();
 
         while ($building_upgrade = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $user_id = $building_upgrade['id'];
             $building_type = $building_upgrade['building_type'];
             $target_level = $building_upgrade['level'];
-            $minutes_left = $building_upgrade['minutes_left'] - 1;
 
-            if ($minutes_left <= 0) {
-                // Upgrade is complete
-                $stmt = $pdo->prepare("UPDATE buildings SET $building_type = ? WHERE id = ?");
-                $stmt->execute([$target_level, $user_id]);
+            // Upgrade is complete
+            $stmt_update = $pdo->prepare("UPDATE buildings SET $building_type = ? WHERE id = ?");
+            $stmt_update->execute([$target_level, $user_id]);
 
-                // Remove from queue
-                $stmt = $pdo->prepare("DELETE FROM building_queue WHERE id = ? AND building_type = ?");
-                $stmt->execute([$user_id, $building_type]);
+            // Remove from queue
+            $stmt_delete = $pdo->prepare("DELETE FROM building_queue WHERE id = ? AND building_type = ?");
+            $stmt_delete->execute([$user_id, $building_type]);
 
-                log_message("Completed upgrade of $building_type to level $target_level for user $user_id");
-            } else {
-                // Update remaining time
-                $stmt = $pdo->prepare("UPDATE building_queue SET minutes_left = ? WHERE id = ? AND building_type = ?");
-                $stmt->execute([$minutes_left, $user_id, $building_type]);
-            }
+            log_message("Completed upgrade of $building_type to level $target_level for user $user_id");
         }
 
         $pdo->commit();
