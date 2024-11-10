@@ -46,9 +46,11 @@ try {
         $output['amount'] *= $amount * $factory_data[$factory_type];
     }
 
-    // Check if user has enough resources
+    // Check if user has enough resources (with factory multiplier)
+    $factory_multiplier = $factory_data[$factory_type];
     foreach ($inputs as $input) {
-        if ($commodities[$input['resource']] < $input['amount']) {
+        $total_required = $input['amount'] * $factory_multiplier;
+        if ($commodities[$input['resource']] < $total_required) {
             throw new Exception("Not enough {$input['resource']} to collect");
         }
     }

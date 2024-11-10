@@ -1,5 +1,5 @@
 <?php
-require_once 'db_connection.php';  // Updated path
+require_once 'db_connection.php';
 require_once 'factory_config.php';
 
 function getUserData($pdo, $user_id) {
@@ -64,11 +64,50 @@ function calculateBuildingPoints($buildings) {
     return $building_points;
 }
 
-function calculatePoints($user_id) {
+function get_gp_breakdown($user_id) {
     global $pdo, $FACTORY_CONFIG;
-
+    
     try {
-        // Get the GP breakdown instead of calculating directly
+        // Get user data
+        $user_data = getUserData($pdo, $user_id);
+        if (!$user_data) {
+            error_log("No user data found for ID: $user_id");
+            return false;
+        }
+
+        // Get factory data
+        $factory_data = getFactoryData($pdo, $user_id);
+        
+        // Get building data
+        $building_data = getBuildingData($pdo, $user_id);
+
+        // Calculate components
+        $population_gp = calculatePopulationPoints($user_data['population']);
+        $land_gp = calculateLandPoints($user_data['total_land']);
+        $factory_gp = calculateFactoryPoints($factory_data, $FACTORY_CONFIG);
+        $building_gp = calculateBuildingPoints($building_data);
+        
+        // Calculate total
+        $total_gp = $population_gp + $land_gp + $factory_gp + $building_gp;
+
+        return [
+            'population_gp' => $population_gp,
+            'land_gp' => $land_gp,
+            'factory_gp' => $factory_gp,
+            'building_gp' => $building_gp,
+            'total_gp' => $total_gp
+        ];
+
+    } catch (Exception $e) {
+        error_log("Error in get_gp_breakdown: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
+        return false;
+    }
+}
+
+function calculatePoints($user_id) {
+    global $pdo;
+    try {
         $gp_breakdown = get_gp_breakdown($user_id);
         if (!$gp_breakdown) {
             error_log("No GP breakdown found for ID: $user_id");

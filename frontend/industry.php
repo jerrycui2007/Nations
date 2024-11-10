@@ -538,13 +538,21 @@ function getResourceAmount($user_resources, $resource_key) {
                     echo "<div class='factory-card'>";
                     echo "<div class='factory-name'>{$factory['name']}</div>";
                     
+                    // Add input field for amount
+                    echo "<input type='number' 
+                               class='collection-input' 
+                               id='{$factory_type}-build-amount' 
+                               min='1' 
+                               value='1' 
+                               oninput='updateConstructionCosts(\"{$factory_type}\")'>";
+
                     echo "<div class='factory-section'>";
                     echo "<div class='factory-section-title'>LAND USAGE</div>";
                     echo "<div class='factory-value'>";
                     $current_land = getResourceAmount($user_resources, $factory['land']['type']);
                     $has_enough_land = $current_land >= $factory['land']['amount'];
                     $style = $has_enough_land ? '' : 'color: #dc3545;';
-                    echo '<span style="' . $style . '">' . 
+                    echo '<span style="' . $style . '" data-base-amount="' . $factory['land']['amount'] . '">' . 
                          getResourceIcon($factory['land']['type']) . " " . 
                          formatNumber($factory['land']['amount']) . 
                          '</span>';
@@ -558,7 +566,7 @@ function getResourceAmount($user_resources, $resource_key) {
                         $current_amount = getResourceAmount($user_resources, $cost['resource']);
                         $has_enough = $current_amount >= $cost['amount'];
                         $style = $has_enough ? '' : 'color: #dc3545;';
-                        echo '<span style="' . $style . '">' . 
+                        echo '<span style="' . $style . '" data-base-amount="' . $cost['amount'] . '">' . 
                              getResourceIcon($cost['resource']) . " " . 
                              formatNumber($cost['amount']) . 
                              '</span>';
@@ -710,12 +718,15 @@ function getResourceAmount($user_resources, $resource_key) {
 
     // Update the buildFactory function similarly
     function buildFactory(factoryType) {
+        const inputElement = document.getElementById(`${factoryType}-build-amount`);
+        const amount = parseInt(inputElement.value) || 1;
+
         fetch('../backend/build_factory.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `factory_type=${factoryType}`
+            body: `factory_type=${factoryType}&amount=${amount}`
         })
         .then(response => response.json())
         .then(data => {
@@ -962,6 +973,37 @@ function getResourceAmount($user_resources, $resource_key) {
             console.error('Error:', error);
             showToast('An error occurred while processing your request.', "error");
         });
+    }
+
+    // Add this new function
+    function updateConstructionCosts(factoryType) {
+        const inputElement = document.getElementById(`${factoryType}-build-amount`);
+        const amount = parseInt(inputElement.value) || 0;
+        
+        // Get the factory's card
+        const card = inputElement.closest('.factory-card');
+        
+        // Update land usage
+        const landSection = card.querySelector('.factory-section:nth-child(3)');
+        if (landSection) {
+            const landSpan = landSection.querySelector('.factory-value span');
+            const baseAmount = parseInt(landSpan.getAttribute('data-base-amount'));
+            const newAmount = baseAmount * amount;
+            const icon = landSpan.querySelector('img').outerHTML;
+            landSpan.innerHTML = `${icon} ${formatNumberDisplay(newAmount)}`;
+        }
+        
+        // Update construction costs
+        const costSection = card.querySelector('.factory-section:nth-child(4)');
+        if (costSection) {
+            const costSpans = costSection.querySelectorAll('.factory-value span');
+            costSpans.forEach(span => {
+                const baseAmount = parseInt(span.getAttribute('data-base-amount'));
+                const newAmount = baseAmount * amount;
+                const icon = span.querySelector('img').outerHTML;
+                span.innerHTML = `${icon} ${formatNumberDisplay(newAmount)}`;
+            });
+        }
     }
     </script>
 </body>

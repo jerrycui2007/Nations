@@ -87,10 +87,8 @@ try {
     $error = "An error occurred while loading the page.";
 }
 
-// If there's an error, we should handle it appropriately
 if ($error) {
-    // You might want to redirect to an error page or display the error message
-    die($error); // This is a simple solution - you might want something more elegant
+    die($error); 
 }
 ?>
 
@@ -636,17 +634,44 @@ if ($error) {
         <?php endif; ?>
 
         function showGPBreakdown() {
+            // Show loading state
+            document.getElementById('population-gp').textContent = 'Loading...';
+            document.getElementById('land-gp').textContent = 'Loading...';
+            document.getElementById('factory-gp').textContent = 'Loading...';
+            document.getElementById('building-gp').textContent = 'Loading...';
+            document.getElementById('total-gp').textContent = 'Loading...';
+            
+            document.querySelector('.gp-overlay').style.display = 'block';
+            document.querySelector('.gp-popup').style.display = 'block';
+
             fetch('../backend/get_gp_breakdown.php')
-                .then(response => response.json())
+                .then(response => response.text())
+                .then(text => {
+                    console.log('Raw response:', text);
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error('JSON Parse Error:', e);
+                        throw new Error('Invalid JSON response: ' + text);
+                    }
+                })
                 .then(data => {
+                    console.log('Parsed data:', data);  // Debug log
+                    
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
                     document.getElementById('population-gp').textContent = formatNumber(data.population_gp);
                     document.getElementById('land-gp').textContent = formatNumber(data.land_gp);
                     document.getElementById('factory-gp').textContent = formatNumber(data.factory_gp);
                     document.getElementById('building-gp').textContent = formatNumber(data.building_gp);
                     document.getElementById('total-gp').textContent = formatNumber(data.total_gp);
-                    
-                    document.querySelector('.gp-overlay').style.display = 'block';
-                    document.querySelector('.gp-popup').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                    showToast(error.message || 'An error occurred while fetching GP breakdown', 'error');
+                    closeGPPopup();
                 });
         }
 
