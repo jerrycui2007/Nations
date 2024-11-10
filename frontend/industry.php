@@ -552,7 +552,9 @@ function getResourceAmount($user_resources, $resource_key) {
                     $current_land = getResourceAmount($user_resources, $factory['land']['type']);
                     $has_enough_land = $current_land >= $factory['land']['amount'];
                     $style = $has_enough_land ? '' : 'color: #dc3545;';
-                    echo '<span style="' . $style . '" data-base-amount="' . $factory['land']['amount'] . '">' . 
+                    echo '<span style="' . $style . '" ' . 
+                         'data-base-amount="' . $factory['land']['amount'] . '" ' .
+                         'data-current-amount="' . $current_land . '">' . 
                          getResourceIcon($factory['land']['type']) . " " . 
                          formatNumber($factory['land']['amount']) . 
                          '</span>';
@@ -566,7 +568,9 @@ function getResourceAmount($user_resources, $resource_key) {
                         $current_amount = getResourceAmount($user_resources, $cost['resource']);
                         $has_enough = $current_amount >= $cost['amount'];
                         $style = $has_enough ? '' : 'color: #dc3545;';
-                        echo '<span style="' . $style . '" data-base-amount="' . $cost['amount'] . '">' . 
+                        echo '<span style="' . $style . '" ' . 
+                             'data-base-amount="' . $cost['amount'] . '" ' .
+                             'data-current-amount="' . $current_amount . '">' . 
                              getResourceIcon($cost['resource']) . " " . 
                              formatNumber($cost['amount']) . 
                              '</span>';
@@ -976,34 +980,46 @@ function getResourceAmount($user_resources, $resource_key) {
     }
 
     // Add this new function
+    function formatNumberDisplay(number) {
+        if (number < 1000) {
+            return number.toLocaleString();
+        } else if (number < 1000000) {
+            return (number / 1000).toFixed(1) + 'k';
+        } else if (number < 1000000000) {
+            return (number / 1000000).toFixed(1) + 'm';
+        } else if (number < 1000000000000) {
+            return (number / 1000000000).toFixed(1) + 'b';
+        } else {
+            return (number / 1000000000000).toFixed(1) + 't';
+        }
+    }
+
     function updateConstructionCosts(factoryType) {
         const inputElement = document.getElementById(`${factoryType}-build-amount`);
-        const amount = parseInt(inputElement.value) || 0;
-        
-        // Get the factory's card
-        const card = inputElement.closest('.factory-card');
+        const amount = parseInt(inputElement.value) || 1;
         
         // Update land usage
+        const card = inputElement.closest('.factory-card');
         const landSection = card.querySelector('.factory-section:nth-child(3)');
-        if (landSection) {
-            const landSpan = landSection.querySelector('.factory-value span');
-            const baseAmount = parseInt(landSpan.getAttribute('data-base-amount'));
-            const newAmount = baseAmount * amount;
-            const icon = landSpan.querySelector('img').outerHTML;
-            landSpan.innerHTML = `${icon} ${formatNumberDisplay(newAmount)}`;
-        }
+        const landSpan = landSection.querySelector('.factory-value span');
+        const landBaseAmount = parseInt(landSpan.getAttribute('data-base-amount'));
+        const landCurrentAmount = parseInt(landSpan.getAttribute('data-current-amount'));
+        const newLandAmount = landBaseAmount * amount;
+        const icon = landSpan.querySelector('img').outerHTML;
+        landSpan.innerHTML = `${icon} ${formatNumberDisplay(newLandAmount)}`;
+        landSpan.style.color = landCurrentAmount >= newLandAmount ? '' : '#dc3545';
         
-        // Update construction costs
+        // Update costs
         const costSection = card.querySelector('.factory-section:nth-child(4)');
-        if (costSection) {
-            const costSpans = costSection.querySelectorAll('.factory-value span');
-            costSpans.forEach(span => {
-                const baseAmount = parseInt(span.getAttribute('data-base-amount'));
-                const newAmount = baseAmount * amount;
-                const icon = span.querySelector('img').outerHTML;
-                span.innerHTML = `${icon} ${formatNumberDisplay(newAmount)}`;
-            });
-        }
+        const costSpans = costSection.querySelectorAll('.factory-value span');
+        costSpans.forEach(span => {
+            const baseAmount = parseInt(span.getAttribute('data-base-amount'));
+            const currentAmount = parseInt(span.getAttribute('data-current-amount'));
+            const newAmount = baseAmount * amount;
+            const icon = span.querySelector('img').outerHTML;
+            span.innerHTML = `${icon} ${formatNumberDisplay(newAmount)}`;
+            span.style.color = currentAmount >= newAmount ? '' : '#dc3545';
+        });
     }
     </script>
 </body>
