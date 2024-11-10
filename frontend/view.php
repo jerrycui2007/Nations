@@ -163,6 +163,59 @@ if (!$nation) {
             color: #333;
             white-space: pre-line;
         }
+
+        .gp-label {
+            cursor: pointer;
+        }
+
+        .gp-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+        }
+
+        .gp-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 1002;
+            min-width: 300px;
+        }
+
+        .gp-close {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .gp-breakdown {
+            margin-top: 20px;
+        }
+
+        .gp-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .gp-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -191,8 +244,8 @@ if (!$nation) {
                     </div>
                     
                     <div class="info-group">
-                        <div class="info-label">GP</div>
-                        <div class="info-value"><?php echo number_format($nation['gp']); ?></div>
+                        <div class="info-label gp-label" onclick="showGPBreakdown()">GP</div>
+                        <div class="info-value gp-label" onclick="showGPBreakdown()"><?php echo number_format($nation['gp']); ?></div>
                     </div>
                 </div>
             </div>
@@ -213,5 +266,91 @@ if (!$nation) {
             <?php include 'footer.php'; ?>
         </div>
     </div>
+
+    <div class="gp-overlay"></div>
+    <div class="gp-popup">
+        <span class="gp-close">&times;</span>
+        <h2>GP Breakdown</h2>
+        <div class="gp-breakdown">
+            <div class="gp-item">
+                <span>Population</span>
+                <span id="population-gp">0</span>
+            </div>
+            <div class="gp-item">
+                <span>Land</span>
+                <span id="land-gp">0</span>
+            </div>
+            <div class="gp-item">
+                <span>Factories</span>
+                <span id="factory-gp">0</span>
+            </div>
+            <div class="gp-item">
+                <span>Buildings</span>
+                <span id="building-gp">0</span>
+            </div>
+            <div class="gp-item">
+                <span>Total GP</span>
+                <span id="total-gp">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            return new Intl.NumberFormat().format(num);
+        }
+
+        function showGPBreakdown() {
+            document.querySelector('.gp-overlay').style.display = 'block';
+            document.querySelector('.gp-popup').style.display = 'block';
+            
+            // Show loading state
+            const elements = ['population-gp', 'land-gp', 'factory-gp', 'building-gp', 'total-gp'];
+            elements.forEach(id => document.getElementById(id).textContent = 'Loading...');
+            
+            // Fetch GP breakdown
+            fetch('../backend/get_nation_gp_breakdown.php?id=<?php echo $nation_id; ?>')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // Update values
+                    document.getElementById('population-gp').textContent = formatNumber(data.population_gp);
+                    document.getElementById('land-gp').textContent = formatNumber(data.land_gp);
+                    document.getElementById('factory-gp').textContent = formatNumber(data.factory_gp);
+                    document.getElementById('building-gp').textContent = formatNumber(data.building_gp);
+                    document.getElementById('total-gp').textContent = formatNumber(data.total_gp);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error fetching GP breakdown');
+                });
+        }
+
+        function closeGPPopup() {
+            document.querySelector('.gp-overlay').style.display = 'none';
+            document.querySelector('.gp-popup').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeButton = document.querySelector('.gp-close');
+            const overlay = document.querySelector('.gp-overlay');
+            
+            if (closeButton) {
+                closeButton.addEventListener('click', closeGPPopup);
+            }
+            
+            if (overlay) {
+                overlay.addEventListener('click', closeGPPopup);
+            }
+        });
+    </script>
 </body>
 </html>
