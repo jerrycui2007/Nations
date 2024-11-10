@@ -1,8 +1,8 @@
 <?php
 session_start();
 require_once '../backend/db_connection.php';
-require_once '../backend/calculate_points.php';
 require_once '../backend/calculate_population_growth.php';
+require_once '../backend/gp_functions.php';
 require_once 'helpers/resource_display.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -634,34 +634,27 @@ if ($error) {
         <?php endif; ?>
 
         function showGPBreakdown() {
-            // Show loading state
-            document.getElementById('population-gp').textContent = 'Loading...';
-            document.getElementById('land-gp').textContent = 'Loading...';
-            document.getElementById('factory-gp').textContent = 'Loading...';
-            document.getElementById('building-gp').textContent = 'Loading...';
-            document.getElementById('total-gp').textContent = 'Loading...';
-            
             document.querySelector('.gp-overlay').style.display = 'block';
             document.querySelector('.gp-popup').style.display = 'block';
-
+            
+            // Show loading state
+            const elements = ['population-gp', 'land-gp', 'factory-gp', 'building-gp', 'total-gp'];
+            elements.forEach(id => document.getElementById(id).textContent = 'Loading...');
+            
+            // Fetch GP breakdown
             fetch('../backend/get_gp_breakdown.php')
-                .then(response => response.text())
-                .then(text => {
-                    console.log('Raw response:', text);
-                    try {
-                        return JSON.parse(text);
-                    } catch (e) {
-                        console.error('JSON Parse Error:', e);
-                        throw new Error('Invalid JSON response: ' + text);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
                     }
+                    return response.json();
                 })
                 .then(data => {
-                    console.log('Parsed data:', data);  // Debug log
-                    
                     if (data.error) {
                         throw new Error(data.error);
                     }
                     
+                    // Update values
                     document.getElementById('population-gp').textContent = formatNumber(data.population_gp);
                     document.getElementById('land-gp').textContent = formatNumber(data.land_gp);
                     document.getElementById('factory-gp').textContent = formatNumber(data.factory_gp);
@@ -669,7 +662,7 @@ if ($error) {
                     document.getElementById('total-gp').textContent = formatNumber(data.total_gp);
                 })
                 .catch(error => {
-                    console.error('Fetch Error:', error);
+                    console.error('GP Breakdown Error:', error);
                     showToast(error.message || 'An error occurred while fetching GP breakdown', 'error');
                     closeGPPopup();
                 });

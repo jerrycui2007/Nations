@@ -30,7 +30,7 @@ function performMinuteUpdates() {
             $stmt_update = $pdo->prepare("UPDATE factories SET $factory_type = $factory_type + 1 WHERE id = ?");
             $stmt_update->execute([$user_id]);
 
-            calculatePoints($user_id);
+            calculateTotalGP($pdo, $user_id)['total_gp'];
 
             // Delete the completed factory from the queue
             $stmt_delete = $pdo->prepare("DELETE FROM factory_queue WHERE id = ? AND factory_type = ? AND queue_position = ?");

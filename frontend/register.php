@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../backend/db_connection.php';
-require_once '../backend/calculate_points.php';
+require_once '../backend/gp_functions.php';
 
 // Initialize variables
 $country_name = $leader_name = $email = $password = "";
@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt->execute([$user_id]);
 
                     // Calculate GP using the calculatePoints function
-                    $initial_gp = calculatePoints($user_id);
+                    $initial_gp = calculateTotalGP($pdo, $user_id)['total_gp'];
 
                     // Insert into buildings table
                     $stmt = $pdo->prepare("INSERT INTO buildings (id) VALUES (?)");

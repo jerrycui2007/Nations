@@ -3,7 +3,7 @@ global $pdo;
 session_start();
 require_once 'db_connection.php';
 require_once 'resource_config.php';
-require_once 'calculate_points.php';
+require_once 'gp_functions.php';
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'User not logged in']);
@@ -128,7 +128,7 @@ try {
     $stmt->execute($update_values);
 
     // Recalculate GP after expansion
-    $new_gp = calculatePoints($user_id);
+    $new_gp = calculateTotalGP($pdo, $user_id)['total_gp'];
     
     // Update user's GP
     $stmt = $pdo->prepare("UPDATE users SET gp = ? WHERE id = ?");

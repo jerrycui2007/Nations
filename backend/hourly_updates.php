@@ -5,8 +5,8 @@ require_once 'calculate_food_consumption.php';
 require_once 'calculate_power_consumption.php';
 require_once 'calculate_consumer_goods_consumption.php';
 require_once 'calculate_population_growth.php';
-require_once 'calculate_points.php';
 require_once 'calculate_tier.php';
+require_once 'gp_functions.php';
 
 function performHourlyUpdates() {
     global $pdo;
@@ -29,7 +29,6 @@ function performHourlyUpdates() {
             
             // Calculate income
             $income_result = calculateIncome($user);
-
             if ($income_result['success']) {
                 $update_stmt = $pdo->prepare("UPDATE commodities SET money = ? WHERE id = ?");
                 $update_stmt->execute([$income_result['new_money'], $user_id]);
@@ -56,18 +55,24 @@ function performHourlyUpdates() {
             $update_stmt->execute([$population_growth_result['new_population'], $user_id]);
 
             // Calculate and update user's tier
-            $new_tier = calculateTier($new_population);
+            $new_tier = calculateTier($population_growth_result['new_population']);
             $update_stmt = $pdo->prepare("UPDATE users SET tier = ? WHERE id = ?");
             $update_stmt->execute([$new_tier, $user_id]);
 
-            // New function to update production capacity
+            // Update production capacity
             updateProductionCapacity($user_id);
 
-            // Recalculate and update user's points
-            calculatePoints($user_id);
+            // Calculate and update GP
+            try {
+                $gp_data = calculateTotalGP($pdo, $user_id);
+                log_message("Updated GP for user $user_id: " . json_encode($gp_data));
+            } catch (Exception $e) {
+                log_message("Error calculating GP for user $user_id: " . $e->getMessage());
+            }
         }
 
         $pdo->commit();
+        log_message("Hourly updates completed successfully");
     } catch (Exception $e) {
         $pdo->rollBack();
         log_message("Error during hourly updates: " . $e->getMessage());
@@ -102,7 +107,6 @@ function updateProductionCapacity($user_id) {
         $update_sql = "UPDATE production_capacity SET " . implode(", ", $update_parts) . " WHERE id = ?";
         $stmt = $pdo->prepare($update_sql);
         $stmt->execute([$user_id]);
-
         log_message("Updated production capacity for user $user_id");
     }
 }

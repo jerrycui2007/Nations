@@ -2,7 +2,6 @@
 global $pdo;
 session_start();
 require_once '../backend/db_connection.php';
-require_once '../backend/calculate_points.php';
 require_once 'helpers/resource_display.php';
 
 // Check if user is logged in
