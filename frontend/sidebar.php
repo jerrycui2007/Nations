@@ -14,7 +14,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <li><a href="leaderboard.php" <?php echo ($current_page == 'leaderboard.php') ? 'class="active"' : ''; ?>>Leaderboard</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
-        <div class="version-info">v0.2.3-beta</div>
+        <div class="version-info">v0.2.4-beta</div>
     </nav>
     
 </div>
