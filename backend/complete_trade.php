@@ -1,26 +1,23 @@
 <?php
 session_start();
 require_once 'db_connection.php';
+require_once 'resource_config.php';
+
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'User not logged in']);
+    echo json_encode(['success' => false, 'message' => 'Not logged in']);
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
-$trade_id = intval($_POST['trade_id'] ?? 0);
-
-if ($trade_id <= 0) {
-    echo json_encode(['success' => false, 'message' => 'Invalid trade ID']);
-    exit();
-}
+$trade_id = $_POST['trade_id'] ?? 0;
+$purchase_amount = intval($_POST['amount'] ?? 0);
 
 try {
-    // Start transaction
     $pdo->beginTransaction();
 
-    // Fetch trade details
-    $stmt = $pdo->prepare("SELECT * FROM trades WHERE trade_id = ?");
+    // Fetch trade details with lock
+    $stmt = $pdo->prepare("SELECT * FROM trades WHERE trade_id = ? FOR UPDATE");
     $stmt->execute([$trade_id]);
     $trade = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -28,61 +25,51 @@ try {
         throw new Exception("Trade not found");
     }
 
-    if ($trade['seller_id'] == $user_id) {
-        throw new Exception("You cannot purchase your own trade");
+    if ($purchase_amount <= 0 || $purchase_amount > $trade['amount_offered']) {
+        throw new Exception("Invalid purchase amount");
     }
 
-    // Calculate total cost
-    $total_cost = $trade['amount_offered'] * $trade['price_per_unit'];
+    $total_cost = $purchase_amount * $trade['price_per_unit'];
+    
+    // Check buyer's money
+    $stmt = $pdo->prepare("SELECT money FROM commodities WHERE id = ? FOR UPDATE");
+    $stmt->execute([$_SESSION['user_id']]);
+    $buyer_resources = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Check if buyer has enough money
-    $stmt = $pdo->prepare("SELECT money FROM commodities WHERE id = ?");
-    $stmt->execute([$user_id]);
-    $buyer_money = $stmt->fetch(PDO::FETCH_ASSOC)['money'];
-
-    if ($buyer_money < $total_cost) {
-        throw new Exception("You don't have enough money to complete this trade");
+    if ($buyer_resources['money'] < $total_cost) {
+        throw new Exception("Not enough money");
     }
 
-    // Transfer money from buyer to seller
-    $stmt = $pdo->prepare("UPDATE commodities SET money = money - ? WHERE id = ?");
-    $stmt->execute([$total_cost, $user_id]);
+    // Process the trade
+    // Update buyer's resources
+    $stmt = $pdo->prepare("UPDATE commodities SET 
+        money = money - ?,
+        {$trade['resource_offered']} = {$trade['resource_offered']} + ?
+        WHERE id = ?");
+    $stmt->execute([$total_cost, $purchase_amount, $_SESSION['user_id']]);
 
+    // Update seller's resources
     $stmt = $pdo->prepare("UPDATE commodities SET money = money + ? WHERE id = ?");
     $stmt->execute([$total_cost, $trade['seller_id']]);
 
-    // Transfer resources from trade to buyer
-    $stmt = $pdo->prepare("UPDATE commodities 
-                          SET `{$trade['resource_offered']}` = `{$trade['resource_offered']}` + ? 
-                          WHERE id = ?");
-    $stmt->execute([$trade['amount_offered'], $user_id]);
+    // Update or remove trade listing
+    if ($purchase_amount == $trade['amount_offered']) {
+        $stmt = $pdo->prepare("DELETE FROM trades WHERE trade_id = ?");
+        $stmt->execute([$trade_id]);
+    } else {
+        $stmt = $pdo->prepare("UPDATE trades SET amount_offered = amount_offered - ? WHERE trade_id = ?");
+        $stmt->execute([$purchase_amount, $trade_id]);
+    }
 
-    // Record in trade history
-    $stmt = $pdo->prepare("INSERT INTO trade_history 
-                          (trade_id, buyer_id, seller_id, resource_offered, amount_offered, price_per_unit, date_finished) 
-                          VALUES (?, ?, ?, ?, ?, ?, NOW())");
-    $stmt->execute([
-        $trade_id,
-        $user_id,
-        $trade['seller_id'],
-        $trade['resource_offered'],
-        $trade['amount_offered'],
-        $trade['price_per_unit']
-    ]);
-
-    // Delete the completed trade
-    $stmt = $pdo->prepare("DELETE FROM trades WHERE trade_id = ?");
-    $stmt->execute([$trade_id]);
+    // Add to trade history
+    $stmt = $pdo->prepare("INSERT INTO trade_history (buyer_id, seller_id, resource_offered, amount_offered, price_per_unit, date_finished)
+        VALUES (?, ?, ?, ?, ?, NOW())");
+    $stmt->execute([$_SESSION['user_id'], $trade['seller_id'], $trade['resource_offered'], $purchase_amount, $trade['price_per_unit']]);
 
     $pdo->commit();
-    echo json_encode([
-        'success' => true, 
-        'message' => 'Trade completed successfully'
-    ]);
+    echo json_encode(['success' => true, 'message' => 'Trade completed successfully']);
+
 } catch (Exception $e) {
     $pdo->rollBack();
-    echo json_encode([
-        'success' => false, 
-        'message' => $e->getMessage()
-    ]);
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }

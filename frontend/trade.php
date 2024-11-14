@@ -15,7 +15,8 @@ try {
     
     // Fetch active trades
     $query = "SELECT t.trade_id, t.seller_id, t.resource_offered, t.amount_offered, 
-                     t.price_per_unit, t.date, u.country_name as seller_name
+                     t.price_per_unit, t.date, u.country_name as seller_name,
+                     u.leader_name as leader_name
               FROM trades t
               JOIN users u ON t.seller_id = u.id";
     
@@ -48,12 +49,23 @@ try {
     $error = "An error occurred while loading trades.";
 }
 
+try {
+    // Fetch user's resources
+    $stmt = $pdo->prepare("SELECT * FROM commodities WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    $error = "An error occurred while loading resources.";
+}
+
 function getResourceDisplayName($resource) {
     global $RESOURCE_CONFIG;
     return isset($RESOURCE_CONFIG[$resource]['display_name']) ? 
            $RESOURCE_CONFIG[$resource]['display_name'] : 
            ucwords(str_replace('_', ' ', $resource));
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -214,6 +226,35 @@ function getResourceDisplayName($resource) {
         .toast.error {
             border-left: 4px solid #dc3545;
         }
+
+        .trade-amount-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: right;
+            display: inline-block;
+            margin: 0;
+            background-color: white;
+            box-sizing: border-box;
+        }
+
+        .total-price {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .trade-amount-input::-webkit-inner-spin-button,
+        .trade-amount-input::-webkit-outer-spin-button {
+            opacity: 1;
+        }
+
+        td {
+            min-width: 100px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -281,11 +322,11 @@ function getResourceDisplayName($resource) {
             <table>
                 <tr>
                     <th>Seller</th>
-                    <th>Resource</th>
-                    <th>Amount</th>
-                    <th>Price per Unit</th>
-                    <th>Total Price</th>
+                    <th>Resource & Amount</th>
+                    <th>Price Per Unit</th>
                     <th>Date Listed</th>
+                    <th>Purchase Amount</th>
+                    <th>Total Price</th>
                     <th>Action</th>
                 </tr>
                 <?php foreach ($trades as $trade): ?>
@@ -293,29 +334,49 @@ function getResourceDisplayName($resource) {
                     <tr>
                         <td>
                             <a href="view.php?id=<?php echo htmlspecialchars($trade['seller_id']); ?>" class="nation-link">
-                                <?php echo htmlspecialchars($trade['seller_name']); ?>
+                                <?php echo htmlspecialchars($trade['seller_name']); ?><br>
+                                <small><?php echo htmlspecialchars($trade['leader_name']); ?></small>
                             </a>
                         </td>
                         <td>
                             <?php echo getResourceIcon($trade['resource_offered']); ?> 
+                            <?php echo number_format($trade['amount_offered']); ?>
                             <?php echo htmlspecialchars($RESOURCE_CONFIG[$trade['resource_offered']]['display_name']); ?>
                         </td>
                         <td>
-                            <?php echo getResourceIcon($trade['resource_offered']); ?> 
-                            <?php echo number_format($trade['amount_offered']); ?>
-                        </td>
-                        <td>
                             <?php echo getResourceIcon('money'); ?> 
-                            <?php echo number_format($trade['price_per_unit']); ?>
-                        </td>
-                        <td>
-                            <?php echo getResourceIcon('money'); ?> 
-                            <?php echo number_format($total_price); ?>
+                            <?php echo number_format($trade['price_per_unit']); ?><br>
                         </td>
                         <td><?php echo date('M j, Y g:i A', strtotime($trade['date'])); ?></td>
                         <td>
                             <?php if ($trade['seller_id'] != $_SESSION['user_id']): ?>
-                                <button class="trade-button" onclick="completeTrade(<?php echo $trade['trade_id']; ?>, <?php echo $total_price; ?>)">
+                                <input type="number" 
+                                       class="trade-amount-input" 
+                                       id="amount_<?php echo $trade['trade_id']; ?>"
+                                       min="1" 
+                                       max="<?php echo $trade['amount_offered']; ?>"
+                                       value="1"
+                                       oninput="updateTotalPrice(<?php echo $trade['trade_id']; ?>, <?php echo $trade['price_per_unit']; ?>, <?php echo $user_resources['money']; ?>)">
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <div id="total_<?php echo $trade['trade_id']; ?>" class="total-price">
+                                <?php 
+                                // Calculate initial total for 1 unit
+                                $initial_total = $trade['price_per_unit']; // For 1 unit
+                                $can_afford = $user_resources['money'] >= $initial_total;
+                                $color_style = $can_afford ? '' : 'color: #ff4444;';
+                                ?>
+                                <span style="<?php echo $color_style; ?>">
+                                    <?php echo getResourceIcon('money'); ?> <?php echo number_format($initial_total); ?>
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <?php if ($trade['seller_id'] != $_SESSION['user_id']): ?>
+                                <button class="trade-button" onclick="completeTrade(<?php echo $trade['trade_id']; ?>)">
                                     Purchase
                                 </button>
                             <?php else: ?>
@@ -390,14 +451,17 @@ function getResourceDisplayName($resource) {
         }, 5000);
     }
 
-    function completeTrade(tradeId, totalPrice) {
-        if (confirm(`Are you sure you want to complete this trade? Total cost: $${totalPrice.toLocaleString()}`)) {
+    function completeTrade(tradeId) {
+        const amountInput = document.getElementById(`amount_${tradeId}`);
+        const amount = parseInt(amountInput.value) || 0;
+        
+        if (confirm(`Are you sure you want to purchase ${amount.toLocaleString()} units?`)) {
             fetch('../backend/complete_trade.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `trade_id=${tradeId}`
+                body: `trade_id=${tradeId}&amount=${amount}`
             })
             .then(response => response.json())
             .then(data => {
@@ -461,6 +525,26 @@ function getResourceDisplayName($resource) {
             showToast('An error occurred while creating the trade.', 'error');
         });
     });
+    </script>
+    <script>
+    function updateTotalPrice(tradeId, pricePerUnit, userMoney) {
+        const amountInput = document.getElementById(`amount_${tradeId}`);
+        const totalElement = document.getElementById(`total_${tradeId}`);
+        const amount = parseInt(amountInput.value) || 0;
+        const total = amount * pricePerUnit;
+        
+        // Get the existing money icon from the page
+        const moneyIcon = document.querySelector('img[alt="money"].resource-icon').outerHTML;
+        
+        // Format the number with commas
+        const formattedTotal = total.toLocaleString();
+        
+        // Check if user can afford it
+        const canAfford = userMoney >= total;
+        const color = canAfford ? '' : '#ff4444';
+        
+        totalElement.innerHTML = `<span style="color: ${color}">${moneyIcon} ${formattedTotal}</span>`;
+    }
     </script>
 </body>
 </html>
