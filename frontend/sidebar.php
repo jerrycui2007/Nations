@@ -12,9 +12,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <li><a href="resources.php" <?php echo ($current_page == 'resources.php') ? 'class="active"' : ''; ?>>Natural Resources</a></li>
             <li><a href="trade.php" <?php echo ($current_page == 'trade.php') ? 'class="active"' : ''; ?>>Trade</a></li>
             <li><a href="leaderboard.php" <?php echo ($current_page == 'leaderboard.php') ? 'class="active"' : ''; ?>>Leaderboard</a></li>
+
+            <li><a href="https://discord.gg/b6VBBDKWSG">Discord Server</a></li>
+
+            
             <li><a href="logout.php">Logout</a></li>
         </ul>
         <div class="version-info">v0.2.4-beta</div>
+        <div class="version-info">Join the official Discord Server to interact with the community and be notified of updates!</div>
     </nav>
     
 </div>

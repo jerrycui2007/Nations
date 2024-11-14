@@ -20,6 +20,14 @@ if (!isset($FACTORY_CONFIG[$factory_type])) {
     exit();
 }
 
+// Add helper function at the top
+function getResourceDisplayName($resourceKey) {
+    global $RESOURCE_CONFIG;
+    return isset($RESOURCE_CONFIG[$resourceKey]['display_name']) 
+        ? $RESOURCE_CONFIG[$resourceKey]['display_name'] 
+        : ucfirst($resourceKey);
+}
+
 try {
     $pdo->beginTransaction();
 
@@ -36,7 +44,8 @@ try {
     
     // Check if user has enough land
     if ($user_resources[$land_type] < $total_land_required) {
-        throw new Exception("Not enough {$land_type}");
+        $land_display_name = getResourceDisplayName($land_type);
+        throw new Exception("Not enough {$land_display_name}");
     }
 
     // Check if user has enough resources for all factories
@@ -44,7 +53,8 @@ try {
         $total_cost = $cost['amount'] * $amount;
         $resource = $cost['resource'];
         if ($user_resources[$resource] < $total_cost) {
-            throw new Exception("Not enough {$resource}");
+            $resource_display_name = getResourceDisplayName($resource);
+            throw new Exception("Not enough {$resource_display_name}");
         }
     }
 

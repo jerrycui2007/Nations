@@ -1,6 +1,6 @@
 <?php
 require_once 'db_connection.php';
-require_once 'calculate_points.php';
+require_once 'gp_functions.php';
 
 function performMinuteUpdates() {
     global $pdo;
@@ -12,10 +12,14 @@ function performMinuteUpdates() {
         // Decrement minutes_left for all entries in factory_queue
         $stmt = $pdo->prepare("UPDATE factory_queue SET minutes_left = minutes_left - 1 WHERE minutes_left > 0");
         $stmt->execute();
+        $affected_rows = $stmt->rowCount();
+        log_message("Updated factory queue times. Affected rows: " . $affected_rows);
 
         // Decrement minutes_left for all entries in building_queue
         $stmt = $pdo->prepare("UPDATE building_queue SET minutes_left = minutes_left - 1 WHERE minutes_left > 0");
         $stmt->execute();
+        $affected_rows = $stmt->rowCount();
+        log_message("Updated building queue times. Affected rows: " . $affected_rows);
 
         // Fetch completed factories
         $stmt_fetch = $pdo->prepare("SELECT id, factory_type, queue_position FROM factory_queue WHERE minutes_left <= 0");
@@ -27,10 +31,13 @@ function performMinuteUpdates() {
             $queue_position = $row['queue_position'];
 
             // Add the completed factory to the user's factories
-            $stmt_update = $pdo->prepare("UPDATE factories SET $factory_type = $factory_type + 1 WHERE id = ?");
+            $stmt_update = $pdo->prepare("UPDATE factories SET `$factory_type` = `$factory_type` + 1 WHERE id = ?");
             $stmt_update->execute([$user_id]);
 
-            calculateTotalGP($pdo, $user_id)['total_gp'];
+            // Update GP - modified to use the function instead of class
+            $new_gp = calculateTotalGP($pdo, $user_id)['total_gp'];
+            $stmt_gp = $pdo->prepare("UPDATE users SET gp = ? WHERE id = ?");
+            $stmt_gp->execute([$new_gp, $user_id]);
 
             // Delete the completed factory from the queue
             $stmt_delete = $pdo->prepare("DELETE FROM factory_queue WHERE id = ? AND factory_type = ? AND queue_position = ?");
@@ -68,11 +75,19 @@ function performMinuteUpdates() {
 }
 
 function log_message($message) {
-    $log_file = __DIR__ . '/minute_updates.log';
+    // For testing, just echo the message and write to a simple log file
     $timestamp = date('Y-m-d H:i:s');
+    echo "[$timestamp] $message\n"; // This will show in console
+    
+    $log_file = __DIR__ . '/minute_updates.log';
     file_put_contents($log_file, "[$timestamp] $message\n", FILE_APPEND);
 }
 
-log_message("Starting minute updates");
-performMinuteUpdates();
-log_message("Minute updates completed");
+// Move these lines inside a main() function to ensure DB connection is ready
+function main() {
+    log_message("Starting minute updates");
+    performMinuteUpdates();
+    log_message("Minute updates completed");
+}
+
+main();

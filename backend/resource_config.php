@@ -65,175 +65,175 @@ $RESOURCE_CONFIG = [
     'apple_tree' => [
         'display_name' => 'Apple Tree',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 5,
         'tier' => 1
     ],
     'cactus' => [
         'display_name' => 'Cactus',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 5,
         'tier' => 1
     ],
     'mulberry' => [
         'display_name' => 'Mulberry',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 5,
         'tier' => 1
     ],
     'coffea' => [
         'display_name' => 'Coffea',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 4,
         'tier' => 2
     ],
     'herbs' => [
         'display_name' => 'Herbs',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 4,
         'tier' => 2
     ],
     'tobacco_plant' => [
         'display_name' => 'Tobacco Plant',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 4,
         'tier' => 2
     ],
     'cotton' => [
         'display_name' => 'Cotton',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 3,
         'tier' => 3
     ],
     'oak_tree' => [
         'display_name' => 'Oak Tree',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 3,
         'tier' => 3
     ],
     'rubber_tree' => [
         'display_name' => 'Rubber Tree',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 3,
         'tier' => 3
     ],
     'christmas_tree' => [
         'display_name' => 'Christmas Tree',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 2,
         'tier' => 4
     ],
     'cocoa' => [
         'display_name' => 'Cocoa',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 2,
         'tier' => 4
     ],
     'grapevine' => [
         'display_name' => 'Grapevine',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 2,
         'tier' => 4
     ],
     'hops' => [
         'display_name' => 'Hops',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 1,
         'tier' => 5
     ],
     'kingwood' => [
         'display_name' => 'Kingwood',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 1,
         'tier' => 5
     ],
     'hemp' => [
         'display_name' => 'Hemp',
         'is_natural_resource' => true,
-        'type' => 'Fauna',
+        'type' => 'Flora',
         'discovery_weight' => 1,
         'tier' => 5
     ],
     'beehive' => [
         'display_name' => 'Beehive',
         'is_natural_resource' => true,
-        'type' => 'Animal',
+        'type' => 'Fauna',
         'discovery_weight' => 500,
         'tier' => 1
     ],
     'goat' => [
         'display_name' => 'Goat',
         'is_natural_resource' => true,
-        'type' => 'Animal',
+        'type' => 'Fauna',
         'discovery_weight' => 500,
         'tier' => 1
     ],
     'cow' => [
         'display_name' => 'Cow',
         'is_natural_resource' => true,
-        'type' => 'Animal',
+        'type' => 'Fauna',
         'discovery_weight' => 400,
         'tier' => 2
     ],
     'sheep' => [
         'display_name' => 'Sheep',
         'is_natural_resource' => true,
-        'type' => 'Animal',
+        'type' => 'Fauna',
         'discovery_weight' => 400,
         'tier' => 2
     ],
     'boar' => [
         'display_name' => 'Boar',
         'is_natural_resource' => true,
-        'type' => 'Animal',
+        'type' => 'Fauna',
         'discovery_weight' => 300,
         'tier' => 3
     ],
     'yak' => [
         'display_name' => 'Yak',
         'is_natural_resource' => true,
-        'type' => 'Animal',
+        'type' => 'Fauna',
         'discovery_weight' => 300,
         'tier' => 3
     ],
     'buffalo' => [
         'display_name' => 'Buffalo',
         'is_natural_resource' => true,
-        'type' => 'Animal',
+        'type' => 'Fauna',
         'discovery_weight' => 200,
         'tier' => 4
     ],
     'elephant' => [
         'display_name' => 'Elephant',
         'is_natural_resource' => true,
-        'type' => 'Animal',
+        'type' => 'Fauna',
         'discovery_weight' => 200,
         'tier' => 4
     ],
     'fox' => [
         'display_name' => 'Fox',
         'is_natural_resource' => true,
-        'type' => 'Animal',
+        'type' => 'Fauna',
         'discovery_weight' => 100,
         'tier' => 5
     ],
     'panther' => [
         'display_name' => 'Panther',
         'is_natural_resource' => true,
-        'type' => 'Animal',
+        'type' => 'Fauna',
         'discovery_weight' => 100,
         'tier' => 5
     ],

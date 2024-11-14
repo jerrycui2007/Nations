@@ -34,7 +34,13 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
             min-height: 100vh;
         }
         .main-content {
-            margin-left: 220px;
+            flex: 1;
+            margin-left: 200px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
             padding-bottom: 60px;
         }
         .content {
@@ -47,8 +53,9 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
             position: fixed;
             bottom: 0;
             right: 0;
-            width: calc(100% - 220px);
+            width: calc(100% - 200px);
             z-index: 1000;
+            margin-left: 200px;
         }
         h1, h2 {
             color: #333;

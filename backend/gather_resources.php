@@ -17,7 +17,7 @@ $building_type = $_POST['building_type'] ?? '';
 $building_resource_types = [
     'geologist_building' => 'Mined',
     'zoologist_building' => 'Fauna',
-    'herbalist_building' => 'Fauna',
+    'herbalist_building' => 'Flora',
     'marine_biologist_building' => 'Marine Animal'
 ];
 

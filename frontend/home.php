@@ -127,6 +127,7 @@ if ($error) {
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
+            padding-bottom: 60px;
         }
 
         .header {
@@ -146,8 +147,12 @@ if ($error) {
             background-color: #f8f9fa;
             padding: 10px 0;
             border-top: 1px solid #dee2e6;
-            width: 100%;
-            margin-left: 0;
+            width: calc(100% - 200px);
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            z-index: 0;
+            margin-left: 200px;
         }
 
         .header-content {
@@ -303,7 +308,6 @@ if ($error) {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
-            margin-left: 0;
         }
 
         .toast-container {
@@ -466,7 +470,7 @@ if ($error) {
                     
                     <div class="info-group">
                         <div class="info-label gp-label" onclick="showGPBreakdown()">GP</div>
-                        <div class="info-value gp-label" onclick="showGPBreakdown()"><?php echo formatNumber($user['gp']); ?></div>
+                        <div class="info-value gp-label" onclick="showGPBreakdown()"><?php echo $user['gp']; ?></div>
                     </div>
                 </div>
             </div>
@@ -688,6 +692,15 @@ if ($error) {
             
             if (overlay) {
                 overlay.addEventListener('click', closeGPPopup);
+            }
+        });
+
+        // Add this after the existing DOMContentLoaded event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            // Format GP value
+            const gpValue = document.querySelector('.info-value.gp-label');
+            if (gpValue) {
+                gpValue.textContent = formatNumber(parseInt(gpValue.textContent));
             }
         });
     </script>

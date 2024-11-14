@@ -482,13 +482,17 @@ function getResourceAmount($user_resources, $resource_key) {
                                     foreach ($factory_data['input'] as $index => $input): 
                                         $base_amount = $input['amount'] * $amount * 24;
                                         $required_amount = $input['amount'] * $amount * $capacity;
+                                        $hourly_amount = $input['amount'] * $amount;
                                         $current_amount = getResourceAmount($user_resources, $input['resource']);
                                         $has_enough = $current_amount >= $required_amount;
                                         $style = $has_enough ? '' : 'color: #dc3545;';
-                                        echo '<span style="' . $style . '" data-base-amount="' . $base_amount . '">' . 
-                                            getResourceIcon($input['resource']) . " " . 
-                                            formatNumber($required_amount) . 
-                                            '</span>';
+                                        echo '<span style="' . $style . '" ' . 
+                                             'data-base-amount="' . $base_amount . '" ' .
+                                             'data-current-amount="' . $current_amount . '" ' .
+                                             'data-hourly-amount="' . $hourly_amount . '">' . 
+                                             getResourceIcon($input['resource']) . " " . 
+                                             formatNumber($required_amount) . 
+                                             '</span>';
                                         if ($index < count($factory_data['input']) - 1) echo "  ";
                                     endforeach; 
                                     ?>
@@ -566,13 +570,14 @@ function getResourceAmount($user_resources, $resource_key) {
                     echo "<div class='factory-value'>";
                     foreach ($factory['construction_cost'] as $index => $cost):
                         $current_amount = getResourceAmount($user_resources, $cost['resource']);
-                        $has_enough = $current_amount >= $cost['amount'];
+                        $required_amount = $cost['amount']; // Base amount for single factory
+                        $has_enough = $current_amount >= $required_amount;
                         $style = $has_enough ? '' : 'color: #dc3545;';
                         echo '<span style="' . $style . '" ' . 
                              'data-base-amount="' . $cost['amount'] . '" ' .
                              'data-current-amount="' . $current_amount . '">' . 
                              getResourceIcon($cost['resource']) . " " . 
-                             formatNumber($cost['amount']) . 
+                             formatNumber($required_amount) . 
                              '</span>';
                         if ($index < count($factory['construction_cost']) - 1) echo "  ";
                     endforeach;
@@ -676,12 +681,16 @@ function getResourceAmount($user_resources, $resource_key) {
 
     // Update the collectResource function
     function collectResource(factoryType) {
+        if (window.isCollecting) return;
+        window.isCollecting = true;
+        
         const inputElement = document.getElementById(`${factoryType}-collect`);
         const amount = parseInt(inputElement.value);
         const maxCapacity = parseInt(inputElement.max);
 
         if (amount < 1 || amount > maxCapacity) {
             showToast(`Please enter a value between 1 and ${maxCapacity}.`, 'error');
+            window.isCollecting = false;
             return;
         }
 
@@ -700,11 +709,12 @@ function getResourceAmount($user_resources, $resource_key) {
                 window.location.reload();
             } else {
                 showToast(data.message, 'error');
+                window.isCollecting = false;
             }
         })
-        .catch((error) => {
-            console.error('Error:', error);
-            showToast('An error occurred while processing your request.', 'error');
+        .catch(error => {
+            showToast('An error occurred', 'error');
+            window.isCollecting = false;
         });
     }
 
@@ -868,10 +878,8 @@ function getResourceAmount($user_resources, $resource_key) {
         const amount = parseInt(inputElement.value) || 0;
         const factoryAmount = parseInt(inputElement.getAttribute('data-factory-amount')) || 0;
 
-        // Get the factory's input/output sections
         const card = inputElement.closest('.factory-collection-card');
         
-        // Update selectors to match the actual HTML structure
         const resourceLists = card.querySelectorAll('.resource-list');
         const inputSection = Array.from(resourceLists).find(section => 
             section.querySelector('.resource-label')?.textContent.trim() === 'INPUT'
@@ -884,8 +892,15 @@ function getResourceAmount($user_resources, $resource_key) {
             const inputValues = inputSection.querySelectorAll('.factory-value span');
             inputValues.forEach(span => {
                 const baseAmount = parseInt(span.getAttribute('data-base-amount'));
+                const currentAmount = parseInt(span.getAttribute('data-current-amount'));
+                const hourlyAmount = parseInt(span.getAttribute('data-hourly-amount'));
                 const newAmount = (baseAmount * amount) / 24;
                 const icon = span.querySelector('img').outerHTML;
+                
+                // Check if user has enough resources for the collection
+                const hasEnough = currentAmount >= newAmount;
+                span.style.color = hasEnough ? '' : '#dc3545';
+                
                 span.innerHTML = `${icon} ${formatNumber(newAmount)}`;
             });
         }
@@ -998,15 +1013,16 @@ function getResourceAmount($user_resources, $resource_key) {
         const inputElement = document.getElementById(`${factoryType}-build-amount`);
         const amount = parseInt(inputElement.value) || 1;
         
-        // Update land usage
         const card = inputElement.closest('.factory-card');
+        
+        // Update land usage
         const landSection = card.querySelector('.factory-section:nth-child(3)');
         const landSpan = landSection.querySelector('.factory-value span');
         const landBaseAmount = parseInt(landSpan.getAttribute('data-base-amount'));
         const landCurrentAmount = parseInt(landSpan.getAttribute('data-current-amount'));
         const newLandAmount = landBaseAmount * amount;
-        const icon = landSpan.querySelector('img').outerHTML;
-        landSpan.innerHTML = `${icon} ${formatNumberDisplay(newLandAmount)}`;
+        const landIcon = landSpan.querySelector('img').outerHTML;
+        landSpan.innerHTML = `${landIcon} ${formatNumberDisplay(newLandAmount)}`;
         landSpan.style.color = landCurrentAmount >= newLandAmount ? '' : '#dc3545';
         
         // Update costs
@@ -1018,6 +1034,7 @@ function getResourceAmount($user_resources, $resource_key) {
             const newAmount = baseAmount * amount;
             const icon = span.querySelector('img').outerHTML;
             span.innerHTML = `${icon} ${formatNumberDisplay(newAmount)}`;
+            // Update the color based on whether the user can afford the total cost
             span.style.color = currentAmount >= newAmount ? '' : '#dc3545';
         });
     }

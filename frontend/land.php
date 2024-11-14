@@ -21,6 +21,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 $multiplier = max(1, $user['population'] / 50000);
 $money_cost = round(5000 * $multiplier);
 $resource_cost = round(1000 * $multiplier);
+$consumer_goods_cost = round(250 * $multiplier);
 
 // Fetch user resources
 $stmt = $pdo->prepare("SELECT money, food, building_materials, consumer_goods FROM commodities WHERE id = ?");
@@ -545,9 +546,9 @@ $land_types = ['cleared_land', 'urban_areas', 'used_land', 'forest', 'mountain',
                               style="<?php echo ($user_resources['building_materials'] < $resource_cost) ? 'color: #ff4444;' : ''; ?>">
                             <?php echo getResourceIcon('building_materials') . formatNumber($resource_cost); ?>
                         </span>
-                        <span class="cost-item" data-base-amount="<?php echo $resource_cost; ?>"
-                              style="<?php echo ($user_resources['consumer_goods'] < $resource_cost) ? 'color: #ff4444;' : ''; ?>">
-                            <?php echo getResourceIcon('consumer_goods') . formatNumber($resource_cost); ?>
+                        <span class="cost-item" data-base-amount="<?php echo $consumer_goods_cost; ?>"
+                              style="<?php echo ($user_resources['consumer_goods'] < $consumer_goods_cost) ? 'color: #ff4444;' : ''; ?>">
+                            <?php echo getResourceIcon('consumer_goods') . formatNumber($consumer_goods_cost); ?>
                         </span>
                     </div>
                 </div>

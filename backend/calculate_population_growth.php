@@ -10,7 +10,10 @@ function calculatePopulationGrowth($user) {
     $growth_rate = 0.005; // 0.5% growth rate
     $growth = 0;
 
-    if ($food > 0 && $power > 0 && $consumer_goods > 0) {
+    // Only check consumer goods if population >= 75000 (tier > 1)
+    $consumer_goods_check = $population < 75000 || $consumer_goods > 0;
+
+    if ($food > 0 && $power > 0 && $consumer_goods_check) {
         // Population increases 
         $growth = round($population * $growth_rate);
     } elseif ($food == 0) {

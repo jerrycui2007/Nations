@@ -27,11 +27,12 @@ try {
     $multiplier = max(1, $user_data['population'] / 50000);
     $money_cost = round(5000 * $multiplier);
     $resource_cost = round(1000 * $multiplier);
+    $consumer_goods_cost = round(250 * $multiplier);  // One quarter of other resources
 
     if ($user_data['money'] < $money_cost || 
         $user_data['food'] < $resource_cost ||
         $user_data['building_materials'] < $resource_cost || 
-        $user_data['consumer_goods'] < $resource_cost) {
+        $user_data['consumer_goods'] < $consumer_goods_cost) {
         throw new Exception("Not enough resources to expand borders");
     }
 
@@ -45,7 +46,7 @@ try {
     }
 
     // Calculate new land amount
-    $new_land_amount = round($user_data['population'] / 2000);
+    $new_land_amount = round($user_data['population'] / 400);
 
     // Define eligible land types (without backticks in the array)
     $eligible_types = ['cleared_land', 'forest', 'mountain', 'river', 'lake', 'grassland', 'jungle', 'desert', 'tundra'];
@@ -104,7 +105,7 @@ try {
                           building_materials = building_materials - ?, 
                           consumer_goods = consumer_goods - ? 
                           WHERE id = ?");
-    $stmt->execute([$money_cost, $resource_cost, $resource_cost, $resource_cost, $user_id]);
+    $stmt->execute([$money_cost, $resource_cost, $resource_cost, $consumer_goods_cost, $user_id]);
 
     // Update user's land
     $update_query = "UPDATE land SET ";

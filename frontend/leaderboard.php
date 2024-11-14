@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Fetch top 100 nations with their ranks and flags
+// Fetch top 10 nations with their ranks and flags
 $stmt = $pdo->prepare("
     SELECT 
         id, 

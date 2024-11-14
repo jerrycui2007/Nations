@@ -68,7 +68,7 @@ if (!isset($_SESSION['user_id'])) {
             When you create your nation, you start with 50 Cleared Land, 60 Urban Areas, 25 Forest, 5 Rivers, and 5 Lakes.
         </P>
         <p>
-            You can gain more land by expaning your borders. The cost of expanding your borders is a base cost of $5000, 1,000 Food, 1,000 Building Materials, and 1,000 Consumer Goods.
+            You can gain more land by expaning your borders. The cost of expanding your borders is a base cost of $5000, 1,000 Food, 1,000 Building Materials, and 250 Consumer Goods.
             However, these costs are multiplied by (Population / 50,000). After expanding your borders, you will receive a number of land of randomly assorted types equal to  round(Population / 2,000).
             All land types are discoverable, except for Used Land and Urban Areas.
             You can only expand your boders once every daily turn.

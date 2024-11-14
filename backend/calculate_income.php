@@ -10,8 +10,11 @@ function calculateIncome($user) {
     // Calculate money increase (3 for every 100 population, rounded to nearest whole number)
     $money_increase = 3 * round($population / 100);
 
-    // Check if food, power, and consumer goods are greater than 0
-    if ($food > 0 && $power > 0 && $consumer_goods > 0) {
+    // Only check consumer goods if population >= 75000 (tier > 1)
+    $consumer_goods_check = $population < 75000 || $consumer_goods > 0;
+
+    // Check if food, power, and consumer goods (if needed) are greater than 0
+    if ($food > 0 && $power > 0 && $consumer_goods_check) {
         $new_money = $current_money + $money_increase;
         return [
             'success' => true,
@@ -24,7 +27,7 @@ function calculateIncome($user) {
             'success' => false,
             'new_money' => $current_money,
             'increase' => 0,
-            'message' => "No money added due to insufficient food, power, or consumer goods."
+            'message' => "No money added due to insufficient resources."
         ];
     }
 }
