@@ -426,6 +426,38 @@ function getResourceAmount($user_resources, $resource_key) {
             opacity: 1;
             transform: translateX(0);
         }
+
+        .demolish-button {
+            width: 100%;
+            padding: 8px;
+            background-color: white;  /* Changed to white background */
+            color: #dc3545;          /* Red text */
+            border: 1px solid #dc3545;  /* Red border */
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.9em;        /* Match collect button text size */
+            transition: all 0.3s ease;
+        }
+
+        .demolish-button:hover {
+            background-color: #dc3545;  /* Red background on hover */
+            color: white;              /* White text on hover */
+        }
+
+        .demolish-button:disabled {
+            background-color: #cccccc;
+            border-color: #cccccc;
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .factory-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
@@ -520,6 +552,11 @@ function getResourceAmount($user_resources, $resource_key) {
                                     onclick="collectResource('<?php echo $factory_type; ?>')"
                                     <?php echo $capacity == 0 ? 'disabled' : ''; ?>>
                                 COLLECT
+                            </button>
+
+                            <button class="demolish-button" 
+                                    onclick="demolishFactory('<?php echo $factory_type; ?>', <?php echo htmlspecialchars(json_encode($factory_data), ENT_QUOTES, 'UTF-8'); ?>)">
+                                DEMOLISH FACTORY
                             </button>
                         </div>
                     <?php endif; ?>
@@ -1036,6 +1073,37 @@ function getResourceAmount($user_resources, $resource_key) {
             span.innerHTML = `${icon} ${formatNumberDisplay(newAmount)}`;
             // Update the color based on whether the user can afford the total cost
             span.style.color = currentAmount >= newAmount ? '' : '#dc3545';
+        });
+    }
+
+    function demolishFactory(factoryType, factoryData) {
+        if (!confirm('Are you sure you want to demolish this factory? You will receive:\n' +
+                    '- 50% of resource costs refunded\n' +
+                    '- 100% of land returned\n' +
+                    'This action cannot be undone.')) {
+            return;
+        }
+
+        fetch('../backend/demolish_factory.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `factory_type=${factoryType}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                localStorage.setItem('toastMessage', data.message);
+                localStorage.setItem('toastType', 'success');
+                window.location.reload();
+            } else {
+                showToast(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('An error occurred while demolishing the factory.', 'error');
         });
     }
     </script>
