@@ -1,4 +1,28 @@
 <?php
+// Only output CSS if this is an HTML response
+if (!headers_sent() && !isset($GLOBALS['JSON_API'])) {
+    echo '<style>
+    .resource-icon {
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+        margin-right: 4px;
+    }
+    .resource-icon:hover::after {
+        content: attr(title);
+        position: absolute;
+        background: #333;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 1000;
+        margin-left: 8px;
+    }
+    </style>';
+}
+
 function formatNumber($number) {
     if ($number < 1000) {
         return number_format($number);
@@ -23,26 +47,4 @@ function getResourceIcon($resource_key, $display_name = null) {
 function formatResourceWithIcon($resource_key, $amount, $display_name = null) {
     return getResourceIcon($resource_key, $display_name) . "" . formatNumber($amount);
 }
-?>
-
-<style>
-.resource-icon {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-right: 4px;
-}
-
-.resource-icon:hover::after {
-    content: attr(title);
-    position: absolute;
-    background: #333;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 1000;
-    margin-left: 8px;
-}
-</style> 
+?> 

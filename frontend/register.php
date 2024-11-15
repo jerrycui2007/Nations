@@ -62,6 +62,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt = $pdo->prepare("UPDATE users SET gp = ? WHERE id = ?");
                     $stmt->execute([$initial_gp, $user_id]);
 
+                    // Insert notification about new nation
+                    $notification_message = "The nation <a href='view.php?id=" . $user_id . "'>" . htmlspecialchars($country_name) . "</a> was founded by " . htmlspecialchars($leader_name) . ".";
+                    $stmt = $pdo->prepare("INSERT INTO notifications (message, type) VALUES (?, 'New Nation')");
+                    $stmt->execute([$notification_message]);
+
                     $pdo->commit();
 
                     echo "Registration successful!";

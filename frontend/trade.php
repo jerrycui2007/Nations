@@ -463,7 +463,15 @@ function getResourceDisplayName($resource) {
                 },
                 body: `trade_id=${tradeId}&amount=${amount}`
             })
-            .then(response => response.json())
+            .then(async response => {
+                const text = await response.text();
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error('Invalid JSON response:', text);
+                    throw new Error('Invalid server response');
+                }
+            })
             .then(data => {
                 showToast(data.message, data.success ? 'success' : 'error');
                 if (data.success) {
