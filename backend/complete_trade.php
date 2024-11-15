@@ -87,13 +87,13 @@ try {
 
     // After successful trade completion, before the commit
     // Get nation names for the notification
-    $stmt = $pdo->prepare("SELECT country_name FROM users WHERE id IN (?, ?)");
-    $stmt->execute([$trade['seller_id'], $_SESSION['user_id']]);
+    $stmt = $pdo->prepare("SELECT id, country_name FROM users WHERE id IN (?, ?)");
+    $stmt->execute([$_SESSION['user_id'], $trade['seller_id']]);
     $nations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Create notification message using the original $total_cost
-    $seller_name = "<a href='view.php?id={$trade['seller_id']}'>" . htmlspecialchars($nations[0]['country_name']) . "</a>";
-    $buyer_name = "<a href='view.php?id={$_SESSION['user_id']}'>" . htmlspecialchars($nations[1]['country_name']) . "</a>";
+    $buyer_name = "<a href='view.php?id={$_SESSION['user_id']}'>" . htmlspecialchars($nations[0]['country_name']) . "</a>";
+    $seller_name = "<a href='view.php?id={$trade['seller_id']}'>" . htmlspecialchars($nations[1]['country_name']) . "</a>";
     $resource_icon = getResourceIcon($trade['resource_offered']);
     $money_icon = getResourceIcon('money');
 
