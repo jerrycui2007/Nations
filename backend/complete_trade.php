@@ -91,9 +91,15 @@ try {
     $stmt->execute([$_SESSION['user_id'], $trade['seller_id']]);
     $nations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Create notification message using the original $total_cost
-    $buyer_name = "<a href='view.php?id={$_SESSION['user_id']}'>" . htmlspecialchars($nations[0]['country_name']) . "</a>";
-    $seller_name = "<a href='view.php?id={$trade['seller_id']}'>" . htmlspecialchars($nations[1]['country_name']) . "</a>";
+    // Create an associative array to map IDs to names
+    $nation_names = [];
+    foreach ($nations as $nation) {
+        $nation_names[$nation['id']] = $nation['country_name'];
+    }
+
+    // Use the correct names based on IDs
+    $buyer_name = "<a href='view.php?id={$_SESSION['user_id']}'>" . htmlspecialchars($nation_names[$_SESSION['user_id']]) . "</a>";
+    $seller_name = "<a href='view.php?id={$trade['seller_id']}'>" . htmlspecialchars($nation_names[$trade['seller_id']]) . "</a>";
     $resource_icon = getResourceIcon($trade['resource_offered']);
     $money_icon = getResourceIcon('money');
 

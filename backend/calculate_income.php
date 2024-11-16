@@ -7,8 +7,8 @@ function calculateIncome($user) {
     $current_money = $user['money'];
     $consumer_goods = $user['consumer_goods'];
 
-    // Calculate money increase (3 for every 100 population, rounded to nearest whole number)
-    $money_increase = 3 * round($population / 100);
+    // Calculate money increase (1 for every 30 population, rounded to nearest whole number)
+    $money_increase = round($population / 30);
 
     // Only check consumer goods if population >= 75000 (tier > 1)
     $consumer_goods_check = $population < 75000 || $consumer_goods > 0;

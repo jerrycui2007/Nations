@@ -17,10 +17,12 @@ try {
     // Fetch user data
     $stmt = $pdo->prepare("
         SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, u.description,
-               c.food, c.power, c.consumer_goods, l.urban_areas, u.flag 
+               c.food, c.power, c.consumer_goods, l.urban_areas, u.flag, u.creationDate,
+               u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag
         FROM users u 
         JOIN commodities c ON u.id = c.id 
         JOIN land l ON u.id = l.id
+        LEFT JOIN alliances a ON u.alliance_id = a.alliance_id
         WHERE u.id = ?
     ");
     $stmt->execute([$_SESSION['user_id']]);
@@ -438,6 +440,21 @@ if ($error) {
         .gp-label {
             cursor: pointer;
         }
+
+        .alliance-status {
+            font-size: 1.1em;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .alliance-link {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .alliance-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -472,11 +489,30 @@ if ($error) {
                         <div class="info-label gp-label" onclick="showGPBreakdown()">GP</div>
                         <div class="info-value gp-label" onclick="showGPBreakdown()"><?php echo $user['gp']; ?></div>
                     </div>
+                    <div class="info-group">
+                        <div class="info-label">Founded</div>
+                        <div class="info-value">
+                            <?php echo date('M j, Y', strtotime($user['creationDate'])); ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="content">
+            <div class="panel">
+                <p class="alliance-status">
+                    <?php if ($user['alliance_id']): ?>
+                        <?php echo htmlspecialchars($user['country_name']); ?> is a member of 
+                        <a href="alliance_view.php?id=<?php echo $user['alliance_id']; ?>" class="alliance-link">
+                            <?php echo htmlspecialchars($user['alliance_name']); ?>
+                        </a>
+                    <?php else: ?>
+                        <?php echo htmlspecialchars($user['country_name']); ?> is not in any alliance
+                    <?php endif; ?>
+                </p>
+            </div>
+
             <div class="panel">
                 <h2>Change Flag</h2>
                 <?php if (isset($flag_update_message)): ?>

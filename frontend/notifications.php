@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Define valid notification types
-$valid_types = ['Trade', 'New Nation'];
+$valid_types = ['Trade', 'New Nation', 'International Relations'];
 
 // Get filter from URL, validate it
 $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
@@ -47,7 +47,7 @@ if (isset($_GET['ajax'])) {
                 </div>
             </div>
             <div class="notification-message">
-                <?php echo html_entity_decode($notification['message']); ?>
+                <?php echo $notification['message']; ?>
             </div>
         </div>
     <?php endforeach;
@@ -224,7 +224,7 @@ if (isset($_GET['ajax'])) {
                                 </div>
                             </div>
                             <div class="notification-message">
-                                <?php echo html_entity_decode($notification['message']); ?>
+                                <?php echo $notification['message']; ?>
                             </div>
                         </div>
                     <?php endforeach; ?>

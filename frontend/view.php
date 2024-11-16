@@ -12,9 +12,11 @@ if ($nation_id === 0) {
 }
 
 // Fetch nation data
-$stmt = $pdo->prepare("SELECT country_name, leader_name, population, tier, gp, flag, description 
-                       FROM users 
-                       WHERE id = ?");
+$stmt = $pdo->prepare("SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, u.flag, u.description, u.creationDate,
+                       u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag
+                       FROM users u
+                       LEFT JOIN alliances a ON u.alliance_id = a.alliance_id
+                       WHERE u.id = ?");
 $stmt->execute([$nation_id]);
 $nation = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -216,6 +218,35 @@ if (!$nation) {
             border-bottom: none;
             font-weight: bold;
         }
+
+        .alliance-status {
+            font-size: 1.1em;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .alliance-link {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .alliance-link:hover {
+            text-decoration: underline;
+        }
+
+        .panel {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .alliance-panel {
+            text-align: center;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -247,11 +278,30 @@ if (!$nation) {
                         <div class="info-label gp-label" onclick="showGPBreakdown()">GP</div>
                         <div class="info-value gp-label" onclick="showGPBreakdown()"><?php echo number_format($nation['gp']); ?></div>
                     </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">Founded</div>
+                        <div class="info-value">
+                            <?php echo date('M j, Y', strtotime($nation['creationDate'])); ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="content">
+            <div class="panel alliance-panel">
+                <p class="alliance-status">
+                    <?php if ($nation['alliance_id']): ?>
+                        <?php echo htmlspecialchars($nation['country_name']); ?> is a member of 
+                        <a href="alliance_view.php?id=<?php echo $nation['alliance_id']; ?>" class="alliance-link">
+                            <?php echo htmlspecialchars($nation['alliance_name']); ?>
+                        </a>
+                    <?php else: ?>
+                        <?php echo htmlspecialchars($nation['country_name']); ?> is not in any alliance
+                    <?php endif; ?>
+                </p>
+            </div>
             <div class="panel description-panel">
                 <h2>About <?php echo htmlspecialchars($nation['country_name']); ?></h2>
                 <?php if (!isset($nation['description']) || $nation['description'] === null || trim($nation['description']) === ''): ?>

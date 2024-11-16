@@ -58,8 +58,8 @@ function calculateTotalGP($pdo, $user_id) {
 
         // Calculate components
         $population_gp = floor($data['population'] / 1000);
-        $land_gp = $data['total_land'];
-        $building_gp = $data['building_gp'];
+        $land_gp = floor($data['total_land'] / 10);
+        $building_gp = $data['building_gp'] * 10;
         
         // Calculate total
         $total_gp = $population_gp + $land_gp + $factory_gp + $building_gp;
