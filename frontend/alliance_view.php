@@ -33,20 +33,13 @@ if (!$alliance) {
     exit();
 }
 
-// Calculate total GP and member count
+// Get member count and total GP directly
 $stmt = $pdo->prepare("
-    WITH alliance_stats AS (
-        SELECT 
-            a.alliance_id,
-            COUNT(u.id) as member_count,
-            SUM(u.gp) as total_gp
-        FROM alliances a
-        JOIN users u ON u.alliance_id = a.alliance_id
-        WHERE a.alliance_id = ?
-        GROUP BY a.alliance_id
-    )
-    SELECT total_gp, member_count
-    FROM alliance_stats
+    SELECT 
+        COUNT(u.id) as member_count,
+        SUM(u.gp) as total_gp
+    FROM users u
+    WHERE u.alliance_id = ?
 ");
 $stmt->execute([$alliance_id]);
 $alliance_stats = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -9,28 +9,30 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Fetch top 100 nations query
+// First get all users ordered by GP
 $stmt = $pdo->prepare("
     SELECT 
-        u1.id, 
-        u1.country_name, 
-        u1.leader_name, 
-        u1.gp,
-        u1.flag,
-        u1.population,
-        u1.alliance_id,
+        u.id, 
+        u.country_name, 
+        u.leader_name, 
+        u.gp,
+        u.flag,
+        u.population,
+        u.alliance_id,
         a.name as alliance_name,
-        a.flag_link as alliance_flag,
-        (SELECT COUNT(*) + 1 
-         FROM users u2 
-         WHERE u2.gp > u1.gp) as ranking
-    FROM users u1
-    LEFT JOIN alliances a ON u1.alliance_id = a.alliance_id
+        a.flag_link as alliance_flag
+    FROM users u
+    LEFT JOIN alliances a ON u.alliance_id = a.alliance_id
     ORDER BY gp DESC
     LIMIT 100
 ");
 $stmt->execute();
 $top_nations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Add rankings 
+foreach ($top_nations as $index => &$nation) {
+    $nation['ranking'] = $index + 1;
+}
 
 // Check if current user is in top 10
 $user_in_top_100 = false;
@@ -157,7 +159,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
             text-decoration: underline;
         }
         .flag-img {
-            width: 30px; /* Adjust size as needed */
+            width: 30px;
             height: auto;
             margin-right: 10px;
         }

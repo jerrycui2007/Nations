@@ -284,29 +284,29 @@ foreach ($BUILDING_CONFIG as $building_type => $building_data) {
     echo "</div>";
 }
 ?>
-</div>
+    </div>
 
-            <h2>Ongoing Upgrades</h2>
-            <div class="ongoing-upgrades-grid">
-<?php
-$stmt = $pdo->prepare("SELECT * FROM building_queue WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
+                <h2>Ongoing Upgrades</h2>
+                <div class="ongoing-upgrades-grid">
+    <?php
+    $stmt = $pdo->prepare("SELECT * FROM building_queue WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
 
-while ($upgrade = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    echo "<div class='upgrade-card'>";
-    echo "<div class='upgrade-title'>{$BUILDING_CONFIG[$upgrade['building_type']]['name']}</div>";
-    echo "<div class='upgrade-info'>Upgrading to Level {$upgrade['level']}</div>";
-    echo "<div class='upgrade-info'>" . formatTimeRemaining($upgrade['minutes_left']) . " remaining</div>";
-    echo "</div>";
-}
+    while ($upgrade = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "<div class='upgrade-card'>";
+        echo "<div class='upgrade-title'>{$BUILDING_CONFIG[$upgrade['building_type']]['name']}</div>";
+        echo "<div class='upgrade-info'>Upgrading to Level {$upgrade['level']}</div>";
+        echo "<div class='upgrade-info'>" . formatTimeRemaining($upgrade['minutes_left']) . " remaining</div>";
+        echo "</div>";
+    }
 
-if ($stmt->rowCount() == 0) {
-    echo "<div class='upgrade-card'>";
-    echo "<div class='upgrade-info'>No ongoing upgrades</div>";
-    echo "</div>";
-}
-?>
-</div>
+    if ($stmt->rowCount() == 0) {
+        echo "<div class='upgrade-card'>";
+        echo "<div class='upgrade-info'>No ongoing upgrades</div>";
+        echo "</div>";
+    }
+    ?>
+    </div>
 
         </div>
 

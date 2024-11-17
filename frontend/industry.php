@@ -688,7 +688,6 @@ function getResourceAmount($user_resources, $resource_key) {
     </div>
 
     <script>
-    // Replace the showPopup function with this new toast system
     function showToast(message, type = 'success') {
         // Create toast container if it doesn't exist
         let container = document.querySelector('.toast-container');
@@ -755,7 +754,6 @@ function getResourceAmount($user_resources, $resource_key) {
         });
     }
 
-    // Add this to check for stored messages on page load
     document.addEventListener('DOMContentLoaded', function() {
         const message = localStorage.getItem('toastMessage');
         const type = localStorage.getItem('toastType');
@@ -767,7 +765,6 @@ function getResourceAmount($user_resources, $resource_key) {
         }
     });
 
-    // Update the buildFactory function similarly
     function buildFactory(factoryType) {
         const inputElement = document.getElementById(`${factoryType}-build-amount`);
         const amount = parseInt(inputElement.value) || 1;
@@ -795,7 +792,6 @@ function getResourceAmount($user_resources, $resource_key) {
         });
     }
 
-    // Add number formatting function
     function formatNumber(number) {
         if (number < 1000) {
             return number.toLocaleString();
@@ -899,7 +895,7 @@ function getResourceAmount($user_resources, $resource_key) {
         }
     }
 
-    // Add this to help with debugging
+    // Debugging
     document.addEventListener('DOMContentLoaded', function() {
         ['collect', 'construct'].forEach(section => {
             const select = document.getElementById(`${section}-filter`);
@@ -1031,7 +1027,6 @@ function getResourceAmount($user_resources, $resource_key) {
         });
     }
 
-    // Add this new function
     function formatNumberDisplay(number) {
         if (number < 1000) {
             return number.toLocaleString();

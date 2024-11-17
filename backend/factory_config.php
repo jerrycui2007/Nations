@@ -51,6 +51,16 @@ $FACTORY_CONFIG = [
         'construction_time' => 30,
         'gp_value' => 1
     ],
+    'jungle_sawmill' => [
+        'tier' => 1,
+        'name' => 'Jungle Sawmill',
+            'input' => [['resource' => 'money', 'amount' => 27]],
+        'output' => [['resource' => 'building_materials', 'amount' => 3]],
+        'construction_cost' => [['resource' => 'money', 'amount' => 1000]],
+        'land' => ['type' => 'jungle', 'amount' => 5],
+        'construction_time' => 30,
+        'gp_value' => 1
+    ],
     'concrete_factory' => [
         'tier' => 1,
         'name' => 'Concrete Factory',

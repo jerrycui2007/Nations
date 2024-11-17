@@ -629,7 +629,7 @@ $RESOURCE_CONFIG = [
             'amarino' => 200,
             'san_sebastian' => 250,
             'tind' => 400,
-            'zaheria' => 0
+            'zaheria' => 100
         ]
     ],
     'copper' => [

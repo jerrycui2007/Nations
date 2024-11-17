@@ -75,15 +75,13 @@ function performMinuteUpdates() {
 }
 
 function log_message($message) {
-    // For testing, just echo the message and write to a simple log file
     $timestamp = date('Y-m-d H:i:s');
-    echo "[$timestamp] $message\n"; // This will show in console
+    echo "[$timestamp] $message\n"; 
     
     $log_file = __DIR__ . '/minute_updates.log';
     file_put_contents($log_file, "[$timestamp] $message\n", FILE_APPEND);
 }
 
-// Move these lines inside a main() function to ensure DB connection is ready
 function main() {
     log_message("Starting minute updates");
     performMinuteUpdates();

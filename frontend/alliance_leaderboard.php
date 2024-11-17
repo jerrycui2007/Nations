@@ -11,32 +11,16 @@ if (!isset($_SESSION['user_id'])) {
 
 // Fetch top 100 alliances with their ranks and flags
 $stmt = $pdo->prepare("
-    WITH alliance_stats AS (
-        SELECT 
-            a.alliance_id,
-            a.name as alliance_name,
-            a.flag_link,
-            a.leader_id,
-            u.country_name as leader_country,
-            COUNT(DISTINCT um.id) as member_count,
-            SUM(um.gp) as total_gp,
-            (SELECT COUNT(*) + 1 
-             FROM (
-                SELECT a2.alliance_id, SUM(u2.gp) as alliance_gp
-                FROM alliances a2
-                JOIN users u2 ON u2.alliance_id = a2.alliance_id
-                GROUP BY a2.alliance_id
-             ) ranked 
-             WHERE ranked.alliance_gp > SUM(um.gp)
-            ) as ranking
-        FROM alliances a
-        JOIN users u ON a.leader_id = u.id
-        JOIN users um ON um.alliance_id = a.alliance_id
-        GROUP BY a.alliance_id, a.name, a.flag_link, a.leader_id, u.country_name
-        ORDER BY total_gp DESC
-        LIMIT 100
-    )
-    SELECT * FROM alliance_stats
+    SELECT 
+        a.alliance_id,
+        a.name as alliance_name,
+        a.flag_link,
+        a.leader_id,
+        u.country_name as leader_country
+    FROM alliances a
+    JOIN users u ON a.leader_id = u.id
+    ORDER BY gp DESC
+    LIMIT 100
 ");
 $stmt->execute();
 $top_alliances = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -45,37 +29,48 @@ $top_alliances = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $search_results = [];
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search_term = '%' . $_GET['search'] . '%';
+    // First get alliance basic info
     $stmt = $pdo->prepare("
-        WITH alliance_stats AS (
-            SELECT 
-                a.alliance_id,
-                a.name as alliance_name,
-                a.flag_link,
-                a.leader_id,
-                u.country_name as leader_country,
-                COUNT(DISTINCT um.id) as member_count,
-                SUM(um.gp) as total_gp,
-                (SELECT COUNT(*) + 1 
-                 FROM (
-                    SELECT a2.alliance_id, SUM(u2.gp) as alliance_gp
-                    FROM alliances a2
-                    JOIN users u2 ON u2.alliance_id = a2.alliance_id
-                    GROUP BY a2.alliance_id
-                 ) ranked 
-                 WHERE ranked.alliance_gp > SUM(um.gp)
-                ) as ranking
-            FROM alliances a
-            JOIN users u ON a.leader_id = u.id
-            JOIN users um ON um.alliance_id = a.alliance_id
-            WHERE a.name LIKE ? OR u.country_name LIKE ?
-            GROUP BY a.alliance_id, a.name, a.flag_link, a.leader_id, u.country_name
-            ORDER BY total_gp DESC
-            LIMIT 50
-        )
-        SELECT * FROM alliance_stats
+        SELECT 
+            a.alliance_id,
+            a.name as alliance_name,
+            a.flag_link,
+            a.leader_id,
+            u.country_name as leader_country
+        FROM alliances a
+        JOIN users u ON a.leader_id = u.id
+        WHERE a.name LIKE ? OR u.country_name LIKE ?
     ");
     $stmt->execute([$search_term, $search_term]);
-    $search_results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $alliances = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // For each alliance, get member count and total GP
+    foreach ($alliances as &$alliance) {
+        $stmt = $pdo->prepare("
+            SELECT 
+                COUNT(DISTINCT id) as member_count,
+                SUM(gp) as total_gp
+            FROM users 
+            WHERE alliance_id = ?
+        ");
+        $stmt->execute([$alliance['alliance_id']]);
+        $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $alliance['member_count'] = $stats['member_count'];
+        $alliance['total_gp'] = $stats['total_gp'];
+    }
+
+    // Sort by total GP
+    usort($alliances, function($a, $b) {
+        return $b['total_gp'] - $a['total_gp'];
+    });
+
+    // Add rankings
+    foreach ($alliances as $index => &$alliance) {
+        $alliance['ranking'] = $index + 1;
+    }
+
+    $search_results = $alliances;
 }
 ?>
 

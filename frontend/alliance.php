@@ -103,19 +103,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_alliance'])) {
             $stmt = $pdo->prepare("DELETE FROM alliance_join_requests WHERE user_id = ?");
             $stmt->execute([$_SESSION['user_id']]);
 
-            // Add notification for alliance creation
+            // Build message
+            $message = sprintf(
+                'The alliance <a href="alliance_view.php?id=%d">%s</a> was founded by <a href="view.php?id=%d">%s</a>',
+                $alliance_id,
+                htmlspecialchars($alliance_name),
+                $_SESSION['user_id'],
+                htmlspecialchars($country_name)
+            );
+
+            // Insert
             $stmt = $pdo->prepare("
                 INSERT INTO notifications (type, message, date) 
-                SELECT 'International Relations', 
-                       CONCAT(
-                           'The alliance <a href=\"alliance_view.php?id=', ?, '\">',
-                           ?, '</a> was founded by <a href=\"view.php?id=', ?,
-                           '\">', country_name, '</a>'
-                       ),
-                       NOW()
-                FROM users WHERE id = ?
+                VALUES ('International Relations', ?, NOW())
             ");
-            $stmt->execute([$alliance_id, $alliance_name, $_SESSION['user_id'], $_SESSION['user_id']]);
+            $stmt->execute([$message]);
 
             $pdo->commit();
             $success_message = "Alliance created successfully!";
@@ -202,21 +204,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['request_response'])) {
                     throw new Exception("Failed to delete join requests");
                 }
 
-                // Add notification for joining alliance
+                // Get user and alliance info first
                 $stmt = $pdo->prepare("
-                    INSERT INTO notifications (type, message, date) 
-                    SELECT 'International Relations', 
-                           CONCAT(
-                               '<a href=\"view.php?id=', u.id, '\">', u.country_name,
-                               '</a> became a member of <a href=\"alliance_view.php?id=', a.alliance_id,
-                               '\">', a.name, '</a>'
-                           ),
-                           NOW()
+                    SELECT u.country_name, a.name as alliance_name 
                     FROM users u 
                     CROSS JOIN alliances a 
                     WHERE u.id = ? AND a.alliance_id = ?
                 ");
                 $stmt->execute([$request_user_id, $alliance['alliance_id']]);
+                $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                // Build message in PHP
+                $message = sprintf(
+                    '<a href="view.php?id=%d">%s</a> became a member of <a href="alliance_view.php?id=%d">%s</a>',
+                    $request_user_id,
+                    htmlspecialchars($data['country_name']),
+                    $alliance['alliance_id'],
+                    htmlspecialchars($data['alliance_name'])
+                );
+
+                // Simple insert
+                $stmt = $pdo->prepare("
+                    INSERT INTO notifications (type, message, date) 
+                    VALUES ('International Relations', ?, NOW())
+                ");
+                $stmt->execute([$message]);
             } else {
                 // Delete this specific request
                 $stmt = $pdo->prepare("DELETE FROM alliance_join_requests WHERE user_id = ? AND alliance_id = ?");
@@ -242,7 +254,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['request_response'])) {
     }
 }
 
-// Add this PHP handler near the other POST handlers
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['leave_alliance'])) {
     try {
         // Ensure user is not the alliance leader
@@ -262,19 +273,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['leave_alliance'])) {
             // Update user's alliance
             $stmt = $pdo->prepare("UPDATE users SET alliance_id = 0 WHERE id = ?");
             if ($stmt->execute([$_SESSION['user_id']])) {
-                // Add notification for leaving alliance
+                // Build message 
+                $message = sprintf(
+                    '<a href="view.php?id=%d">%s</a> has left <a href="alliance_view.php?id=%d">%s</a>',
+                    $_SESSION['user_id'],
+                    htmlspecialchars($leaveData['country_name']),
+                    $alliance['alliance_id'],
+                    htmlspecialchars($leaveData['name'])
+                );
+
+                // Insert
                 $stmt = $pdo->prepare("
                     INSERT INTO notifications (type, message, date) 
-                    VALUES ('International Relations', 
-                            CONCAT(
-                                '<a href=\"view.php?id=', ?, '\">', ?, 
-                                '</a> has left <a href=\"alliance_view.php?id=', ?, 
-                                '\">', ?, '</a>'
-                            ), 
-                            NOW()
-                    )
+                    VALUES ('International Relations', ?, NOW())
                 ");
-                $stmt->execute([$_SESSION['user_id'], $leaveData['country_name'], $alliance['alliance_id'], $leaveData['name']]);
+                $stmt->execute([$message]);
 
                 $pdo->commit();
                 $_SESSION['toast'] = json_encode([
@@ -296,7 +309,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['leave_alliance'])) {
     }
 }
 
-// Add this PHP handler near the other POST handlers
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['disband_alliance'])) {
     try {
         // Verify user is alliance leader
@@ -325,18 +337,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['disband_alliance'])) {
                 throw new Exception("Failed to delete join requests");
             }
 
-            // Add notification for disbanding alliance
+            // Build message
+            $message = sprintf(
+                'The alliance %s was disbanded by <a href="view.php?id=%d">%s</a>',
+                htmlspecialchars($disbandData['name']),
+                $_SESSION['user_id'],
+                htmlspecialchars($disbandData['country_name'])
+            );
+
+            // Insert
             $stmt = $pdo->prepare("
                 INSERT INTO notifications (type, message, date) 
-                VALUES ('International Relations', 
-                        CONCAT(
-                            'The alliance ', ?, ' was disbanded by <a href=\"view.php?id=', ?,
-                            '\">', ?, '</a>'
-                        ), 
-                        NOW()
-                )
+                VALUES ('International Relations', ?, NOW())
             ");
-            $stmt->execute([$disbandData['name'], $_SESSION['user_id'], $disbandData['country_name']]);
+            $stmt->execute([$message]);
 
             // Delete the alliance
             $stmt = $pdo->prepare("DELETE FROM alliances WHERE alliance_id = ?");
@@ -949,7 +963,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['disband_alliance'])) {
                         </form>
                     </div>
                 <?php endif; ?>
-                <!-- Additional alliance content can go here -->
             </div>
         <?php endif; ?>
 
@@ -985,8 +998,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['disband_alliance'])) {
             
             const form = event.target;
             const formData = new FormData(form);
-            formData.append('create_alliance', '1');  // Add this to match the PHP check
-
+            formData.append('create_alliance', '1'); 
             try {
                 const response = await fetch(window.location.href, {
                     method: 'POST',

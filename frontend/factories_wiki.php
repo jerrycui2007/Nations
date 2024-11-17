@@ -54,7 +54,7 @@ function formatResourcesWithIcons($resources) {
         .content {
             margin-left: 200px; /* Same as sidebar width */
             padding: 20px;
-            padding-bottom: 60px; /* Add padding to accommodate the footer */
+            padding-bottom: 60px; 
         }
         h1 {
             color: #333;
