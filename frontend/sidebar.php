@@ -15,9 +15,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <li><a href="leaderboard.php" <?php echo ($current_page == 'leaderboard.php') ? 'class="active"' : ''; ?>>Nation Leaderboard</a></li>
             <li><a href="alliance_leaderboard.php" <?php echo ($current_page == 'alliance_leaderboard.php') ? 'class="active"' : ''; ?>>Alliance Leaderboard</a></li>
             <li><a href="notifications.php" <?php echo ($current_page == 'notifications.php') ? 'class="active"' : ''; ?>>Notifications</a></li>
-            <li><a href="rules.php" <?php echo ($current_page == 'rules.php') ? 'class="active"' : ''; ?>>Rules</a></li>
+            <li><a href="https://docs.google.com/document/d/1TDdhsYFXrqr9ZPwHsAbb3bqFYrKxcyUqcM4pbGv88Is/edit?usp=sharing">Rules</a></li>
             <li><a href="https://discord.gg/b6VBBDKWSG">Discord Server</a></li>
-
+            
             
             <li><a href="logout.php">Logout</a></li>
         </ul>
@@ -106,5 +106,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
     .sidebar {
         scrollbar-width: thin;
         scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0.1);
+    }
+
+    .rules-section ul li {
+        margin-bottom: 10px;
+        line-height: 1.5;
     }
 </style>

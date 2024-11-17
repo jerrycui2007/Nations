@@ -54,7 +54,7 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
             bottom: 0;
             right: 0;
             width: calc(100% - 200px);
-            z-index: 1000;
+            z-index: 0;
             margin-left: 200px;
         }
         h1, h2 {
