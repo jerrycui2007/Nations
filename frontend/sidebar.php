@@ -15,7 +15,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <li><a href="leaderboard.php" <?php echo ($current_page == 'leaderboard.php') ? 'class="active"' : ''; ?>>Nation Leaderboard</a></li>
             <li><a href="alliance_leaderboard.php" <?php echo ($current_page == 'alliance_leaderboard.php') ? 'class="active"' : ''; ?>>Alliance Leaderboard</a></li>
             <li><a href="notifications.php" <?php echo ($current_page == 'notifications.php') ? 'class="active"' : ''; ?>>Notifications</a></li>
-
+            <li><a href="rules.php" <?php echo ($current_page == 'rules.php') ? 'class="active"' : ''; ?>>Rules</a></li>
             <li><a href="https://discord.gg/b6VBBDKWSG">Discord Server</a></li>
 
             
@@ -39,6 +39,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         z-index: 500;
         display: flex;
         flex-direction: column;
+        overflow-y: auto;
     }
 
     .sidebar nav {
@@ -46,9 +47,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
     }
 
     .version-info {
-        padding: 16px;
+        padding: 12px;
         text-align: center;
-        font-size: 0.8em;
+        font-size: 0.75em;
         color: #95a5a6;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
@@ -60,17 +61,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
     }
 
     .sidebar nav ul li {
-        padding: 4px 0;
+        padding: 2px 0;
     }
 
     .sidebar nav ul li a {
         text-decoration: none;
         color: #ecf0f1;
         display: block;
-        padding: 12px 24px;
+        padding: 8px 16px;
         transition: all 0.3s ease;
         border-left: 4px solid transparent;
         text-align: left;
+        font-size: 0.9em;
     }
 
     .sidebar nav ul li a:hover {
@@ -82,5 +84,27 @@ $current_page = basename($_SERVER['PHP_SELF']);
         background-color: #34495e;
         border-left-color: #3498db;
         font-weight: 600;
+    }
+
+    .sidebar::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .sidebar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0.1);
     }
 </style>
