@@ -457,6 +457,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['request_join'])) {
                 </div>
             <?php endif; ?>
         </div>
+        <div class="footer">
+            <?php include 'footer.php'; ?>
+        </div>
     </div>
 </body>
 </html> 
