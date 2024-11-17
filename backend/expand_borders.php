@@ -4,6 +4,7 @@ session_start();
 require_once 'db_connection.php';
 require_once 'resource_config.php';
 require_once 'gp_functions.php';
+require_once 'land_config.php';
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'User not logged in']);
@@ -17,7 +18,7 @@ $pdo->beginTransaction();
 
 try {
     // Check if user has enough resources
-    $stmt = $pdo->prepare("SELECT u.population, c.money, c.food, c.building_materials, c.consumer_goods 
+    $stmt = $pdo->prepare("SELECT u.population, u.continent, c.money, c.food, c.building_materials, c.consumer_goods 
                           FROM users u 
                           JOIN commodities c ON u.id = c.id 
                           WHERE u.id = ?");
@@ -45,17 +46,27 @@ try {
         throw new Exception("You have already expanded your borders today. Please try again tomorrow.");
     }
 
+    // Create weighted array for land types based on continent
+    $weighted_land_types = [];
+    $user_continent = $user_data['continent'] ?? 'westberg';
+
+    foreach ($LAND_CONFIG as $land_type => $config) {
+        $weight = $config['weight'][$user_continent] ?? 0;
+        for ($i = 0; $i < $weight; $i++) {
+            $weighted_land_types[] = $land_type;
+        }
+    }
+
     // Calculate new land amount
     $new_land_amount = round($user_data['population'] / 400);
 
-    // Define eligible land types (without backticks in the array)
-    $eligible_types = ['cleared_land', 'forest', 'mountain', 'river', 'lake', 'grassland', 'jungle', 'desert', 'tundra'];
-
-    // Distribute new land randomly
-    $new_land = array_fill_keys($eligible_types, 0);
+    // Distribute new land using weights
+    $new_land = array_fill_keys(array_keys($LAND_CONFIG), 0);
     for ($i = 0; $i < $new_land_amount; $i++) {
-        $random_type = $eligible_types[array_rand($eligible_types)];
-        $new_land[$random_type]++;
+        if (!empty($weighted_land_types)) {
+            $random_type = $weighted_land_types[array_rand($weighted_land_types)];
+            $new_land[$random_type]++;
+        }
     }
 
     // Get all natural resources and their weights
@@ -65,9 +76,11 @@ try {
 
     // Create weighted array for random selection
     $weighted_resources = [];
+    $user_continent = $user_data['continent'] ?? 'westberg'; // Default to westberg if no continent set
+
     foreach ($natural_resources as $resource_key => $resource_data) {
-        // Default to weight of 0 if discovery_weight is not set
-        $weight = $resource_data['discovery_weight'] ?? 0;
+        // Get continent-specific weight
+        $weight = $resource_data['discovery_weight'][$user_continent] ?? 0;
         for ($i = 0; $i < $weight; $i++) {
             $weighted_resources[] = $resource_key;
         }

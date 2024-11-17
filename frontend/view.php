@@ -2,6 +2,7 @@
 global $pdo;
 session_start();
 require_once '../backend/db_connection.php';
+require_once '../backend/continent_config.php';
 
 // Get nation ID from URL parameter
 $nation_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -13,7 +14,7 @@ if ($nation_id === 0) {
 
 // Fetch nation data
 $stmt = $pdo->prepare("SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, u.flag, u.description, u.creationDate,
-                       u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag
+                       u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag, u.continent
                        FROM users u
                        LEFT JOIN alliances a ON u.alliance_id = a.alliance_id
                        WHERE u.id = ?");
@@ -48,7 +49,7 @@ if (!$nation) {
         }
 
         .header {
-            background: url('resources/westberg.png') no-repeat center center;
+            background: url('resources/<?php echo $nation['continent'] ? $nation['continent'] : 'default'; ?>.png') no-repeat center center;
             background-size: cover;
             padding: 150px 20px;
             color: white;
@@ -295,10 +296,20 @@ if (!$nation) {
                     <?php if ($nation['alliance_id']): ?>
                         <?php echo htmlspecialchars($nation['country_name']); ?> is a member of 
                         <a href="alliance_view.php?id=<?php echo $nation['alliance_id']; ?>" class="alliance-link">
-                            <?php echo htmlspecialchars($nation['alliance_name']); ?>
+                            <?php echo htmlspecialchars($nation['alliance_name']); ?>.
                         </a>
                     <?php else: ?>
-                        <?php echo htmlspecialchars($nation['country_name']); ?> is not in any alliance
+                        <?php echo htmlspecialchars($nation['country_name']); ?> is not in any alliance.
+                    <?php endif; ?>
+                </p>
+            </div>
+            <div class="panel">
+                <p class="alliance-status">
+                    <?php if ($nation['continent']): ?>
+                        <?php echo htmlspecialchars($nation['country_name']); ?> is located in 
+                        <?php echo htmlspecialchars($CONTINENT_CONFIG[$nation['continent']]); ?>.
+                    <?php else: ?>
+                        <?php echo htmlspecialchars($nation['country_name']); ?> is not on any continent yet
                     <?php endif; ?>
                 </p>
             </div>

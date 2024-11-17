@@ -27,8 +27,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['country_name'] = $user['country_name'];
                 $_SESSION['leader_name'] = $user['leader_name'];
 
-                // Redirect to the game page or dashboard
-                header("Location: home.php");
+                // Check if continent is set
+                $stmt = $pdo->prepare("SELECT continent FROM users WHERE id = ?");
+                $stmt->execute([$user['id']]);
+                $continent = $stmt->fetch(PDO::FETCH_ASSOC)['continent'];
+
+                // Redirect based on whether continent is set
+                if ($continent === null) {
+                    header("Location: choose_continent.php");
+                } else {
+                    header("Location: home.php");
+                }
                 exit();
             } else {
                 $error = "Invalid leader name or password.";

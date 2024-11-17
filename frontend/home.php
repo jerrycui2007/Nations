@@ -4,6 +4,7 @@ require_once '../backend/db_connection.php';
 require_once '../backend/calculate_population_growth.php';
 require_once '../backend/gp_functions.php';
 require_once 'helpers/resource_display.php';
+require_once '../backend/continent_config.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -18,7 +19,7 @@ try {
     $stmt = $pdo->prepare("
         SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, u.description,
                c.food, c.power, c.consumer_goods, l.urban_areas, u.flag, u.creationDate,
-               u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag
+               u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag, u.continent
         FROM users u 
         JOIN commodities c ON u.id = c.id 
         JOIN land l ON u.id = l.id
@@ -133,7 +134,7 @@ if ($error) {
         }
 
         .header {
-            background: url('resources/westberg.png') no-repeat center center;
+            background: url('resources/<?php echo $user['continent'] ? $user['continent'] : 'default'; ?>.png') no-repeat center center;
             background-size: cover;
             padding: 150px 20px;
             color: white;
@@ -505,10 +506,21 @@ if ($error) {
                     <?php if ($user['alliance_id']): ?>
                         <?php echo htmlspecialchars($user['country_name']); ?> is a member of 
                         <a href="alliance_view.php?id=<?php echo $user['alliance_id']; ?>" class="alliance-link">
-                            <?php echo htmlspecialchars($user['alliance_name']); ?>
+                            <?php echo htmlspecialchars($user['alliance_name']); ?>.
                         </a>
                     <?php else: ?>
-                        <?php echo htmlspecialchars($user['country_name']); ?> is not in any alliance
+                        <?php echo htmlspecialchars($user['country_name']); ?> is not in any alliance.
+                    <?php endif; ?>
+                </p>
+            </div>
+
+            <div class="panel">
+                <p class="alliance-status">
+                    <?php if ($user['continent']): ?>
+                        <?php echo htmlspecialchars($user['country_name']); ?> is located in 
+                        <?php echo htmlspecialchars($CONTINENT_CONFIG[$user['continent']]); ?>.
+                    <?php else: ?>
+                        <?php echo htmlspecialchars($user['country_name']); ?> is not on any continent yet
                     <?php endif; ?>
                 </p>
             </div>
