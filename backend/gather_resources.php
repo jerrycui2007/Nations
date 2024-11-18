@@ -34,8 +34,7 @@ try {
     $stmt->execute([$user_id]);
     $building_level = $stmt->fetch(PDO::FETCH_ASSOC)[$building_type];
 
-    // Add after getting building level (around line 35)
-    $cost = $building_level * 1000;  // Same cost calculation as shown in resources.php
+    $cost = $building_level * 1000;  
 
     // Check if user has enough money
     $stmt = $pdo->prepare("SELECT money FROM commodities WHERE id = ?");
@@ -46,7 +45,7 @@ try {
         throw new Exception("Not enough money to gather resources");
     }
 
-    // Get resources of matching type and tier
+    // Get resources of matching type
     $resource_type = $building_resource_types[$building_type];
     $transferable_resources = array_filter($RESOURCE_CONFIG, function($resource) use ($resource_type, $building_level) {
         return isset($resource['is_natural_resource']) && 
@@ -62,7 +61,6 @@ try {
     // Get current hidden resources
     $resource_columns = array_keys($transferable_resources);
     $hidden_query = "SELECT `" . implode("`, `", $resource_columns) . "` FROM hidden_resources WHERE id = ?";
-    error_log("Hidden resources query: " . $hidden_query);  // Debug log
     $stmt = $pdo->prepare($hidden_query);
     $stmt->execute([$user_id]);
     $hidden_resources = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -88,19 +86,21 @@ try {
 
     // Update commodities
     $commodities_update .= implode(", ", $update_parts) . " WHERE id = ?";
-    $update_values[] = $user_id;  // Add user_id for WHERE clause
+    $update_values[] = $user_id;  
     $stmt = $pdo->prepare($commodities_update);
     $stmt->execute($update_values);
 
-    // Reset hidden resources (no parameters needed since we're setting to 0)
+    // Reset hidden resources 
     $hidden_update .= implode(", ", $hidden_parts) . " WHERE id = ?";
     $stmt = $pdo->prepare($hidden_update);
     $stmt->execute([$user_id]);
 
     $pdo->commit();
+
     echo json_encode([
-        'success' => true,
-        'message' => "Successfully gathered resources"
+        'success' => true, 
+        'message' => 'Resources gathered successfully!',
+        'gathered' => $hidden_resources
     ]);
 } catch (Exception $e) {
     $pdo->rollBack();

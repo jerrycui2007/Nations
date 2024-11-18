@@ -131,7 +131,7 @@ $RESOURCE_CONFIG = [
             'westberg' => 3,
             'amarino' => 5,
             'san_sebastian' => 1,
-            'tind' => 0,
+            'tind' => 1,
             'zaheria' => 0
         ]
     ],
@@ -157,7 +157,7 @@ $RESOURCE_CONFIG = [
             'westberg' => 1,
             'amarino' => 3,
             'san_sebastian' => 1,
-            'tind' => 0,
+            'tind' => 1,
             'zaheria' => 0
         ]
     ],

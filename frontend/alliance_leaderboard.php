@@ -9,21 +9,77 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Fetch top 100 alliances with their ranks and flags
+// First get all alliances ordered by total GP
 $stmt = $pdo->prepare("
     SELECT 
         a.alliance_id,
         a.name as alliance_name,
         a.flag_link,
         a.leader_id,
-        u.country_name as leader_country
+        u.country_name as leader_country,
+        (SELECT COUNT(*) FROM users WHERE alliance_id = a.alliance_id) as member_count,
+        (SELECT SUM(gp) FROM users WHERE alliance_id = a.alliance_id) as total_gp,
+        (SELECT COUNT(*) + 1 
+         FROM (
+             SELECT alliance_id, SUM(gp) as alliance_gp 
+             FROM users 
+             GROUP BY alliance_id
+         ) sub 
+         WHERE sub.alliance_gp > (
+             SELECT SUM(gp) 
+             FROM users 
+             WHERE alliance_id = a.alliance_id
+         )
+        ) as ranking
     FROM alliances a
     JOIN users u ON a.leader_id = u.id
-    ORDER BY gp DESC
+    ORDER BY total_gp DESC
     LIMIT 100
 ");
 $stmt->execute();
 $top_alliances = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Check if current user's alliance is in top 100
+$user_alliance_in_top_100 = false;
+$stmt = $pdo->prepare("SELECT alliance_id FROM users WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($user['alliance_id']) {
+    foreach ($top_alliances as $alliance) {
+        if ($alliance['alliance_id'] == $user['alliance_id']) {
+            $user_alliance_in_top_100 = true;
+            break;
+        }
+    }
+
+    // If user's alliance not in top 100, get their alliance info
+    if (!$user_alliance_in_top_100) {
+        $stmt = $pdo->prepare("
+            SELECT 
+                a.alliance_id,
+                a.name as alliance_name,
+                a.flag_link,
+                a.leader_id,
+                u.country_name as leader_country,
+                (SELECT COUNT(*) FROM users WHERE alliance_id = a.alliance_id) as member_count,
+                (SELECT SUM(gp) FROM users WHERE alliance_id = a.alliance_id) as total_gp,
+                (SELECT COUNT(*) 
+                 FROM (SELECT alliance_id, SUM(gp) as total_gp 
+                       FROM users 
+                       GROUP BY alliance_id) as a2 
+                 WHERE a2.total_gp > (SELECT SUM(gp) 
+                                    FROM users 
+                                    WHERE alliance_id = a.alliance_id)
+                ) + 1 as ranking
+            FROM alliances a
+            JOIN users u ON a.leader_id = u.id
+            WHERE a.alliance_id = ?
+        ");
+        $stmt->execute([$user['alliance_id']]);
+        $user_alliance = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+}
 
 // Handle search
 $search_results = [];
@@ -212,7 +268,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                     <tr>
                         <td>
                             <?php 
-                            if ($alliance['ranking'] <= 3) {
+                            if (isset($alliance['ranking']) && $alliance['ranking'] <= 3) {
                                 $medalClass = '';
                                 switch ($alliance['ranking']) {
                                     case 1:
@@ -227,7 +283,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                                 }
                                 echo '<span class="medal ' . $medalClass . '">' . $alliance['ranking'] . '</span>';
                             } else {
-                                echo number_format($alliance['ranking']);
+                                echo isset($alliance['ranking']) ? number_format($alliance['ranking']) : '-';
                             }
                             ?>
                         </td>
@@ -244,8 +300,8 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                                 <?php echo htmlspecialchars($alliance['leader_country']); ?>
                             </a>
                         </td>
-                        <td><?php echo number_format($alliance['member_count']); ?></td>
-                        <td><?php echo number_format($alliance['total_gp']); ?></td>
+                        <td><?php echo isset($alliance['member_count']) ? number_format($alliance['member_count']) : '0'; ?></td>
+                        <td><?php echo isset($alliance['total_gp']) ? number_format($alliance['total_gp']) : '0'; ?></td>
                     </tr>
                 <?php endforeach; ?>
             </table>

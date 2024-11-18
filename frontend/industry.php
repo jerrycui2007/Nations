@@ -6,7 +6,13 @@ require_once '../backend/factory_config.php';
 require_once '../backend/resource_config.php';
 require_once 'helpers/resource_display.php';
 require_once 'helpers/time_display.php';
+require_once '../backend/calculate_tier.php';
 
+// Get user's current tier
+$stmt = $pdo->prepare("SELECT population FROM users WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user_population = $stmt->fetch(PDO::FETCH_ASSOC)['population'];
+$user_tier = calculateTier($user_population);
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -458,6 +464,15 @@ function getResourceAmount($user_resources, $resource_key) {
             align-items: center;
             gap: 10px;
         }
+
+        .factory-card[data-factory-tier] {
+            position: relative;
+        }
+
+        .factory-card .build-button:disabled {
+            cursor: not-allowed;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -487,7 +502,7 @@ function getResourceAmount($user_resources, $resource_key) {
                         $hue = ($progress_percent / 100) * 120; // 0 = red, 120 = green
                         $progress_color = "hsl({$hue}, 70%, 45%)";
                     ?>
-                        <div class="factory-collection-card">
+                        <div class="factory-collection-card" data-factory-tier="<?php echo $factory_data['tier']; ?>">
                             <div class="factory-header">
                                 <span class="factory-name"><?php echo $factory_data['name']; ?></span>
                                 <span class="factory-amount"><?php echo $amount; ?></span>
@@ -576,7 +591,7 @@ function getResourceAmount($user_resources, $resource_key) {
                 echo "<div class='factory-grid'>";
                 
                 foreach ($FACTORY_CONFIG as $factory_type => $factory) {
-                    echo "<div class='factory-card'>";
+                    echo "<div class='factory-card' data-factory-tier='" . $factory['tier'] . "'>";
                     echo "<div class='factory-name'>{$factory['name']}</div>";
                     
                     // Add input field for amount
@@ -1101,6 +1116,37 @@ function getResourceAmount($user_resources, $resource_key) {
             showToast('An error occurred while demolishing the factory.', 'error');
         });
     }
+
+    function checkTierRequirements() {
+        const userTier = <?php echo $user_tier; ?>;
+        const factoryCards = document.querySelectorAll('.factory-card');
+        
+        factoryCards.forEach(card => {
+            const factoryTier = parseInt(card.dataset.factoryTier);
+            const buildButton = card.querySelector('.build-button');
+            const buildInput = card.querySelector('input[type="number"]');
+            
+            if (factoryTier > userTier) {
+                if (buildButton) {
+                    buildButton.disabled = true;
+                    buildButton.style.backgroundColor = '#cccccc';
+                    buildButton.textContent = `REQUIRES TIER ${factoryTier}`;
+                }
+                if (buildInput) {
+                    buildInput.disabled = true;
+                }
+                
+                // Add grey overlay to the whole card
+                card.style.opacity = '0.7';
+            }
+        });
+    }
+
+    // Add this to your existing DOMContentLoaded event listener
+    document.addEventListener('DOMContentLoaded', function() {
+        checkTierRequirements();
+        // ... your existing event listeners ...
+    });
     </script>
 </body>
 </html>

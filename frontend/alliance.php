@@ -45,10 +45,10 @@ if ($user['alliance_id'] > 0) {
 
     // Get member list
     $stmt = $pdo->prepare("
-        SELECT id, country_name, leader_name, gp, flag
+        SELECT DISTINCT id, country_name, leader_name, gp, flag
         FROM users
         WHERE alliance_id = ?
-        ORDER BY gp DESC
+        ORDER BY gp DESC, id ASC
     ");
     $stmt->execute([$user['alliance_id']]);
     $members = $stmt->fetchAll(PDO::FETCH_ASSOC);

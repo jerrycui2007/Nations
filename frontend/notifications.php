@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Define valid notification types
+// Notification types
 $valid_types = ['Trade', 'New Nation', 'International Relations'];
 
 // Get filter from URL, validate it

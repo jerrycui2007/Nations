@@ -20,7 +20,10 @@ $stmt = $pdo->prepare("
         u.population,
         u.alliance_id,
         a.name as alliance_name,
-        a.flag_link as alliance_flag
+        a.flag_link as alliance_flag,
+        (SELECT COUNT(*) + 1 
+         FROM users u2 
+         WHERE u2.gp > u.gp) as ranking
     FROM users u
     LEFT JOIN alliances a ON u.alliance_id = a.alliance_id
     ORDER BY gp DESC
@@ -28,11 +31,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute();
 $top_nations = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Add rankings 
-foreach ($top_nations as $index => &$nation) {
-    $nation['ranking'] = $index + 1;
-}
 
 // Check if current user is in top 10
 $user_in_top_100 = false;

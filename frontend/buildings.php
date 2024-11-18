@@ -5,6 +5,7 @@ require_once '../backend/building_config.php';
 require_once '../backend/resource_config.php';
 require_once 'helpers/resource_display.php';
 require_once 'helpers/time_display.php';
+require_once '../backend/calculate_tier.php';
 
 
 // Check if user is logged in
@@ -27,6 +28,11 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
 $stmt = $pdo->prepare("SELECT * FROM land WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user_land = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$stmt = $pdo->prepare("SELECT population FROM users WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user_population = $stmt->fetch(PDO::FETCH_ASSOC)['population'];
+$user_tier = calculateTier($user_population);
 
 function getResourceDisplayName($resource) {
     global $RESOURCE_CONFIG;
@@ -205,6 +211,17 @@ function getResourceDisplayName($resource) {
             margin-bottom: 5px;
             text-align: left;
         }
+
+        .building-description {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            border-left: 3px solid #4CAF50;
+        }
     </style>
 </head>
 <body>
@@ -223,6 +240,10 @@ foreach ($BUILDING_CONFIG as $building_type => $building_data) {
     
     echo "<div class='building-card'>";
     echo "<div class='building-name'>{$building_data['name']}</div>";
+    
+    echo "<div class='building-section'>";
+    echo "<div class='building-description'>{$building_data['description']}</div>";
+    echo "</div>";
     
     echo "<div class='building-section'>";
     echo "<div class='building-section-title'>CURRENT LEVEL</div>";
@@ -263,6 +284,15 @@ foreach ($BUILDING_CONFIG as $building_type => $building_data) {
         
         // Disable button if requirements not met
         $can_upgrade = true;
+        $tier_requirement_met = true;
+
+        // Check tier requirement
+        if ($user_tier < $next_level_data['minimum_tier']) {
+            $tier_requirement_met = false;
+            $can_upgrade = false;
+        }
+
+        // Check resource requirements
         foreach ($next_level_data['construction_cost'] as $resource => $amount) {
             if ($resource !== 'construction_time' && ($user_resources[$resource] ?? 0) < $amount) {
                 $can_upgrade = false;
@@ -272,9 +302,13 @@ foreach ($BUILDING_CONFIG as $building_type => $building_data) {
         if ($user_land_amount < $required_land) {
             $can_upgrade = false;
         }
-        
+
         $button_disabled = $can_upgrade ? '' : 'disabled';
-        echo "<button class='upgrade-button' {$button_disabled} onclick='upgradeBuilding(\"{$building_type}\")'>Upgrade to Level {$next_level}</button>";
+        $button_text = $tier_requirement_met ? 
+            "Upgrade to Level {$next_level}" : 
+            "REQUIRES TIER {$next_level_data['minimum_tier']}";
+
+        echo "<button class='upgrade-button' {$button_disabled} onclick='upgradeBuilding(\"{$building_type}\")'>{$button_text}</button>";
     } else {
         echo "<div class='building-section'>";
         echo "<div class='building-value'>Maximum level reached</div>";

@@ -230,6 +230,67 @@ $user_resources = $stmt->fetch(PDO::FETCH_ASSOC);
             font-weight: bold;
             color: #666;
         }
+
+        .resource-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .resource-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .popup-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .popup-list {
+            margin: 15px 0;
+        }
+
+        .popup-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 1.1em;
+        }
+
+        .popup-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 1em;
+        }
+
+        .popup-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -319,7 +380,36 @@ sort($resource_types);
             </div>
 
             <script>
+            const RESOURCE_CONFIG = <?php echo json_encode($RESOURCE_CONFIG); ?>;
+            const gatherCosts = {};
+
+            <?php
+            foreach ($BUILDING_CONFIG as $building_type => $building_data) {
+                $current_level = $user_buildings[$building_type] ?? 0;
+                if ($current_level > 0) {
+                    echo "gatherCosts['{$building_type}'] = " . ($current_level * 1000) . ";\n";
+                }
+            }
+            ?>
+
+            function formatNumberDisplay(number) {
+                if (number < 1000) {
+                    return number.toLocaleString();
+                } else if (number < 1000000) {
+                    return (number / 1000).toFixed(1) + 'k';
+                } else if (number < 1000000000) {
+                    return (number / 1000000).toFixed(1) + 'm';
+                } else if (number < 1000000000000) {
+                    return (number / 1000000000).toFixed(1) + 'b';
+                } else {
+                    return (number / 1000000000000).toFixed(1) + 't';
+                }
+            }
+
             function gatherResources(buildingType) {
+                console.log('Starting gatherResources with buildingType:', buildingType);
+                console.log('Gather cost:', gatherCosts[buildingType]);
+                
                 fetch('../backend/gather_resources.php', {
                     method: 'POST',
                     headers: {
@@ -327,20 +417,66 @@ sort($resource_types);
                     },
                     body: `building_type=${buildingType}`
                 })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Raw response:', response);
+                    return response.text().then(text => {
+                        console.log('Response text:', text);
+                        try {
+                            return JSON.parse(text);
+                        } catch (e) {
+                            console.error('JSON Parse Error:', e);
+                            console.error('Failed to parse:', text);
+                            throw e;
+                        }
+                    });
+                })
                 .then(data => {
+                    console.log('Parsed response data:', data);
                     if (data.success) {
-                        localStorage.setItem('toastMessage', data.message);
-                        localStorage.setItem('toastType', 'success');
-                        window.location.reload();
+                        showResourcePopup(data.gathered);
                     } else {
-                        showToast(data.message, 'error');
+                        showToast(data.message || 'An error occurred while gathering resources.', 'error');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    showToast('An error occurred while gathering resources', 'error');
+                    console.error('Fetch Error:', error);
+                    console.error('Error stack:', error.stack);
+                    showToast('An error occurred while gathering resources.', 'error');
                 });
+            }
+
+            function getResourceIconHtml(resourceKey) {
+                const displayName = RESOURCE_CONFIG[resourceKey]?.display_name || 
+                                   resourceKey.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                return `<img src='resources/${resourceKey}_icon.png' alt='${resourceKey}' title='${displayName}' class='resource-icon'>`;
+            }
+
+            function showResourcePopup(gatheredResources) {
+                const popupList = document.querySelector('.popup-list');
+                popupList.innerHTML = '';
+                
+                for (const [resource, amount] of Object.entries(gatheredResources)) {
+                    const item = document.createElement('div');
+                    item.className = 'popup-item';
+                    item.innerHTML = `${getResourceIconHtml(resource)} ${RESOURCE_CONFIG[resource].display_name}: ${formatNumberDisplay(amount)}`;
+                    popupList.appendChild(item);
+                }
+                
+                if (Object.keys(gatheredResources).length === 0) {
+                    const item = document.createElement('div');
+                    item.className = 'popup-item';
+                    item.textContent = 'No resources found this time.';
+                    popupList.appendChild(item);
+                }
+                
+                document.querySelector('.resource-overlay').style.display = 'block';
+                document.querySelector('.resource-popup').style.display = 'block';
+            }
+
+            function closeResourcePopup() {
+                document.querySelector('.resource-overlay').style.display = 'none';
+                document.querySelector('.resource-popup').style.display = 'none';
+                window.location.reload();
             }
 
             function filterResources(type) {
@@ -383,6 +519,13 @@ sort($resource_types);
         <div class="footer">
             <?php include 'footer.php'; ?>
         </div>
+    </div>
+
+    <div class="resource-overlay"></div>
+    <div class="resource-popup">
+        <div class="popup-header">Resources Gathered!</div>
+        <div class="popup-list"></div>
+        <button class="popup-button" onclick="closeResourcePopup()">Close</button>
     </div>
 </body>
 </html>

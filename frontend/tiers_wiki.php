@@ -25,9 +25,9 @@ if (!isset($_SESSION['user_id'])) {
             padding: 0;
         }
         .content {
-            margin-left: 200px; /* Same as sidebar width */
+            margin-left: 200px;
             padding: 20px;
-            padding-bottom: 60px; /* Add padding to accommodate the footer */
+            padding-bottom: 60px; 
         }
         h1 {
             color: #333;

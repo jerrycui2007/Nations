@@ -45,7 +45,7 @@ if (!$nation) {
 
         .main-content {
             margin-left: 220px;
-            padding-bottom: 60px; /* Add space for footer */
+            padding-bottom: 60px;
         }
 
         .header {
@@ -54,7 +54,7 @@ if (!$nation) {
             padding: 150px 20px;
             color: white;
             position: relative;
-            width: 100%; /* Changed from fixed width */
+            width: 100%; 
         }
 
         .header-content {

@@ -1,9 +1,23 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Calculate time until next hour
+$now = new DateTime('now', new DateTimeZone('America/New_York'));
+$next_hour = clone $now;
+$next_hour->modify('next hour')->setTime($next_hour->format('H'), 0, 0);
+$time_until_hour = $now->diff($next_hour);
+
+// Calculate time until 8pm EST
+$today_8pm = new DateTime('today 20:00:00', new DateTimeZone('America/New_York'));
+if ($now > $today_8pm) {
+    $today_8pm->modify('+1 day');
+}
+$time_until_daily = $now->diff($today_8pm);
 ?>
 
 <div class="sidebar">
     <nav>
+        
         <ul>
             <li><a href="home.php" <?php echo ($current_page == 'home.php') ? 'class="active"' : ''; ?>>Home</a></li>
             <li><a href="land.php" <?php echo ($current_page == 'land.php') ? 'class="active"' : ''; ?>>Land</a></li>
@@ -21,8 +35,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
             
             <li><a href="logout.php">Logout</a></li>
         </ul>
-        <div class="version-info">v0.3.0-beta</div>
+        <div class="version-info">v0.5.1-beta</div>
         <div class="version-info">Join the official Discord Server to interact with the community and be notified of updates!</div>
+        <div class="turn-info">
+            <div class="turn-timer">
+                Next turn in: <?php echo sprintf('%02d:%02d', $time_until_hour->h, $time_until_hour->i); ?>
+            </div>
+            <div class="turn-timer">
+                Next day in: <?php echo sprintf('%02d:%02d', $time_until_daily->h, $time_until_daily->i); ?>
+            </div>
+        </div>
     </nav>
     
 </div>
@@ -111,5 +133,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
     .rules-section ul li {
         margin-bottom: 10px;
         line-height: 1.5;
+    }
+
+    .turn-info {
+        padding: 12px;
+        background-color: #34495e;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .turn-timer {
+        color: #ecf0f1;
+        font-size: 0.9em;
+        text-align: center;
+        margin: 4px 0;
     }
 </style>
