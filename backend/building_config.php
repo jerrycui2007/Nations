@@ -116,5 +116,23 @@ $BUILDING_CONFIG = [
                 ]
             ]
         ]
+        ],
+        'barracks' => [
+        'name' => 'Barracks',
+        'description' => 'A military training facility. Allows you to train infantry units.',
+        'levels' => [
+            1 => [
+                'minimum_tier' => 2,
+                'construction_cost' => [
+                    'money' => 5000,
+                    'building_materials' => 1000,
+                    'metal' => 250,
+                    'construction_time' => 180
+                ],
+                'land' => [
+                    'cleared_land' => 10
+                ]
+            ]
+        ]
     ]
 ];
