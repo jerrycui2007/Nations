@@ -7,6 +7,77 @@ require_once 'calculate_consumer_goods_consumption.php';
 require_once 'calculate_population_growth.php';
 require_once 'calculate_tier.php';
 require_once 'gp_functions.php';
+require_once 'mission_config.php';
+
+function assignMissions() {
+    global $pdo, $MISSION_CONFIG;
+
+    try {
+        // Get all users and their current mission count
+        $stmt = $pdo->prepare("
+            SELECT u.id, COUNT(m.mission_id) as mission_count
+            FROM users u
+            LEFT JOIN missions m ON u.id = m.user_id
+            GROUP BY u.id
+            HAVING mission_count < 2
+        ");
+        $stmt->execute();
+        $users_needing_missions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($users_needing_missions as $user) {
+            $missions_to_create = 2 - $user['mission_count'];
+
+            for ($i = 0; $i < $missions_to_create; $i++) {
+                // Get user's current missions
+                $stmt = $pdo->prepare("
+                    SELECT mission_type 
+                    FROM missions 
+                    WHERE user_id = ?
+                ");
+                $stmt->execute([$user['id']]);
+                $existing_missions = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+                // Calculate total weight for mission selection
+                $total_weight = 0;
+                $available_missions = array_diff_key($MISSION_CONFIG, array_flip($existing_missions));
+
+                foreach ($available_missions as $type => $config) {
+                    $total_weight += $config['spawn_weight'];
+                }
+
+                // Select random mission type based on weights
+                $random = rand(1, $total_weight);
+                $current_weight = 0;
+                $selected_mission_type = '';
+
+                foreach ($available_missions as $type => $config) {
+                    $current_weight += $config['spawn_weight'];
+                    if ($random <= $current_weight) {
+                        $selected_mission_type = $type;
+                        break;
+                    }
+                }
+
+                // Create new mission
+                $stmt = $pdo->prepare("
+                    INSERT INTO missions (
+                        user_id, mission_type, status, 
+                        rewards_claimed, battle_id
+                    ) VALUES (
+                        ?, ?, 'incomplete',
+                        FALSE, NULL
+                    )
+                ");
+                $stmt->execute([$user['id'], $selected_mission_type]);
+            }
+        }
+
+        log_message("Mission assignment completed successfully");
+    } catch (Exception $e) {
+        log_message("Error during mission assignment: " . $e->getMessage());
+        throw $e;
+    }
+}
 
 function performHourlyUpdates() {
     global $pdo;
@@ -112,11 +183,13 @@ function updateProductionCapacity($user_id) {
 }
 
 function log_message($message) {
+    /*
     $log_file = __DIR__ . '/hourly_updates.log';
     $timestamp = date('Y-m-d H:i:s');
-    file_put_contents($log_file, "[$timestamp] $message\n", FILE_APPEND);
+    file_put_contents($log_file, "[$timestamp] $message\n", FILE_APPEND);*/
 }
 
 log_message("Starting hourly updates");
+assignMissions();
 performHourlyUpdates();
 log_message("Hourly updates completed");

@@ -350,6 +350,10 @@ if (!$nation) {
                 <span id="building-gp">0</span>
             </div>
             <div class="gp-item">
+                <span>Military</span>
+                <span id="military-gp">0</span>
+            </div>
+            <div class="gp-item">
                 <span>Total GP</span>
                 <span id="total-gp">0</span>
             </div>
@@ -366,11 +370,11 @@ if (!$nation) {
             document.querySelector('.gp-popup').style.display = 'block';
             
             // Show loading state
-            const elements = ['population-gp', 'land-gp', 'factory-gp', 'building-gp', 'total-gp'];
+            const elements = ['population-gp', 'land-gp', 'factory-gp', 'building-gp', 'military-gp', 'total-gp'];
             elements.forEach(id => document.getElementById(id).textContent = 'Loading...');
             
             // Fetch GP breakdown
-            fetch('../backend/get_nation_gp_breakdown.php?id=<?php echo $nation_id; ?>')
+            fetch(`../backend/get_nation_gp_breakdown.php?id=<?php echo $nation_id; ?>`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -387,11 +391,12 @@ if (!$nation) {
                     document.getElementById('land-gp').textContent = formatNumber(data.land_gp);
                     document.getElementById('factory-gp').textContent = formatNumber(data.factory_gp);
                     document.getElementById('building-gp').textContent = formatNumber(data.building_gp);
+                    document.getElementById('military-gp').textContent = formatNumber(data.military_gp);
                     document.getElementById('total-gp').textContent = formatNumber(data.total_gp);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error fetching GP breakdown');
+                    console.error('GP Breakdown Error:', error);
+                    closeGPPopup();
                 });
         }
 

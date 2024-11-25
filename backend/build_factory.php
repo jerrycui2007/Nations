@@ -28,6 +28,25 @@ function getResourceDisplayName($resourceKey) {
         : ucfirst($resourceKey);
 }
 
+// Get user's population to calculate tier
+$stmt = $pdo->prepare("SELECT population FROM users WHERE id = ?");
+$stmt->execute([$user_id]);
+$user_population = $stmt->fetch(PDO::FETCH_ASSOC)['population'];
+
+// Calculate user's tier
+require_once 'calculate_tier.php';
+$user_tier = calculateTier($user_population);
+
+// Check if user meets tier requirement
+$factory_tier = $FACTORY_CONFIG[$factory_type]['tier'];
+if ($user_tier < $factory_tier) {
+    echo json_encode([
+        'success' => false, 
+        'message' => "This factory requires Tier {$factory_tier}. Your nation is Tier {$user_tier}."
+    ]);
+    exit();
+}
+
 try {
     $pdo->beginTransaction();
 

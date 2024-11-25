@@ -26,16 +26,21 @@ $time_until_daily = $now->diff($today_8pm);
             <li><a href="resources.php" <?php echo ($current_page == 'resources.php') ? 'class="active"' : ''; ?>>Natural Resources</a></li>
             <li><a href="trade.php" <?php echo ($current_page == 'trade.php') ? 'class="active"' : ''; ?>>Trade</a></li>
             <li><a href="alliance.php" <?php echo ($current_page == 'alliance.php') ? 'class="active"' : ''; ?>>Alliance</a></li>
+            <li><a href="military.php" <?php echo ($current_page == 'military.php') ? 'class="active"' : ''; ?>>Military</a></li>
+            <li><a href="battles.php" <?php echo ($current_page == 'battles.php') ? 'class="active"' : ''; ?>>Battle Reports</a></li>
+            <li><a href="missions.php" <?php echo ($current_page == 'missions.php') ? 'class="active"' : ''; ?>>Missions</a></li>
+            <li><a href="recruitment.php" <?php echo ($current_page == 'recruitment.php') ? 'class="active"' : ''; ?>>Recruitment</a></li>
             <li><a href="leaderboard.php" <?php echo ($current_page == 'leaderboard.php') ? 'class="active"' : ''; ?>>Nation Leaderboard</a></li>
             <li><a href="alliance_leaderboard.php" <?php echo ($current_page == 'alliance_leaderboard.php') ? 'class="active"' : ''; ?>>Alliance Leaderboard</a></li>
             <li><a href="notifications.php" <?php echo ($current_page == 'notifications.php') ? 'class="active"' : ''; ?>>Notifications</a></li>
-            <li><a href="https://docs.google.com/document/d/1TDdhsYFXrqr9ZPwHsAbb3bqFYrKxcyUqcM4pbGv88Is/edit?usp=sharing">Rules</a></li>
+            <li><a href="https://nations.miraheze.org/wiki/Rules">Rules</a></li>
             <li><a href="https://discord.gg/b6VBBDKWSG">Discord Server</a></li>
+            <li><a href="https://nations.miraheze.org/wiki/Main_Page">Wiki</a></li>
             
             
             <li><a href="logout.php">Logout</a></li>
         </ul>
-        <div class="version-info">v0.5.1-beta</div>
+        <div class="version-info">v0.6.0-beta</div>
         <div class="version-info">Join the official Discord Server to interact with the community and be notified of updates!</div>
         <div class="turn-info">
             <div class="turn-timer">

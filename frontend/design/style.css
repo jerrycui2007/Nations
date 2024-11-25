@@ -51,3 +51,43 @@ h1 {
     align-items: center;
     gap: 4px;
 }
+
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.toast {
+    padding: 12px 24px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+    min-width: 200px;
+    text-align: center;
+    animation: slideIn 0.3s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.toast.success {
+    background-color: #4CAF50;  /* Green */
+    width: 100%;
+}
+
+.toast.error {
+    background-color: #f44336;  /* Red */
+    width: 100%;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

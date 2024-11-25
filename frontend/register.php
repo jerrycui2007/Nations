@@ -54,6 +54,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Calculate GP using the calculatePoints function
                     $initial_gp = calculateTotalGP($pdo, $user_id)['total_gp'];
 
+                    // Create defensive division
+                    $stmt = $pdo->prepare("INSERT INTO divisions (user_id, name, is_defence) VALUES (?, 'Defence Division', 1)");
+                    $stmt->execute([$user_id]);
+
                     // Insert into buildings table
                     $stmt = $pdo->prepare("INSERT INTO buildings (id) VALUES (?)");
                     $stmt->execute([$user_id]);

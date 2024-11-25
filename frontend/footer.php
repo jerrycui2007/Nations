@@ -31,7 +31,7 @@ $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_dat
                             data-tooltip="<?php echo htmlspecialchars($resource['display_name'] ?? 'Money'); ?>: Income <?php echo formatNumber($income_result['increase']); ?> per turn"
                         <?php elseif ($key === 'food'): ?>
                             id="food-label" 
-                            data-tooltip="<?php echo htmlspecialchars($resource['display_name'] ?? 'Food'); ?>: Consumption <?php echo number_format($food_consumption_result['consumption']); ?> per turn"
+                            data-tooltip="<?php echo htmlspecialchars($resource['display_name'] ?? 'Food'); ?>: Consumption <?php echo number_format($food_consumption_result['actual_consumption']); ?> per turn"
                         <?php elseif ($key === 'power'): ?>
                             id="power-label" 
                             data-tooltip="<?php echo htmlspecialchars($resource['display_name'] ?? 'Power'); ?>: Consumption <?php echo number_format($power_consumption_result['consumption']); ?> per turn"
@@ -47,8 +47,8 @@ $consumer_goods_consumption_result = calculateConsumerGoodsConsumption($user_dat
                         <?php 
                         if ($key === 'money' && isset($income_result['increase'])) {
                             echo 'style="color: ' . ($income_result['increase'] >= 0 ? '#28a745' : '#dc3545') . ';"';
-                        } elseif ($key === 'food' && isset($food_consumption_result['consumption'])) {
-                            echo 'style="color: ' . ($food_consumption_result['consumption'] <= 0 ? '#28a745' : '#dc3545') . ';"';
+                        } elseif ($key === 'food' && isset($food_consumption_result['actual_consumption'])) {
+                            echo 'style="color: ' . ($food_consumption_result['actual_consumption'] <= 0 ? '#28a745' : '#dc3545') . ';"';
                         } elseif ($key === 'power' && isset($power_consumption_result['consumption'])) {
                             echo 'style="color: ' . ($power_consumption_result['consumption'] <= 0 ? '#28a745' : '#dc3545') . ';"';
                         } elseif ($key === 'consumer_goods' && isset($consumer_goods_consumption_result['consumption'])) {

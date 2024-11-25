@@ -19,18 +19,9 @@ $stmt = $pdo->prepare("
         u.country_name as leader_country,
         (SELECT COUNT(*) FROM users WHERE alliance_id = a.alliance_id) as member_count,
         (SELECT SUM(gp) FROM users WHERE alliance_id = a.alliance_id) as total_gp,
-        (SELECT COUNT(*) 
-         FROM (
-             SELECT alliance_id, SUM(gp) as alliance_gp 
-             FROM users 
-             GROUP BY alliance_id
-         ) sub 
-         WHERE sub.alliance_gp > (
-             SELECT SUM(gp) 
-             FROM users 
-             WHERE alliance_id = a.alliance_id
-         )
-        ) as ranking
+        DENSE_RANK() OVER (ORDER BY (
+            SELECT SUM(gp) FROM users WHERE alliance_id = a.alliance_id
+        ) DESC) as ranking
     FROM alliances a
     JOIN users u ON a.leader_id = u.id
     ORDER BY total_gp DESC
@@ -64,14 +55,9 @@ if ($user['alliance_id']) {
                 u.country_name as leader_country,
                 (SELECT COUNT(*) FROM users WHERE alliance_id = a.alliance_id) as member_count,
                 (SELECT SUM(gp) FROM users WHERE alliance_id = a.alliance_id) as total_gp,
-                (SELECT COUNT(*) 
-                 FROM (SELECT alliance_id, SUM(gp) as total_gp 
-                       FROM users 
-                       GROUP BY alliance_id) as a2 
-                 WHERE a2.total_gp > (SELECT SUM(gp) 
-                                    FROM users 
-                                    WHERE alliance_id = a.alliance_id)
-                ) + 1 as ranking
+                DENSE_RANK() OVER (ORDER BY (
+                    SELECT SUM(gp) FROM users WHERE alliance_id = a.alliance_id
+                ) DESC) as ranking
             FROM alliances a
             JOIN users u ON a.leader_id = u.id
             WHERE a.alliance_id = ?

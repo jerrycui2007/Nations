@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Notification types
-$valid_types = ['Trade', 'New Nation', 'International Relations'];
+$valid_types = ['Trade', 'New Nation', 'International Relations', 'Conflict'];
 
 // Get filter from URL, validate it
 $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';

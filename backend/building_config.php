@@ -116,10 +116,10 @@ $BUILDING_CONFIG = [
                 ]
             ]
         ]
-        ],
-        'barracks' => [
+    ],
+    'barracks' => [
         'name' => 'Barracks',
-        'description' => 'A military training facility. Allows you to train infantry units.',
+        'description' => 'A military training facility. Allows you to train infantry units. You can recruit up to (3 times the level of this building) units at a time.',
         'levels' => [
             1 => [
                 'minimum_tier' => 2,
@@ -132,7 +132,73 @@ $BUILDING_CONFIG = [
                 'land' => [
                     'cleared_land' => 10
                 ]
+            ],
+            2 => [
+                'minimum_tier' => 3,
+                'construction_cost' => [
+                    'money' => 25000,
+                    'building_materials' => 5000,
+                    'metal' => 1000,
+                    'construction_time' => 480
+                ],
+                'land' => [
+                    'cleared_land' => 15
+                ]
             ]
         ]
+    ],
+    'special_forces_recruiting_agency' => [
+        'name' => 'Special Forces Recruiting Agency',
+        'description' => '[CLASSIFIED]',
+        'levels' => [
+            1 => [
+                'minimum_tier' => 3,
+                'construction_cost' => [
+                    'money' => 25000,
+                    'building_materials' => 5000,
+                    'metal' => 1000,
+                    'construction_time' => 480
+                ],
+                'land' => [
+                    'cleared_land' => 15
+                ]
+            ],
+        ]
+    ],
+    'light_armour_factory' => [
+            'name' => 'Light Armour Factory',
+            'description' => 'A lightly-armoured vehicle factory. Allows you to train lightly armoured units. You can recruit up to (3 times the level of this building) units at a time.',
+            'levels' => [
+                1 => [
+                    'minimum_tier' => 4,
+                    'construction_cost' => [
+                        'money' => 50000,
+                        'building_materials' => 10000,
+                        'metal' => 3000,
+                        'construction_time' => 1440
+                    ],
+                    'land' => [
+                        'cleared_land' => 20
+                    ]
+                ],
+            ]
+    ],
+    'heavy_armour_factory' => [
+    'name' => 'Heavy Armour Factory',
+    'description' => 'A heavily-armoured vehicle factory. Allows you to train heavily armoured units. You can recruit up to (3 times the level of this building) units at a time.',
+    'levels' => [
+        1 => [
+            'minimum_tier' => 4,
+            'construction_cost' => [
+                'money' => 50000,
+                'building_materials' => 10000,
+                'metal' => 3000,
+                'construction_time' => 1440
+            ],
+            'land' => [
+                'cleared_land' => 20
+            ]
+        ],
     ]
+]
 ];

@@ -3,7 +3,7 @@
 $LAND_CONFIG = [
     'cleared_land' => [
         'weight' => [
-            'westberg' => 10, 
+            'westberg' => 10,
             'amarino' => 10,
             'san_sebastian' => 10,
             'tind' => 10,
@@ -12,11 +12,11 @@ $LAND_CONFIG = [
     ],
     'forest' => [
         'weight' => [
-            'westberg' => 30,
-            'amarino' => 20,
-            'san_sebastian' => 25,
-            'tind' => 15,
-            'zaheria' => 1
+            'westberg' => 43,
+            'amarino' => 10,
+            'san_sebastian' => 18,
+            'tind' => 5,
+            'zaheria' => 5
         ]
     ],
     'mountain' => [
@@ -24,41 +24,41 @@ $LAND_CONFIG = [
             'westberg' => 10,
             'amarino' => 5,
             'san_sebastian' => 15,
-            'tind' => 40,
+            'tind' => 34,
             'zaheria' => 5
         ]
     ],
     'river' => [
         'weight' => [
             'westberg' => 15,
-            'amarino' => 20,
+            'amarino' => 15,
             'san_sebastian' => 15,
-            'tind' => 30,
-            'zaheria' => 1
+            'tind' => 20,
+            'zaheria' => 5
         ]
     ],
     'lake' => [
         'weight' => [
             'westberg' => 15,
-            'amarino' => 20,
+            'amarino' => 15,
             'san_sebastian' => 15,
-            'tind' => 30,
-            'zaheria' => 1
+            'tind' => 20,
+            'zaheria' => 5
         ]
     ],
     'grassland' => [
         'weight' => [
             'westberg' => 20,
-            'amarino' => 10,
-            'san_sebastian' => 15,
-            'tind' => 5,
+            'amarino' => 5,
+            'san_sebastian' => 20,
+            'tind' => 1,
             'zaheria' => 5
         ]
     ],
     'jungle' => [
         'weight' => [
             'westberg' => 5,
-            'amarino' => 20,
+            'amarino' => 60,
             'san_sebastian' => 10,
             'tind' => 0,
             'zaheria' => 0
@@ -68,15 +68,15 @@ $LAND_CONFIG = [
         'weight' => [
             'westberg' => 0,
             'amarino' => 0,
-            'san_sebastian' => 10,
+            'san_sebastian' => 15,
             'tind' => 0,
-            'zaheria' => 50
+            'zaheria' => 85
         ]
     ],
     'tundra' => [
         'weight' => [
             'westberg' => 2,
-            'amarino' => 2,
+            'amarino' => 0,
             'san_sebastian' => 2,
             'tind' => 30,
             'zaheria' => 0

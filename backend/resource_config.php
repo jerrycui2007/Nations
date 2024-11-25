@@ -221,7 +221,7 @@ $RESOURCE_CONFIG = [
         'discovery_weight' => [
             'westberg' => 5,
             'amarino' => 3,
-            'san_sebastian' => 5,
+            'san_sebastian' => 13,
             'tind' => 1,
             'zaheria' => 0
         ]
@@ -299,7 +299,7 @@ $RESOURCE_CONFIG = [
         'discovery_weight' => [
             'westberg' => 5,
             'amarino' => 3,
-            'san_sebastian' => 5,
+            'san_sebastian' => 13,
             'tind' => 3,
             'zaheria' => 0
         ]
@@ -589,7 +589,7 @@ $RESOURCE_CONFIG = [
             'westberg' => 500,
             'amarino' => 0,
             'san_sebastian' => 250,
-            'tind' => 500,
+            'tind' => 1000,
             'zaheria' => 500
         ]
     ],
@@ -602,7 +602,7 @@ $RESOURCE_CONFIG = [
             'westberg' => 250,
             'amarino' => 0,
             'san_sebastian' => 0,
-            'tind' => 500,
+            'tind' => 1139,
             'zaheria' => 100
         ]
     ],
@@ -614,7 +614,7 @@ $RESOURCE_CONFIG = [
         'discovery_weight' => [
             'westberg' => 400,
             'amarino' => 400,
-            'san_sebastian' => 400,
+            'san_sebastian' => 1000,
             'tind' => 200,
             'zaheria' => 100
         ]
@@ -627,8 +627,8 @@ $RESOURCE_CONFIG = [
         'discovery_weight' => [
             'westberg' => 400,
             'amarino' => 200,
-            'san_sebastian' => 250,
-            'tind' => 400,
+            'san_sebastian' => 500,
+            'tind' => 500,
             'zaheria' => 100
         ]
     ],
@@ -641,7 +641,7 @@ $RESOURCE_CONFIG = [
             'westberg' => 250,
             'amarino' => 0,
             'san_sebastian' => 0,
-            'tind' => 500,
+            'tind' => 750,
             'zaheria' => 100
         ]
     ],
@@ -654,7 +654,7 @@ $RESOURCE_CONFIG = [
             'westberg' => 250,
             'amarino' => 0,
             'san_sebastian' => 0,
-            'tind' => 500,
+            'tind' => 750,
             'zaheria' => 0
         ]
     ],
@@ -666,9 +666,9 @@ $RESOURCE_CONFIG = [
         'discovery_weight' => [
             'westberg' => 250,
             'amarino' => 250,
-            'san_sebastian' => 250,
+            'san_sebastian' => 500,
             'tind' => 250,
-            'zaheria' => 250
+            'zaheria' => 750
         ]
     ],
     'platinum' => [
@@ -680,7 +680,7 @@ $RESOURCE_CONFIG = [
             'westberg' => 250,
             'amarino' => 100,
             'san_sebastian' => 100,
-            'tind' => 500,
+            'tind' => 750,
             'zaheria' => 0
         ]
     ],
@@ -692,9 +692,9 @@ $RESOURCE_CONFIG = [
         'discovery_weight' => [
             'westberg' => 250,
             'amarino' => 250,
-            'san_sebastian' => 250,
+            'san_sebastian' => 500,
             'tind' => 250,
-            'zaheria' => 250
+            'zaheria' => 750
         ]
     ],
     'saltpeter' => [
@@ -705,9 +705,9 @@ $RESOURCE_CONFIG = [
         'discovery_weight' => [
             'westberg' => 100,
             'amarino' => 300,
-            'san_sebastian' => 500,
+            'san_sebastian' => 1025,
             'tind' => 0,
-            'zaheria' => 300
+            'zaheria' => 570
         ]
     ],
     'sulfur' => [
@@ -716,11 +716,11 @@ $RESOURCE_CONFIG = [
         'type' => 'Mined',
         'tier' => 4,
         'discovery_weight' => [
-            'westberg' => 100,
+            'westberg' => 0,
             'amarino' => 300,
-            'san_sebastian' => 500,
+            'san_sebastian' => 1025,
             'tind' => 0,
-            'zaheria' => 300
+            'zaheria' => 570
         ]
     ],
     'uraninite' => [
@@ -729,11 +729,11 @@ $RESOURCE_CONFIG = [
         'type' => 'Mined',
         'tier' => 4,
         'discovery_weight' => [
-            'westberg' => 25,
+            'westberg' => 19,
             'amarino' => 250,
             'san_sebastian' => 25,
             'tind' => 250,
-            'zaheria' => 500
+            'zaheria' => 1500
         ]
     ],
     'petroleum' => [
@@ -742,11 +742,11 @@ $RESOURCE_CONFIG = [
         'type' => 'Mined',
         'tier' => 4,
         'discovery_weight' => [
-            'westberg' => 250,
+            'westberg' => 150,
             'amarino' => 25,
             'san_sebastian' => 25,
             'tind' => 25,
-            'zaheria' => 500
+            'zaheria' => 1500
         ]
     ],
     'gemstone' => [
@@ -757,8 +757,8 @@ $RESOURCE_CONFIG = [
         'discovery_weight' => [
             'westberg' => 250,
             'amarino' => 250,
-            'san_sebastian' => 250,
-            'tind' => 250,
+            'san_sebastian' => 500,
+            'tind' => 500,
             'zaheria' => 250
         ]
     ],
@@ -771,7 +771,7 @@ $RESOURCE_CONFIG = [
             'westberg' => 300,
             'amarino' => 500,
             'san_sebastian' => 300,
-            'tind' => 100,
+            'tind' => 250,
             'zaheria' => 100
         ]
     ],
@@ -782,9 +782,9 @@ $RESOURCE_CONFIG = [
         'tier' => 5,
         'discovery_weight' => [
             'westberg' => 250,
-            'amarino' => 250,
+            'amarino' => 299,
             'san_sebastian' => 200,
-            'tind' => 250,
+            'tind' => 500,
             'zaheria' => 0
         ]
     ],
@@ -798,7 +798,7 @@ $RESOURCE_CONFIG = [
             'amarino' => 25,
             'san_sebastian' => 25,
             'tind' => 25,
-            'zaheria' => 500
+            'zaheria' => 1500
         ]
     ]
 ];

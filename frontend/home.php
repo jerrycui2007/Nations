@@ -711,6 +711,7 @@ if ($error) {
                     document.getElementById('land-gp').textContent = formatNumber(data.land_gp);
                     document.getElementById('factory-gp').textContent = formatNumber(data.factory_gp);
                     document.getElementById('building-gp').textContent = formatNumber(data.building_gp);
+                    document.getElementById('military-gp').textContent = formatNumber(data.military_gp);
                     document.getElementById('total-gp').textContent = formatNumber(data.total_gp);
                 })
                 .catch(error => {
@@ -772,6 +773,10 @@ if ($error) {
             <div class="gp-item">
                 <span>Buildings</span>
                 <span id="building-gp">0</span>
+            </div>
+            <div class="gp-item">
+                <span>Military</span>
+                <span id="military-gp">0</span>
             </div>
             <div class="gp-item">
                 <span>Total GP</span>

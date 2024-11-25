@@ -37,6 +37,17 @@ function calculateTotalGP($pdo, $user_id) {
             throw new Exception("User data not found");
         }
 
+        // Calculate military GP from units
+        $stmt = $pdo->prepare("
+            SELECT 
+                SUM(firepower + armour + maneuver + FLOOR(hp/10)) as total_strength
+            FROM units 
+            WHERE player_id = ?
+        ");
+        $stmt->execute([$user_id]);
+        $military_data = $stmt->fetch(PDO::FETCH_ASSOC);
+        $military_gp = floor(($military_data['total_strength'] ?? 0) / 10);
+
         // Get factory GP using the PHP config
         $factory_gp = 0;
         $stmt = $pdo->prepare("
@@ -62,7 +73,7 @@ function calculateTotalGP($pdo, $user_id) {
         $building_gp = $data['building_gp'] * 10;
         
         // Calculate total
-        $total_gp = $population_gp + $land_gp + $factory_gp + $building_gp;
+        $total_gp = $population_gp + $land_gp + $factory_gp + $building_gp + $military_gp;
 
         // Update the user's GP in the database
         $stmt = $pdo->prepare("UPDATE users SET gp = ? WHERE id = ?");
@@ -73,6 +84,7 @@ function calculateTotalGP($pdo, $user_id) {
             'land_gp' => $land_gp,
             'factory_gp' => $factory_gp,
             'building_gp' => $building_gp,
+            'military_gp' => $military_gp,
             'total_gp' => $total_gp
         ];
 

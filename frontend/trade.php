@@ -13,37 +13,49 @@ if (!isset($_SESSION['user_id'])) {
 try {
     $resource_filter = $_GET['resource_filter'] ?? 'all';
     
-    // Fetch active trades
-    $query = "SELECT t.trade_id, t.seller_id, t.resource_offered, t.amount_offered, 
-                     t.price_per_unit, t.date, u.country_name as seller_name,
-                     u.leader_name as leader_name
-              FROM trades t
-              JOIN users u ON t.seller_id = u.id";
+    // First query for market trades (excluding player's trades)
+    $query = "WITH MinPrices AS (
+        SELECT resource_offered, MIN(price_per_unit) as min_price
+        FROM trades
+        WHERE seller_id != ? -- Exclude player's trades
+        GROUP BY resource_offered)
+    SELECT t.*, u.country_name as seller_name, u.leader_name
+    FROM trades t
+    JOIN users u ON t.seller_id = u.id
+    JOIN MinPrices mp ON t.resource_offered = mp.resource_offered
+    WHERE t.seller_id != ? AND t.price_per_unit = mp.min_price";
     
-    $params = [];
+    $params = [$_SESSION['user_id'], $_SESSION['user_id']];
+    
     if ($resource_filter !== 'all') {
-        $query .= " WHERE t.resource_offered = ?";
+        $query .= " AND t.resource_offered = ?";
         $params[] = $resource_filter;
     }
     
-    $query .= " ORDER BY t.price_per_unit ASC";
+    $query .= " ORDER BY t.price_per_unit ASC, t.date ASC";
     
     $stmt = $pdo->prepare($query);
     $stmt->execute($params);
-    $trades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $market_trades = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Fetch trade history
-    $stmt = $pdo->prepare("SELECT th.*, 
-                           u_buyer.country_name as buyer_name,
-                           u_seller.country_name as seller_name
-                           FROM trade_history th
-                           JOIN users u_buyer ON th.buyer_id = u_buyer.id
-                           JOIN users u_seller ON th.seller_id = u_seller.id
-                           WHERE buyer_id = ? OR seller_id = ?
-                           ORDER BY date DESC
-                           LIMIT 10");
-    $stmt->execute([$_SESSION['user_id'], $_SESSION['user_id']]);
-    $trade_history = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Second query for player's trades
+    $query = "SELECT t.*, u.country_name as seller_name, u.leader_name
+    FROM trades t
+    JOIN users u ON t.seller_id = u.id
+    WHERE t.seller_id = ?";
+    
+    $params = [$_SESSION['user_id']];
+    
+    if ($resource_filter !== 'all') {
+        $query .= " AND t.resource_offered = ?";
+        $params[] = $resource_filter;
+    }
+    
+    $query .= " ORDER BY t.price_per_unit ASC, t.date ASC";
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->execute($params);
+    $player_trades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     error_log($e->getMessage());
     $error = "An error occurred while loading trades.";
@@ -64,6 +76,38 @@ function getResourceDisplayName($resource) {
     return isset($RESOURCE_CONFIG[$resource]['display_name']) ? 
            $RESOURCE_CONFIG[$resource]['display_name'] : 
            ucwords(str_replace('_', ' ', $resource));
+}
+
+try {
+    // Query for trade history
+    $query = "SELECT th.*, u.country_name, u.leader_name,
+              CASE 
+                  WHEN th.buyer_id = ? THEN 'purchase'
+                  WHEN th.seller_id = ? THEN 'sale'
+              END as transaction_type,
+              CASE
+                  WHEN th.buyer_id = ? THEN th.seller_id
+                  WHEN th.seller_id = ? THEN th.buyer_id
+              END as partner_id
+              FROM trade_history th
+              JOIN users u ON (th.buyer_id = ? AND th.seller_id = u.id) 
+                         OR (th.seller_id = ? AND th.buyer_id = u.id)
+              ORDER BY th.date DESC
+              LIMIT 50";
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([
+        $_SESSION['user_id'], 
+        $_SESSION['user_id'],
+        $_SESSION['user_id'], 
+        $_SESSION['user_id'],
+        $_SESSION['user_id'], 
+        $_SESSION['user_id']
+    ]);
+    $trade_history = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    $error = "An error occurred while loading trade history.";
 }
 
 ?>
@@ -319,6 +363,7 @@ function getResourceDisplayName($resource) {
                 </select>
             </div>
 
+            <h2>Market Trades</h2>
             <table>
                 <tr>
                     <th>Seller</th>
@@ -329,102 +374,156 @@ function getResourceDisplayName($resource) {
                     <th>Total Price</th>
                     <th>Action</th>
                 </tr>
-                <?php foreach ($trades as $trade): ?>
-                    <?php $total_price = $trade['amount_offered'] * $trade['price_per_unit']; ?>
+                <?php if (empty($market_trades)): ?>
                     <tr>
-                        <td>
-                            <a href="view.php?id=<?php echo htmlspecialchars($trade['seller_id']); ?>" class="nation-link">
-                                <?php echo htmlspecialchars($trade['seller_name']); ?><br>
-                                <small><?php echo htmlspecialchars($trade['leader_name']); ?></small>
-                            </a>
-                        </td>
-                        <td>
-                            <?php echo getResourceIcon($trade['resource_offered']); ?> 
-                            <?php echo number_format($trade['amount_offered']); ?>
-                            <?php echo htmlspecialchars($RESOURCE_CONFIG[$trade['resource_offered']]['display_name']); ?>
-                        </td>
-                        <td>
-                            <?php echo getResourceIcon('money'); ?> 
-                            <?php echo number_format($trade['price_per_unit']); ?><br>
-                        </td>
-                        <td><?php echo date('M j, Y g:i A', strtotime($trade['date'])); ?></td>
-                        <td>
-                            <?php if ($trade['seller_id'] != $_SESSION['user_id']): ?>
-                                <input type="number" 
-                                       class="trade-amount-input" 
-                                       id="amount_<?php echo $trade['trade_id']; ?>"
-                                       min="1" 
-                                       max="<?php echo $trade['amount_offered']; ?>"
-                                       value="1"
-                                       oninput="updateTotalPrice(<?php echo $trade['trade_id']; ?>, <?php echo $trade['price_per_unit']; ?>, <?php echo $user_resources['money']; ?>)">
-                            <?php else: ?>
-                                -
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <div id="total_<?php echo $trade['trade_id']; ?>" class="total-price">
-                                <?php 
-                                // Calculate initial total for 1 unit
-                                $initial_total = $trade['price_per_unit']; // For 1 unit
-                                $can_afford = $user_resources['money'] >= $initial_total;
-                                $color_style = $can_afford ? '' : 'color: #ff4444;';
-                                ?>
-                                <span style="<?php echo $color_style; ?>">
-                                    <?php echo getResourceIcon('money'); ?> <?php echo number_format($initial_total); ?>
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <?php if ($trade['seller_id'] != $_SESSION['user_id']): ?>
-                                <button class="trade-button" onclick="completeTrade(<?php echo $trade['trade_id']; ?>)">
-                                    Purchase
-                                </button>
-                            <?php else: ?>
+                        <td colspan="7" style="text-align: center;">No trades available</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($market_trades as $trade): ?>
+                        <?php $total_price = $trade['amount_offered'] * $trade['price_per_unit']; ?>
+                        <tr>
+                            <td>
+                                <a href="view.php?id=<?php echo htmlspecialchars($trade['seller_id']); ?>" class="nation-link">
+                                    <?php echo htmlspecialchars($trade['seller_name']); ?><br>
+                                    <small><?php echo htmlspecialchars($trade['leader_name']); ?></small>
+                                </a>
+                            </td>
+                            <td>
+                                <?php echo getResourceIcon($trade['resource_offered']); ?> 
+                                <?php echo number_format($trade['amount_offered']); ?>
+                                <?php echo htmlspecialchars($RESOURCE_CONFIG[$trade['resource_offered']]['display_name']); ?>
+                            </td>
+                            <td>
+                                <?php echo getResourceIcon('money'); ?> 
+                                <?php echo number_format($trade['price_per_unit']); ?><br>
+                            </td>
+                            <td><?php echo date('M j, Y g:i A', strtotime($trade['date'])); ?></td>
+                            <td>
+                                <?php if ($trade['seller_id'] != $_SESSION['user_id']): ?>
+                                    <input type="number" 
+                                           class="trade-amount-input" 
+                                           id="amount_<?php echo $trade['trade_id']; ?>"
+                                           min="1" 
+                                           max="<?php echo $trade['amount_offered']; ?>"
+                                           value="1"
+                                           oninput="updateTotalPrice(<?php echo $trade['trade_id']; ?>, <?php echo $trade['price_per_unit']; ?>, <?php echo $user_resources['money']; ?>)">
+                                <?php else: ?>
+                                    -
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <div id="total_<?php echo $trade['trade_id']; ?>" class="total-price">
+                                    <?php 
+                                    // Calculate initial total for 1 unit
+                                    $initial_total = $trade['price_per_unit']; // For 1 unit
+                                    $can_afford = $user_resources['money'] >= $initial_total;
+                                    $color_style = $can_afford ? '' : 'color: #ff4444;';
+                                    ?>
+                                    <span style="<?php echo $color_style; ?>">
+                                        <?php echo getResourceIcon('money'); ?> <?php echo number_format($initial_total); ?>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <?php if ($trade['seller_id'] != $_SESSION['user_id']): ?>
+                                    <button class="trade-button" onclick="completeTrade(<?php echo $trade['trade_id']; ?>)">
+                                        Purchase
+                                    </button>
+                                <?php else: ?>
+                                    <button class="cancel-button" onclick="cancelTrade(<?php echo $trade['trade_id']; ?>)">
+                                        Cancel
+                                    </button>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </table>
+
+            <h2>Your Active Trades</h2>
+            <table>
+                <tr>
+                    <th>Resource & Amount</th>
+                    <th>Price Per Unit</th>
+                    <th>Date Listed</th>
+                    <th>Action</th>
+                </tr>
+                <?php if (empty($player_trades)): ?>
+                    <tr>
+                        <td colspan="4" style="text-align: center;">You have no active trades</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($player_trades as $trade): ?>
+                        <tr>
+                            <td>
+                                <?php echo getResourceIcon($trade['resource_offered']); ?> 
+                                <?php echo number_format($trade['amount_offered']); ?>
+                                <?php echo htmlspecialchars($RESOURCE_CONFIG[$trade['resource_offered']]['display_name']); ?>
+                            </td>
+                            <td>
+                                <?php echo getResourceIcon('money'); ?> 
+                                <?php echo number_format($trade['price_per_unit']); ?>
+                            </td>
+                            <td><?php echo date('M j, Y g:i A', strtotime($trade['date'])); ?></td>
+                            <td>
                                 <button class="cancel-button" onclick="cancelTrade(<?php echo $trade['trade_id']; ?>)">
                                     Cancel
                                 </button>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </table>
-
-            <h2>Trade History</h2>
-            <table>
-                <tr>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Other Party</th>
-                    <th>Resource</th>
-                    <th>Amount</th>
-                    <th>Price per Unit</th>
-                    <th>Total Value</th>
-                </tr>
-                <?php foreach ($trade_history as $history): ?>
-                    <?php 
-                    $is_buyer = $history['buyer_id'] == $_SESSION['user_id'];
-                    $total_value = $history['amount_offered'] * $history['price_per_unit'];
-                    ?>
-                    <tr style="background-color: <?php echo $is_buyer ? '#ffebee' : '#e8f5e9'; ?>">
-                        <td><?php echo date('M j, Y g:i A', strtotime($history['date_finished'])); ?></td>
-                        <td><?php echo $is_buyer ? 'Purchase' : 'Sale'; ?></td>
-                        <td>
-                            <a href="view.php?id=<?php echo $is_buyer ? $history['seller_id'] : $history['buyer_id']; ?>" class="nation-link">
-                                <?php echo htmlspecialchars($is_buyer ? $history['seller_name'] : $history['buyer_name']); ?>
-                            </a>
-                        </td>
-                        <td><?php echo getResourceDisplayName($history['resource_offered']); ?></td>
-                        <td><?php echo number_format($history['amount_offered']); ?></td>
-                        <td>$<?php echo number_format($history['price_per_unit']); ?></td>
-                        <td>$<?php echo number_format($total_value); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-                <?php if (empty($trade_history)): ?>
-                    <tr>
-                        <td colspan="7" style="text-align: center;">No trade history found</td>
-                    </tr>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 <?php endif; ?>
             </table>
+
+            <div class="trade-history">
+                <h2>Trade History</h2>
+                <table>
+                    <tr>
+                        <th>Type</th>
+                        <th>Trading Partner</th>
+                        <th>Resource & Amount</th>
+                        <th>Price Per Unit</th>
+                        <th>Total Price</th>
+                        <th>Date</th>
+                    </tr>
+                    <?php if (empty($trade_history)): ?>
+                        <tr>
+                            <td colspan="6" style="text-align: center;">No trade history available</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($trade_history as $history): ?>
+                            <?php 
+                            $is_purchase = $history['transaction_type'] === 'purchase';
+                            $row_color = $is_purchase ? '#ffebee' : '#e8f5e9';
+                            $total_price = $history['amount_offered'] * $history['price_per_unit'];
+                            ?>
+                            <tr style="background-color: <?php echo $row_color; ?>">
+                                <td><?php echo ucfirst($history['transaction_type']); ?></td>
+                                <td>
+                                    <a href="view.php?id=<?php echo htmlspecialchars($history['partner_id']); ?>" class="nation-link">
+                                        <?php echo htmlspecialchars($history['country_name']); ?><br>
+                                        <small><?php echo htmlspecialchars($history['leader_name']); ?></small>
+                                    </a>
+                                </td>
+                                <td>
+                                    <?php echo getResourceIcon($history['resource_offered']); ?> 
+                                    <?php echo number_format($history['amount_offered']); ?>
+                                    <?php echo htmlspecialchars($RESOURCE_CONFIG[$history['resource_offered']]['display_name']); ?>
+                                </td>
+                                <td>
+                                    <?php echo getResourceIcon('money'); ?> 
+                                    <?php echo number_format($history['price_per_unit']); ?>
+                                </td>
+                                <td>
+                                    <?php echo getResourceIcon('money'); ?> 
+                                    <?php echo number_format($total_price); ?>
+                                </td>
+                                <td><?php echo date('M j, Y g:i A', strtotime($history['date'])); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </table>
+            </div>
         </div>
 
         <div class="footer">
