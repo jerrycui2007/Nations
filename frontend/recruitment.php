@@ -8,6 +8,9 @@ require_once 'helpers/resource_display.php';
 require_once 'helpers/time_display.php';
 require_once '../backend/calculate_tier.php';
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Get user's current tier
 $stmt = $pdo->prepare("SELECT population FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
@@ -371,6 +374,7 @@ $daily_unit_type = $daily_unit ? $daily_unit['unit_type'] : '';
                 <?php foreach ($UNIT_CONFIG as $unit_key => $unit): ?>
                     <?php
                     // Skip units that aren't recruitable and aren't the daily unit
+                    error_log("Checking unit: " . $unit_key . " - Recruitable: " . ($unit['recruitable'] ? 'true' : 'false'));
                     if ((!isset($unit['recruitable']) || $unit['recruitable'] === false) && $unit_key !== $daily_unit_type) {
                         continue;
                     }
@@ -485,6 +489,7 @@ $daily_unit_type = $daily_unit ? $daily_unit['unit_type'] : '';
                                 foreach ($unit['building_requirements'] as $building => $required_level) {
                                     $current_level = $user_buildings[$building] ?? 0;
                                     if ($current_level < $required_level) {
+                                        echo $building_name;
                                         $building_name = strtoupper($BUILDING_CONFIG[$building]['name']);
                                         $missing_requirements[] = "$building_name LEVEL $required_level";
                                     }

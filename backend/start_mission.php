@@ -116,6 +116,32 @@ try {
                 $unit_config['hp'],
                 $unit_config['hp']
             ]);
+
+            // Get the last inserted unit ID
+            $unit_id = $pdo->lastInsertId();
+
+            // Create buffs for the unit if any exist
+            if (!empty($unit_config['buffs'])) {
+                $stmt_buff = $pdo->prepare("
+                    INSERT INTO buffs (
+                        unit_id, description, buff_type, value, target
+                    ) VALUES (
+                        ?, ?, ?, ?, ?
+                    )
+                ");
+
+                foreach ($unit_config['buffs'] as $buff) {
+                    $buff_values = [
+                        $unit_id,
+                        $buff['description'],
+                        $buff['buff_type'],
+                        $buff['value'],
+                        $buff['target']
+                    ];
+                    $stmt_buff->execute($buff_values);
+                    error_log("Created buff for enemy unit $unit_id: " . $buff['description']);
+                }
+            }
         }
     }
 

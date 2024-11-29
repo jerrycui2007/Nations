@@ -740,7 +740,7 @@ foreach ($units as $unit) {
         </div>
     </div>
     <script>
-        function disbandUnit(unitId, unitName, refundCosts) {
+        function disbandUnit(unitId, unitName) {
             if (!confirm(`Are you sure you want to disband ${unitName}?`)) {
                 return;
             }
@@ -750,7 +750,7 @@ foreach ($units as $unit) {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `unit_id=${unitId}&refund_costs=${JSON.stringify(refundCosts)}`
+                body: `unit_id=${encodeURIComponent(unitId)}`
             })
             .then(response => response.json())
             .then(data => {
@@ -1035,7 +1035,7 @@ foreach ($units as $unit) {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `unit_id=${unitId}&new_name=${encodeURIComponent(newName)}`
+                body: `unit_id=${encodeURIComponent(unitId)}&new_name=${encodeURIComponent(newName)}`
             })
             .then(response => response.json())
             .then(data => {

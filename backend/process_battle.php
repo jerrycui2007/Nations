@@ -13,7 +13,6 @@ define('LOG_DIR', __DIR__ . '/logs');
 define('BATTLE_LOG_FILE', LOG_DIR . '/battle_process.log');
 
 function log_battle_message($message, $level = 'INFO', $context = []) {
-    /*
     try {
         // Create logs directory if it doesn't exist
         if (!file_exists(LOG_DIR)) {
@@ -35,7 +34,7 @@ function log_battle_message($message, $level = 'INFO', $context = []) {
     } catch (Exception $e) {
         error_log("Exception in log_battle_message: " . $e->getMessage());
         return false;
-    } */
+    }
 }
 
 function append_to_battle_report($battle_id, $html_content) {
@@ -297,6 +296,218 @@ function process_battle($battle_id) {
                     "%s (%s) couldn't find an opening against %s (%s)."
                 ]
             ]
+        ],
+        "Air" => [
+            "Infantry" => [
+                "critical" => [
+                    "%s (%s) caught %s (%s) during a low-altitude pass, dealing %s damage.",
+                    "%s (%s) coordinated concentrated fire on %s (%s), inflicting %s damage.",
+                    "%s (%s) exploited %s's (%s) strafing run for %s damage.",
+                    "%s (%s) executed perfect anti-air tactics against %s (%s), dealing %s damage."
+                ],
+                "regular" => [
+                    "%s (%s) engaged %s (%s) with small arms fire, dealing %s damage.",
+                    "%s (%s) maintained suppressing fire on %s (%s), causing %s damage.",
+                    "%s (%s) fired at %s's (%s) exposed approach, inflicting %s damage.",
+                    "%s (%s) coordinated volley fire against %s (%s), dealing %s damage."
+                ],
+                "graze" => [
+                    "%s (%s) scattered shots near %s (%s), dealing %s damage.",
+                    "%s (%s) forced %s (%s) to break off their attack run, causing %s damage.",
+                    "%s (%s) harassed %s (%s) with covering fire, inflicting %s damage.",
+                    "%s (%s) disrupted %s's (%s) approach, dealing %s damage."
+                ],
+                "miss" => [
+                    "%s (%s) couldn't track %s (%s) effectively.",
+                    "%s (%s) failed to lead %s (%s) properly.",
+                    "%s (%s) lost sight of %s (%s) in the clouds.",
+                    "%s (%s) small arms fire fell short of %s (%s)."
+                ]
+            ],
+            "Armour" => [
+                "critical" => [
+                    "%s (%s) caught %s (%s) with concentrated anti-air fire, dealing %s damage.",
+                    "%s (%s) tracked and struck %s (%s) with precision, inflicting %s damage.",
+                    "%s (%s) unleashed a barrage of AA fire on %s (%s) for %s damage.",
+                    "%s (%s) executed a perfect anti-air defense against %s (%s), dealing %s damage."
+                ],
+                "regular" => [
+                    "%s (%s) engaged %s (%s) with AA guns, dealing %s damage.",
+                    "%s (%s) fired at %s (%s) with mounted weapons, causing %s damage.",
+                    "%s (%s) tracked %s (%s) with sustained fire, inflicting %s damage.",
+                    "%s (%s) maintained AA fire on %s (%s), dealing %s damage."
+                ],
+                "graze" => [
+                    "%s (%s) forced %s (%s) to break off their attack, dealing %s damage.",
+                    "%s (%s) scattered fire near %s (%s), causing %s damage.",
+                    "%s (%s) grazed %s's (%s) fuselage, inflicting %s damage.",
+                    "%s (%s) disrupted %s's (%s) approach, dealing %s damage."
+                ],
+                "miss" => [
+                    "%s (%s) failed to track %s (%s) effectively.",
+                    "%s (%s) AA fire missed %s (%s) completely.",
+                    "%s (%s) couldn't maintain a lock on %s (%s).",
+                    "%s (%s) shots were evaded by %s (%s)."
+                ]
+            ],
+            "Air" => [
+                "critical" => [
+                    "%s (%s) outmaneuvered and shot down %s (%s), dealing %s damage.",
+                    "%s (%s) dominated the dogfight with %s (%s), inflicting %s damage.",
+                    "%s (%s) caught %s (%s) in a perfect firing position for %s damage.",
+                    "%s (%s) executed a textbook air combat maneuver against %s (%s), dealing %s damage."
+                ],
+                "regular" => [
+                    "%s (%s) engaged %s (%s) in a dogfight, dealing %s damage.",
+                    "%s (%s) exchanged fire with %s (%s) mid-air, causing %s damage.",
+                    "%s (%s) pursued and struck %s (%s), inflicting %s damage.",
+                    "%s (%s) scored hits on %s (%s), dealing %s damage."
+                ],
+                "graze" => [
+                    "%s (%s) clipped %s's (%s) wing, dealing %s damage.",
+                    "%s (%s) grazed %s (%s) with machine gun fire, causing %s damage.",
+                    "%s (%s) landed glancing hits on %s (%s), inflicting %s damage.",
+                    "%s (%s) forced %s (%s) to evade, dealing %s damage."
+                ],
+                "miss" => [
+                    "%s (%s) lost sight of %s (%s) in the clouds.",
+                    "%s (%s) was outmaneuvered by %s (%s).",
+                    "%s (%s) couldn't get a firing solution on %s (%s).",
+                    "%s (%s) missiles failed to track %s (%s)."
+                ]
+            ],
+            "Static" => [
+                "critical" => [
+                    "%s (%s) breached %s's (%s) defensive line with explosives, dealing %s damage.",
+                    "%s (%s) found a weak point in %s's (%s) fortifications, inflicting %s damage.",
+                    "%s (%s) executed a perfect assault on %s's (%s) position for %s damage.",
+                    "%s (%s) overwhelmed %s's (%s) defenses, dealing %s damage."
+                ],
+                "regular" => [
+                    "%s (%s) engaged %s (%s) with sustained fire, dealing %s damage.",
+                    "%s (%s) pressed the attack against %s (%s), causing %s damage.",
+                    "%s (%s) assaulted %s's (%s) position, inflicting %s damage.",
+                    "%s (%s) maintained pressure on %s (%s), dealing %s damage."
+                ],
+                "graze" => [
+                    "%s (%s) caused minor damage to %s's (%s) defenses, dealing %s damage.",
+                    "%s (%s) harassed %s's (%s) position, causing %s damage.",
+                    "%s (%s) probed %s's (%s) defensive line, inflicting %s damage.",
+                    "%s (%s) tested %s's (%s) fortifications, dealing %s damage."
+                ],
+                "miss" => [
+                    "%s (%s) failed to breach %s's (%s) defenses.",
+                    "%s (%s) attack was repelled by %s (%s).",
+                    "%s (%s) couldn't find a weakness in %s's (%s) position.",
+                    "%s (%s) assault was stopped by %s's (%s) fortifications."
+                ]
+            ]
+        ],
+        "Static" => [
+            "Infantry" => [
+                "critical" => [
+                    "%s (%s) caught %s (%s) in devastating crossfire, dealing %s damage.",
+                    "%s (%s) unleashed concentrated fire on %s (%s), inflicting %s damage.",
+                    "%s (%s) pinned down and eliminated %s (%s) for %s damage.",
+                    "%s (%s) dominated the battlefield against %s (%s), dealing %s damage."
+                ],
+                "regular" => [
+                    "%s (%s) engaged %s (%s) with sustained fire, dealing %s damage.",
+                    "%s (%s) suppressed %s's (%s) advance, causing %s damage.",
+                    "%s (%s) defended their position against %s (%s), inflicting %s damage.",
+                    "%s (%s) maintained fire on %s (%s), dealing %s damage."
+                ],
+                "graze" => [
+                    "%s (%s) forced %s (%s) to take cover, dealing %s damage.",
+                    "%s (%s) scattered %s's (%s) formation, causing %s damage.",
+                    "%s (%s) suppressed %s (%s) with covering fire for %s damage.",
+                    "%s (%s) harassed %s's (%s) movement, inflicting %s damage."
+                ],
+                "miss" => [
+                    "%s (%s) failed to hit %s (%s) through the smoke.",
+                    "%s (%s) lost sight of %s (%s) in the chaos.",
+                    "%s (%s) couldn't track %s's (%s) movement.",
+                    "%s (%s) fire was ineffective against %s (%s)."
+                ]
+            ],
+            "Armour" => [
+                "critical" => [
+                    "%s (%s) penetrated %s's (%s) weak point, dealing %s damage.",
+                    "%s (%s) disabled %s's (%s) critical systems, inflicting %s damage.",
+                    "%s (%s) caught %s (%s) in a perfect killzone for %s damage.",
+                    "%s (%s) executed a perfect anti-tank defense against %s (%s), dealing %s damage."
+                ],
+                "regular" => [
+                    "%s (%s) engaged %s (%s) with anti-tank fire, dealing %s damage.",
+                    "%s (%s) defended against %s's (%s) advance, causing %s damage.",
+                    "%s (%s) maintained AT fire on %s (%s), inflicting %s damage.",
+                    "%s (%s) struck %s (%s) from prepared positions, dealing %s damage."
+                ],
+                "graze" => [
+                    "%s (%s) scored a glancing hit on %s (%s), dealing %s damage.",
+                    "%s (%s) damaged %s's (%s) external systems for %s damage.",
+                    "%s (%s) partially penetrated %s's (%s) armor, causing %s damage.",
+                    "%s (%s) forced %s (%s) to adjust course, inflicting %s damage."
+                ],
+                "miss" => [
+                    "%s (%s) rounds deflected off %s's (%s) armor.",
+                    "%s (%s) failed to penetrate %s's (%s) plating.",
+                    "%s (%s) couldn't find a vulnerability in %s's (%s).",
+                    "%s (%s) fire was ineffective against %s's (%s) armor."
+                ]
+            ],
+            "Air" => [
+                "critical" => [
+                    "%s (%s) caught %s (%s) in concentrated AA fire, dealing %s damage.",
+                    "%s (%s) tracked and struck %s (%s) perfectly, inflicting %s damage.",
+                    "%s (%s) shredded %s's (%s) airframe for %s damage.",
+                    "%s (%s) executed perfect anti-air defense against %s (%s), dealing %s damage."
+                ],
+                "regular" => [
+                    "%s (%s) engaged %s (%s) with anti-air fire, dealing %s damage.",
+                    "%s (%s) maintained AA fire on %s (%s), causing %s damage.",
+                    "%s (%s) tracked %s (%s) through the sky, inflicting %s damage.",
+                    "%s (%s) defended airspace against %s (%s), dealing %s damage."
+                ],
+                "graze" => [
+                    "%s (%s) clipped %s's (%s) wing, dealing %s damage.",
+                    "%s (%s) forced %s (%s) to take evasive action, causing %s damage.",
+                    "%s (%s) scattered flak near %s (%s), inflicting %s damage.",
+                    "%s (%s) disrupted %s's (%s) attack run, dealing %s damage."
+                ],
+                "miss" => [
+                    "%s (%s) failed to track %s (%s) effectively.",
+                    "%s (%s) AA fire missed %s (%s) completely.",
+                    "%s (%s) couldn't maintain a lock on %s (%s).",
+                    "%s (%s) flak was avoided by %s (%s)."
+                ]
+            ],
+            "Static" => [
+                "critical" => [
+                    "%s (%s) found a critical weakness in %s's (%s) position, dealing %s damage.",
+                    "%s (%s) concentrated fire on %s's (%s) vulnerable point, inflicting %s damage.",
+                    "%s (%s) breached %s's (%s) defenses for %s damage.",
+                    "%s (%s) demolished %s's (%s) fortifications, dealing %s damage."
+                ],
+                "regular" => [
+                    "%s (%s) exchanged fire with %s (%s), dealing %s damage.",
+                    "%s (%s) engaged %s's (%s) position, causing %s damage.",
+                    "%s (%s) bombarded %s's (%s) defenses, inflicting %s damage.",
+                    "%s (%s) maintained pressure on %s (%s), dealing %s damage."
+                ],
+                "graze" => [
+                    "%s (%s) scored glancing hits on %s (%s), dealing %s damage.",
+                    "%s (%s) partially damaged %s's (%s) defenses, causing %s damage.",
+                    "%s (%s) struck %s's (%s) outer works, inflicting %s damage.",
+                    "%s (%s) made limited impact on %s (%s), dealing %s damage."
+                ],
+                "miss" => [
+                    "%s (%s) fire was absorbed by %s's (%s) defenses.",
+                    "%s (%s) failed to breach %s's (%s) fortifications.",
+                    "%s (%s) couldn't find a weakness in %s's (%s) position.",
+                    "%s (%s) attacks were ineffective against %s (%s)."
+                ]
+            ]
         ]
     ];
     
@@ -396,7 +607,9 @@ function process_battle($battle_id) {
                 if ($buff['target'] === $battle['continent'] || 
                     ($buff['target'] === 'IsDefending' && $unit['division_id'] == $battle['defender_division_id'])) {
                     return $buff['value'];
+                    log_battle_message("AllStatsMultiplier buff applied");
                 }
+                log_battle_message("AllStatsMultiplier buff not applied");
                 return 1; // No multiplier if conditions don't match
             },
             'ManeuverMultiplier' => function($unit, $buff, $battle) {
@@ -416,10 +629,34 @@ function process_battle($battle_id) {
             },
             'FirepowerMultiplierAgainstUnit' => function($unit, $buff, $target_unit) {
                 if ($buff['target'] === $target_unit['type']) {
+                    log_battle_message("FirepowerMultiplierAgainstUnit buff applied", 'DEBUG', [
+                        'unit_id' => $unit['unit_id'],
+                        'target_unit_id' => $target_unit['unit_id'],
+                        'buff_value' => $buff['value']
+                    ]);
                     return $buff['value'];
                 }
                 return 1;
-            }
+            },
+            'FriendlyManeuverMultiplier' => function($unit, $buff, $battle) {
+                // Always apply the multiplier regardless of target
+                return $buff['value'];
+            },
+            'ArmourMultiplierAgainstUnit' => function($unit, $buff, $attacking_unit) {
+                if ($buff['target'] === $attacking_unit['type']) {
+                    log_battle_message("ArmourMultiplierAgainstUnit buff applied", 'DEBUG', [
+                        'unit_id' => $unit['unit_id'],
+                        'attacking_unit_id' => $attacking_unit['unit_id'],
+                        'buff_value' => $buff['value']
+                    ]);
+                    return $buff['value'];
+                }
+                return 1;
+            },
+            'EnemyManeuverMultiplier' => function($unit, $buff, $battle) {
+                // Always apply the multiplier to enemy units
+                return $buff['value'];
+            },
         ];
 
         // Get all buffs for units, grouped by type
@@ -443,6 +680,52 @@ function process_battle($battle_id) {
             $unit_buffs[$buff['unit_id']][$buff['buff_type']][] = $buff;
         }
 
+        // Get FriendlyManeuverMultiplier buffs for each division
+        $stmt = $pdo->prepare("
+            SELECT b.*, u.division_id 
+            FROM buffs b
+            JOIN units u ON b.unit_id = u.unit_id
+            WHERE u.division_id IN (?, ?) 
+            AND b.buff_type = 'FriendlyManeuverMultiplier'
+        ");
+        $stmt->execute([$battle['defender_division_id'], $battle['attacker_division_id']]);
+        $maneuver_buffs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Index maneuver multipliers by division
+        $division_maneuver_multipliers = [
+            $battle['defender_division_id'] => 1,
+            $battle['attacker_division_id'] => 1
+        ];
+
+        foreach ($maneuver_buffs as $buff) {
+            $division_maneuver_multipliers[$buff['division_id']] *= $buff['value'];
+        }
+
+        // Get EnemyManeuverMultiplier buffs for each division
+        $stmt = $pdo->prepare("
+            SELECT b.*, u.division_id 
+            FROM buffs b
+            JOIN units u ON b.unit_id = u.unit_id
+            WHERE u.division_id IN (?, ?) 
+            AND b.buff_type = 'EnemyManeuverMultiplier'
+        ");
+        $stmt->execute([$battle['defender_division_id'], $battle['attacker_division_id']]);
+        $enemy_maneuver_buffs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Index enemy maneuver multipliers by division
+        $enemy_division_maneuver_multipliers = [
+            $battle['defender_division_id'] => 1,
+            $battle['attacker_division_id'] => 1
+        ];
+
+        foreach ($enemy_maneuver_buffs as $buff) {
+            // Apply the multiplier to the OPPOSING division
+            $opposing_division_id = ($buff['division_id'] == $battle['defender_division_id']) 
+                ? $battle['attacker_division_id'] 
+                : $battle['defender_division_id'];
+            $enemy_division_maneuver_multipliers[$opposing_division_id] *= $buff['value'];
+        }
+
         // Calculate total maneuver for weighted random selection
         $total_maneuver = 0;
         foreach ($all_units as $unit) {
@@ -455,12 +738,18 @@ function process_battle($battle_id) {
                 }
             }
             
-            // Apply ManeuverMultiplier buffs if they exist
-            if (isset($unit_buffs[$unit['unit_id']]['ManeuverMultiplier'])) {
-                foreach ($unit_buffs[$unit['unit_id']]['ManeuverMultiplier'] as $buff) {
-                    $maneuver *= $BUFF_HANDLERS['ManeuverMultiplier']($unit, $buff, $battle);
+            // Apply FriendlyManeuverMultiplier buffs if they exist
+            if (isset($unit_buffs[$unit['unit_id']]['FriendlyManeuverMultiplier'])) {
+                foreach ($unit_buffs[$unit['unit_id']]['FriendlyManeuverMultiplier'] as $buff) {
+                    $maneuver *= $BUFF_HANDLERS['FriendlyManeuverMultiplier']($unit, $buff, $battle);
                 }
             }
+            
+            // Apply division-wide maneuver multiplier
+            $maneuver *= $division_maneuver_multipliers[$unit['division_id']];
+            
+            // Apply enemy maneuver multiplier
+            $maneuver *= $enemy_division_maneuver_multipliers[$unit['division_id']];
             
             $total_maneuver += $maneuver;
         }
@@ -480,12 +769,18 @@ function process_battle($battle_id) {
                 }
             }
             
-            // Apply ManeuverMultiplier buffs if they exist
-            if (isset($unit_buffs[$unit['unit_id']]['ManeuverMultiplier'])) {
-                foreach ($unit_buffs[$unit['unit_id']]['ManeuverMultiplier'] as $buff) {
-                    $maneuver *= $BUFF_HANDLERS['ManeuverMultiplier']($unit, $buff, $battle);
+            // Apply FriendlyManeuverMultiplier buffs if they exist
+            if (isset($unit_buffs[$unit['unit_id']]['FriendlyManeuverMultiplier'])) {
+                foreach ($unit_buffs[$unit['unit_id']]['FriendlyManeuverMultiplier'] as $buff) {
+                    $maneuver *= $BUFF_HANDLERS['FriendlyManeuverMultiplier']($unit, $buff, $battle);
                 }
             }
+            
+            // Apply division-wide maneuver multiplier
+            $maneuver *= $division_maneuver_multipliers[$unit['division_id']];
+            
+            // Apply enemy maneuver multiplier
+            $maneuver *= $enemy_division_maneuver_multipliers[$unit['division_id']];
             
             $current_sum += $maneuver;
             if ($roll <= $current_sum) {
@@ -510,6 +805,7 @@ function process_battle($battle_id) {
         // Apply buffs to stats for combat
         $attacking_firepower = $attacking_unit['firepower'];
         $attacking_maneuver = $attacking_unit['maneuver'];
+        $attacking_armour = $attacking_unit['armour'];
 
         // Apply AllStatsMultiplier buffs
         if (isset($unit_buffs[$attacking_unit['unit_id']]['AllStatsMultiplier'])) {
@@ -517,19 +813,30 @@ function process_battle($battle_id) {
                 $multiplier = $BUFF_HANDLERS['AllStatsMultiplier']($attacking_unit, $buff, $battle);
                 $attacking_firepower = floor($attacking_firepower * $multiplier);
                 $attacking_maneuver = floor($attacking_maneuver * $multiplier);
+                $attacking_armour = floor($attacking_armour * $multiplier);
             }
         }
 
         // Apply FirepowerMultiplierAgainstUnit buffs
         if (isset($unit_buffs[$attacking_unit['unit_id']]['FirepowerMultiplierAgainstUnit'])) {
+            log_battle_message("FirepowerMultiplierAgainstUnit buffs applied", 'DEBUG', [
+                'unit_id' => $attacking_unit['unit_id'],
+                'target_unit_id' => $target_unit['unit_id'],
+                'buffs' => $unit_buffs[$attacking_unit['unit_id']]['FirepowerMultiplierAgainstUnit']
+            ]);
             foreach ($unit_buffs[$attacking_unit['unit_id']]['FirepowerMultiplierAgainstUnit'] as $buff) {
                 $multiplier = $BUFF_HANDLERS['FirepowerMultiplierAgainstUnit']($attacking_unit, $buff, $target_unit);
+                log_battle_message("FirepowerMultiplierAgainstUnit multiplier applied", 'DEBUG', [
+                    'multiplier' => $multiplier
+                ]);
                 $attacking_firepower = floor($attacking_firepower * $multiplier);
             }
         }
 
         $target_armour = $target_unit['armour'];
         $target_maneuver = $target_unit['maneuver'];
+
+        // Apply AllStatsMultiplier buffs if they exist
         if (isset($unit_buffs[$target_unit['unit_id']]['AllStatsMultiplier'])) {
             foreach ($unit_buffs[$target_unit['unit_id']]['AllStatsMultiplier'] as $buff) {
                 $multiplier = $BUFF_HANDLERS['AllStatsMultiplier']($target_unit, $buff, $battle);
@@ -537,10 +844,12 @@ function process_battle($battle_id) {
                 $target_maneuver = floor($target_maneuver * $multiplier);
             }
         }
-        if (isset($unit_buffs[$target_unit['unit_id']]['ManeuverMultiplier'])) {
-            foreach ($unit_buffs[$target_unit['unit_id']]['ManeuverMultiplier'] as $buff) {
-                $multiplier = $BUFF_HANDLERS['ManeuverMultiplier']($target_unit, $buff, $battle);
-                $target_maneuver = floor($target_maneuver * $multiplier);
+
+        // Apply ArmourMultiplierAgainstUnit buffs if they exist
+        if (isset($unit_buffs[$target_unit['unit_id']]['ArmourMultiplierAgainstUnit'])) {
+            foreach ($unit_buffs[$target_unit['unit_id']]['ArmourMultiplierAgainstUnit'] as $buff) {
+                $multiplier = $BUFF_HANDLERS['ArmourMultiplierAgainstUnit']($target_unit, $buff, $attacking_unit);
+                $target_armour = floor($target_armour * $multiplier);
             }
         }
 
@@ -931,6 +1240,7 @@ function process_battle($battle_id) {
         log_battle_message("Combat Report Templates Structure", 'DEBUG', [
             'templates' => $COMBAT_REPORT_TEMPLATES
         ]);
+        
         
         
 

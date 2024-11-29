@@ -1,5 +1,7 @@
 <?php
 
+include 'unit_config.php';
+
 function calculateIncome($user) {
     global $pdo, $UNIT_CONFIG;
     

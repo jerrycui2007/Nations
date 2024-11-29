@@ -170,7 +170,7 @@ $BUILDING_CONFIG = [
             'description' => 'A lightly-armoured vehicle factory. Allows you to train lightly armoured units. You can recruit up to (3 times the level of this building) units at a time.',
             'levels' => [
                 1 => [
-                    'minimum_tier' => 4,
+                    'minimum_tier' => 5,
                     'construction_cost' => [
                         'money' => 50000,
                         'building_materials' => 10000,
@@ -188,7 +188,7 @@ $BUILDING_CONFIG = [
     'description' => 'A heavily-armoured vehicle factory. Allows you to train heavily armoured units. You can recruit up to (3 times the level of this building) units at a time.',
     'levels' => [
         1 => [
-            'minimum_tier' => 4,
+            'minimum_tier' => 5,
             'construction_cost' => [
                 'money' => 50000,
                 'building_materials' => 10000,
@@ -199,6 +199,42 @@ $BUILDING_CONFIG = [
                 'cleared_land' => 20
             ]
         ],
+        ]
+    ],
+    'engineer_lab' => [
+    'name' => 'Engineer Lab',
+    'description' => 'A research centre for engineers to produce their creations. Allows you to train static units. You can recruit up to (3 times the level of this building) units at a time.',
+    'levels' => [
+        1 => [
+            'minimum_tier' => 5,
+            'construction_cost' => [
+                'money' => 50000,
+                'building_materials' => 10000,
+                'metal' => 3000,
+                'construction_time' => 1440
+            ],
+            'land' => [
+                'cleared_land' => 20
+            ]
+        ],
+        ]
+    ],
+    'airfield' => [
+        'name' => 'Airfield',
+        'description' => 'A base for aircraft. Allows you to train air units. You can recruit up to (3 times the level of this building) units at a time.',
+        'levels' => [
+            1 => [
+                'minimum_tier' => 6,
+                'construction_cost' => [
+                    'money' => 50000,
+                    'building_materials' => 10000,
+                    'metal' => 3000,
+                    'construction_time' => 1440
+                ],
+                'land' => [
+                    'cleared_land' => 20
+                ]
+            ],
+        ]
     ]
-]
 ];

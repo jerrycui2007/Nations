@@ -8,11 +8,11 @@ $next_hour->modify('next hour')->setTime($next_hour->format('H'), 0, 0);
 $time_until_hour = $now->diff($next_hour);
 
 // Calculate time until 8pm EST
-$today_8pm = new DateTime('today 20:00:00', new DateTimeZone('America/New_York'));
-if ($now > $today_8pm) {
-    $today_8pm->modify('+1 day');
+$today_3pm = new DateTime('today 15:00:00', new DateTimeZone('America/New_York'));
+if ($now > $today_3pm) {
+    $today_3pm->modify('+1 day');
 }
-$time_until_daily = $now->diff($today_8pm);
+$time_until_daily = $now->diff($today_3pm);
 ?>
 
 <div class="sidebar">

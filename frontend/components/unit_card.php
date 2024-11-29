@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../backend/unit_config.php';
 
-$unit_type = strtolower(str_replace(' ', '_', $unit['type']));
+$unit_type = strtolower(str_replace(' ', '_', $unit['name']));
 $recruitment_cost = isset($UNIT_CONFIG[$unit_type]['recruitment_cost']) 
     ? $UNIT_CONFIG[$unit_type]['recruitment_cost'] 
     : [];
@@ -14,7 +14,7 @@ if ($unit['division_id'] > 0) {
     $division_in_combat = $division['in_combat'] ?? false;
 }
 ?>
-<div class="unit-card" data-unit-type="<?php echo $unit['type']; ?>">
+<div class="unit-card" data-unit-type="<?php echo $unit['name']; ?>">
     <div class="unit-level-box"><?php echo $unit['level']; ?></div>
     <div class="unit-content">
         <div class="unit-custom-name">
@@ -41,7 +41,7 @@ if ($unit['division_id'] > 0) {
                 </div>
             </div>
 
-            Armour -->
+            <!-- Armour -->
             <div class="unit-stat">
                 <span class="unit-stat-label">DEF:</span>
                 <div class="unit-stat-bar-container">
@@ -52,7 +52,7 @@ if ($unit['division_id'] > 0) {
                 </div>
             </div>
 
-            Maneuver -->
+            <!-- Maneuver -->
             <div class="unit-stat">
                 <span class="unit-stat-label">MAN:</span>
                 <div class="unit-stat-bar-container">
@@ -103,7 +103,7 @@ if ($unit['division_id'] > 0) {
                 <div class="upkeep-content">
                     <?php 
                     $upkeep_strings = [];
-                    $unit_type = strtolower(str_replace(' ', '_', $unit['type']));
+                    $unit_type = strtolower(str_replace(' ', '_', $unit['name']));
                     foreach ($UNIT_CONFIG[$unit_type]['upkeep'] as $resource => $amount) {
                         $upkeep_strings[] = getResourceIcon($resource) . formatNumber($amount);
                     }
@@ -135,7 +135,7 @@ if ($unit['division_id'] > 0) {
             <i class="fas fa-exchange-alt"></i> Move Division
         </button>
         <button class="disband-button" 
-                onclick="disbandUnit(<?php echo $unit['unit_id']; ?>, <?php echo json_encode($unit['name']); ?>, <?php echo json_encode($recruitment_cost ?? []); ?>)"
+                onclick="disbandUnit(<?php echo $unit['unit_id']; ?>, '<?php echo addslashes($unit['name']); ?>')"
                 <?php echo $division_in_combat ? 'disabled title="Cannot disband units while division is in combat"' : ''; ?>>
             DISBAND UNIT
         </button>

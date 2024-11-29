@@ -784,6 +784,12 @@ function getResourceAmount($user_resources, $resource_key) {
         const inputElement = document.getElementById(`${factoryType}-build-amount`);
         const amount = parseInt(inputElement.value) || 1;
 
+        // Add validation for negative numbers
+        if (amount < 1) {
+            showToast('Please enter a positive number of factories to build.', 'error');
+            return;
+        }
+
         fetch('../backend/build_factory.php', {
             method: 'POST',
             headers: {
