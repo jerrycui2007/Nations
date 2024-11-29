@@ -16,31 +16,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         try {
             // Prepare and execute the query
-            $stmt = $pdo->prepare("SELECT id, country_name, leader_name, password, continent FROM users WHERE leader_name = ?");
+            $stmt = $pdo->prepare("SELECT id, country_name, leader_name, password, continent, email_verified FROM users WHERE leader_name = ?");
             $stmt->execute([$leader_name]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user) {
-                // Check if password is null (needs to be set) or verify existing password
-                if ($user['password'] === null) {
-                    // Hash and set the new password
-                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                    $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
-                    $stmt->execute([$hashed_password, $user['id']]);
-                    
-                    // Start session after setting password
-                    session_start();
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['country_name'] = $user['country_name'];
-                    $_SESSION['leader_name'] = $user['leader_name'];
-
-                    // Redirect based on whether continent is set
-                    if ($user['continent'] === null) {
-                        header("Location: choose_continent.php");
-                    } else {
-                        header("Location: home.php");
-                    }
-                    exit();
+                // Check if email is verified
+                if (!$user['email_verified']) {
+                    $error = "Please verify your email address before logging in. Check your inbox for the verification link.";
                 } else if (password_verify($password, $user['password'])) {
                     // Normal login with existing password
                     session_start();

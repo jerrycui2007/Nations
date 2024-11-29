@@ -2,6 +2,7 @@
 session_start();
 require_once '../backend/db_connection.php';
 require_once '../backend/gp_functions.php';
+require_once '../backend/send_verification_email.php';
 
 // Initialize variables
 $country_name = $leader_name = $email = $password = "";
@@ -31,9 +32,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 try {
                     // Insert into users table
-                    $stmt = $pdo->prepare("INSERT INTO users (country_name, leader_name, email, password) VALUES (?, ?, ?, ?)");
-                    $stmt->execute([$country_name, $leader_name, $email, $password]);
+                    $verification_token = generateVerificationToken();
+                    $token_expiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
+
+                    $stmt = $pdo->prepare("
+                        INSERT INTO users (country_name, leader_name, email, password, verification_token, token_expiry) 
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    ");
+                    $stmt->execute([$country_name, $leader_name, $email, $password, $verification_token, $token_expiry]);
                     $user_id = $pdo->lastInsertId();
+
+                    // Send verification email
+                    if (!sendVerificationEmail($email, $verification_token)) {
+                        throw new Exception("Failed to send verification email");
+                    }
 
                     // Insert into commodities table
                     $stmt = $pdo->prepare("INSERT INTO commodities (id) VALUES (?)");
