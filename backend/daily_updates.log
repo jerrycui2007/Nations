@@ -1,0 +1,4823 @@
+[2024-11-23 23:19:03] Starting daily updates
+[2024-11-23 23:19:03] Reset expanded_borders_today for 0 users
+[2024-11-23 23:19:03] Cleaned up 0 orphaned buffs
+[2024-11-23 23:19:03] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-23 23:19:03] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-23 23:19:03] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-23 23:19:03] Starting mission refresh process
+[2024-11-23 23:19:03] Found 6 missions to refresh
+[2024-11-23 23:19:03] Processing mission ID 1 for user 7
+[2024-11-23 23:19:03] User has 1 other missions
+[2024-11-23 23:19:03] total weight = 0
+[2024-11-23 23:19:46] Starting daily updates
+[2024-11-23 23:19:46] Reset expanded_borders_today for 0 users
+[2024-11-23 23:19:46] Cleaned up 0 orphaned buffs
+[2024-11-23 23:19:46] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-23 23:19:46] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-23 23:19:46] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-23 23:19:46] Starting mission refresh process
+[2024-11-23 23:19:46] Found 6 missions to refresh
+[2024-11-23 23:19:46] Processing mission ID 1 for user 7
+[2024-11-23 23:19:46] User has 1 other missions
+[2024-11-23 23:19:46] Available missions: 
+[2024-11-23 23:19:46] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:19:46] Error processing mission 1: Invalid total weight: 0
+[2024-11-23 23:19:46] Processing mission ID 10 for user 8
+[2024-11-23 23:19:46] User has 1 other missions
+[2024-11-23 23:19:46] Available missions: 
+[2024-11-23 23:19:46] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:19:46] Error processing mission 10: Invalid total weight: 0
+[2024-11-23 23:19:46] Processing mission ID 9 for user 8
+[2024-11-23 23:19:46] User has 1 other missions
+[2024-11-23 23:19:46] Available missions: 
+[2024-11-23 23:19:46] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:19:46] Error processing mission 9: Invalid total weight: 0
+[2024-11-23 23:19:46] Processing mission ID 8 for user 7
+[2024-11-23 23:19:46] User has 1 other missions
+[2024-11-23 23:19:46] Available missions: 
+[2024-11-23 23:19:46] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:19:46] Error processing mission 8: Invalid total weight: 0
+[2024-11-23 23:19:46] Processing mission ID 11 for user 9
+[2024-11-23 23:19:46] User has 1 other missions
+[2024-11-23 23:19:46] Available missions: 
+[2024-11-23 23:19:46] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:19:46] Error processing mission 11: Invalid total weight: 0
+[2024-11-23 23:19:46] Processing mission ID 12 for user 9
+[2024-11-23 23:19:46] User has 1 other missions
+[2024-11-23 23:19:46] Available missions: 
+[2024-11-23 23:19:46] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:19:46] Error processing mission 12: Invalid total weight: 0
+[2024-11-23 23:19:46] Mission refresh process completed successfully
+[2024-11-23 23:19:46] Daily updates completed successfully
+[2024-11-23 23:19:46] Daily updates completed
+[2024-11-23 23:20:59] Mission config loaded: 10 missions
+[2024-11-23 23:20:59] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 1000
+            [rarity] => Rare
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The Union of Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => Westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 2500
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 50
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 400
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's Not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 100
+            [rarity] => Uncommon
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-11-23 23:20:59] Starting daily updates
+[2024-11-23 23:20:59] Reset expanded_borders_today for 0 users
+[2024-11-23 23:20:59] Cleaned up 0 orphaned buffs
+[2024-11-23 23:20:59] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-23 23:20:59] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-23 23:20:59] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-23 23:20:59] Starting mission refresh process
+[2024-11-23 23:20:59] Found 6 missions to refresh
+[2024-11-23 23:20:59] Processing mission ID 1 for user 7
+[2024-11-23 23:20:59] User has 1 other missions
+[2024-11-23 23:20:59] Available missions: 
+[2024-11-23 23:20:59] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:20:59] Error processing mission 1: Invalid total weight: 0
+[2024-11-23 23:20:59] Processing mission ID 10 for user 8
+[2024-11-23 23:20:59] User has 1 other missions
+[2024-11-23 23:20:59] Available missions: 
+[2024-11-23 23:20:59] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:20:59] Error processing mission 10: Invalid total weight: 0
+[2024-11-23 23:20:59] Processing mission ID 9 for user 8
+[2024-11-23 23:20:59] User has 1 other missions
+[2024-11-23 23:20:59] Available missions: 
+[2024-11-23 23:20:59] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:20:59] Error processing mission 9: Invalid total weight: 0
+[2024-11-23 23:20:59] Processing mission ID 8 for user 7
+[2024-11-23 23:20:59] User has 1 other missions
+[2024-11-23 23:20:59] Available missions: 
+[2024-11-23 23:20:59] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:20:59] Error processing mission 8: Invalid total weight: 0
+[2024-11-23 23:20:59] Processing mission ID 11 for user 9
+[2024-11-23 23:20:59] User has 1 other missions
+[2024-11-23 23:20:59] Available missions: 
+[2024-11-23 23:20:59] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:20:59] Error processing mission 11: Invalid total weight: 0
+[2024-11-23 23:20:59] Processing mission ID 12 for user 9
+[2024-11-23 23:20:59] User has 1 other missions
+[2024-11-23 23:20:59] Available missions: 
+[2024-11-23 23:20:59] Warning: No available missions after filtering, using all missions
+[2024-11-23 23:20:59] Error processing mission 12: Invalid total weight: 0
+[2024-11-23 23:20:59] Mission refresh process completed successfully
+[2024-11-23 23:20:59] Daily updates completed successfully
+[2024-11-23 23:20:59] Daily updates completed
+[2024-11-23 23:22:21] Mission config loaded: 10 missions
+[2024-11-23 23:22:21] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 1000
+            [rarity] => Rare
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The Union of Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => Westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 2500
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 50
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 400
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's Not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 100
+            [rarity] => Uncommon
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-11-23 23:22:21] Starting daily updates
+[2024-11-23 23:22:21] Reset expanded_borders_today for 0 users
+[2024-11-23 23:22:21] Cleaned up 0 orphaned buffs
+[2024-11-23 23:22:21] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-23 23:22:21] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-23 23:22:21] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-23 23:22:21] Starting mission refresh process
+[2024-11-23 23:22:21] Found 6 missions to refresh
+[2024-11-23 23:22:21] Processing mission ID 1 for user 7
+[2024-11-23 23:22:21] User has 1 other missions
+[2024-11-23 23:22:21] Available missions: jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-23 23:22:21] Total weight calculated: 9000
+[2024-11-23 23:22:21] Selected new mission type: foreign_affairs
+[2024-11-23 23:22:21] Successfully updated mission 1 to foreign_affairs
+[2024-11-23 23:22:21] Processing mission ID 10 for user 8
+[2024-11-23 23:22:21] User has 1 other missions
+[2024-11-23 23:22:21] Available missions: jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-23 23:22:21] Total weight calculated: 9000
+[2024-11-23 23:22:21] Selected new mission type: supply_raid
+[2024-11-23 23:22:21] Successfully updated mission 10 to supply_raid
+[2024-11-23 23:22:21] Processing mission ID 9 for user 8
+[2024-11-23 23:22:21] User has 1 other missions
+[2024-11-23 23:22:21] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, arctic_drill, thats_not_a_meteorite
+[2024-11-23 23:22:21] Total weight calculated: 7500
+[2024-11-23 23:22:21] Selected new mission type: its_the_least_we_can_do
+[2024-11-23 23:22:21] Successfully updated mission 9 to its_the_least_we_can_do
+[2024-11-23 23:22:21] Processing mission ID 8 for user 7
+[2024-11-23 23:22:21] User has 1 other missions
+[2024-11-23 23:22:21] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-23 23:22:21] Total weight calculated: 9000
+[2024-11-23 23:22:21] Selected new mission type: its_the_least_we_can_do
+[2024-11-23 23:22:21] Successfully updated mission 8 to its_the_least_we_can_do
+[2024-11-23 23:22:21] Processing mission ID 11 for user 9
+[2024-11-23 23:22:21] User has 1 other missions
+[2024-11-23 23:22:21] Available missions: jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-23 23:22:21] Total weight calculated: 9000
+[2024-11-23 23:22:21] Selected new mission type: its_the_least_we_can_do
+[2024-11-23 23:22:21] Successfully updated mission 11 to its_the_least_we_can_do
+[2024-11-23 23:22:21] Processing mission ID 12 for user 9
+[2024-11-23 23:22:21] User has 1 other missions
+[2024-11-23 23:22:21] Available missions: riot_control, jungle_fever, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-23 23:22:21] Total weight calculated: 9000
+[2024-11-23 23:22:21] Selected new mission type: foreign_affairs
+[2024-11-23 23:22:21] Successfully updated mission 12 to foreign_affairs
+[2024-11-23 23:22:21] Mission refresh process completed successfully
+[2024-11-23 23:22:21] Daily updates completed successfully
+[2024-11-23 23:22:21] Daily updates completed
+[2024-11-23 23:29:58] Mission config loaded: 10 missions
+[2024-11-23 23:29:58] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 1000
+            [rarity] => Rare
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The Union of Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => Westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 2500
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 50
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 400
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's Not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 100
+            [rarity] => Uncommon
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-11-23 23:29:58] Starting daily updates
+[2024-11-23 23:29:58] Reset expanded_borders_today for 0 users
+[2024-11-23 23:29:58] Cleaned up 0 orphaned buffs
+[2024-11-23 23:29:58] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-23 23:29:58] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-23 23:29:58] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-23 23:29:58] Starting mission refresh process
+[2024-11-23 23:29:58] Found 5 missions to refresh
+[2024-11-23 23:29:58] Processing mission ID 10 for user 8
+[2024-11-23 23:29:58] User has 1 other missions
+[2024-11-23 23:29:58] Available missions: riot_control, jungle_fever, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-23 23:29:58] Total weight calculated: 9000
+[2024-11-23 23:29:58] Selected new mission type: little_brother_wants_out
+[2024-11-23 23:29:58] Successfully updated mission 10 to little_brother_wants_out
+[2024-11-23 23:29:58] Processing mission ID 9 for user 8
+[2024-11-23 23:29:58] User has 1 other missions
+[2024-11-23 23:29:58] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-23 23:29:58] Total weight calculated: 9000
+[2024-11-23 23:29:58] Selected new mission type: supply_raid
+[2024-11-23 23:29:58] Successfully updated mission 9 to supply_raid
+[2024-11-23 23:29:58] Processing mission ID 8 for user 7
+[2024-11-23 23:29:58] User has 1 other missions
+[2024-11-23 23:29:58] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-23 23:29:58] Total weight calculated: 9000
+[2024-11-23 23:29:58] Selected new mission type: homeland_offence
+[2024-11-23 23:29:58] Successfully updated mission 8 to homeland_offence
+[2024-11-23 23:29:58] Processing mission ID 11 for user 9
+[2024-11-23 23:29:58] User has 1 other missions
+[2024-11-23 23:29:58] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-23 23:29:58] Total weight calculated: 9000
+[2024-11-23 23:29:58] Selected new mission type: arctic_drill
+[2024-11-23 23:29:58] Successfully updated mission 11 to arctic_drill
+[2024-11-23 23:29:58] Processing mission ID 12 for user 9
+[2024-11-23 23:29:58] User has 1 other missions
+[2024-11-23 23:29:58] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, thats_not_a_meteorite
+[2024-11-23 23:29:58] Total weight calculated: 9600
+[2024-11-23 23:29:58] Selected new mission type: thats_not_a_meteorite
+[2024-11-23 23:29:58] Successfully updated mission 12 to thats_not_a_meteorite
+[2024-11-23 23:29:58] Mission refresh process completed successfully
+[2024-11-23 23:29:58] Daily updates completed successfully
+[2024-11-23 23:29:58] Daily updates completed
+[2024-11-24 00:28:03] Mission config loaded: 10 missions
+[2024-11-24 00:28:03] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 1000
+            [rarity] => Rare
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The Union of Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 2500
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 50
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 7
+                            [max_amount] => 9
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 400
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's Not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 100
+            [rarity] => Uncommon
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-11-24 00:28:03] Starting daily updates
+[2024-11-24 00:28:03] Reset expanded_borders_today for 0 users
+[2024-11-24 00:28:03] Cleaned up 0 orphaned buffs
+[2024-11-24 00:28:03] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-24 00:28:03] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-24 00:28:03] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-24 00:28:03] Updating daily unit selection
+[2024-11-24 00:28:03] No non-recruitable units found in config
+[2024-11-24 00:28:03] Starting mission refresh process
+[2024-11-24 00:28:03] Found 5 missions to refresh
+[2024-11-24 00:28:03] Processing mission ID 18 for user 9
+[2024-11-24 00:28:03] User has 1 other missions
+[2024-11-24 00:28:03] Available missions: jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:28:03] Total weight calculated: 9000
+[2024-11-24 00:28:03] Selected new mission type: supply_raid
+[2024-11-24 00:28:03] Successfully updated mission 18 to supply_raid
+[2024-11-24 00:28:03] Processing mission ID 16 for user 8
+[2024-11-24 00:28:03] User has 1 other missions
+[2024-11-24 00:28:03] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:28:03] Total weight calculated: 9000
+[2024-11-24 00:28:03] Selected new mission type: homeland_offence
+[2024-11-24 00:28:03] Successfully updated mission 16 to homeland_offence
+[2024-11-24 00:28:03] Processing mission ID 15 for user 8
+[2024-11-24 00:28:03] User has 1 other missions
+[2024-11-24 00:28:03] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:28:03] Total weight calculated: 9000
+[2024-11-24 00:28:03] Selected new mission type: supply_raid
+[2024-11-24 00:28:03] Successfully updated mission 15 to supply_raid
+[2024-11-24 00:28:03] Processing mission ID 13 for user 7
+[2024-11-24 00:28:03] User has 1 other missions
+[2024-11-24 00:28:03] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:28:03] Total weight calculated: 7500
+[2024-11-24 00:28:03] Selected new mission type: its_the_least_we_can_do
+[2024-11-24 00:28:03] Successfully updated mission 13 to its_the_least_we_can_do
+[2024-11-24 00:28:03] Processing mission ID 17 for user 9
+[2024-11-24 00:28:03] User has 1 other missions
+[2024-11-24 00:28:03] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:28:03] Total weight calculated: 7500
+[2024-11-24 00:28:03] Selected new mission type: arctic_drill
+[2024-11-24 00:28:03] Successfully updated mission 17 to arctic_drill
+[2024-11-24 00:28:03] Mission refresh process completed successfully
+[2024-11-24 00:28:03] Daily updates completed successfully
+[2024-11-24 00:28:03] Daily updates completed
+[2024-11-24 00:29:39] Mission config loaded: 10 missions
+[2024-11-24 00:29:39] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 1000
+            [rarity] => Rare
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The Union of Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 2500
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 50
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 7
+                            [max_amount] => 9
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 400
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's Not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 100
+            [rarity] => Uncommon
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-11-24 00:29:39] Starting daily updates
+[2024-11-24 00:29:39] Reset expanded_borders_today for 0 users
+[2024-11-24 00:29:39] Cleaned up 0 orphaned buffs
+[2024-11-24 00:29:39] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-24 00:29:39] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-24 00:29:39] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-24 00:29:39] Updating daily unit selection
+[2024-11-24 00:29:39] No non-recruitable units found in config
+[2024-11-24 00:29:39] Starting mission refresh process
+[2024-11-24 00:29:39] Found 5 missions to refresh
+[2024-11-24 00:29:39] Processing mission ID 18 for user 9
+[2024-11-24 00:29:39] User has 1 other missions
+[2024-11-24 00:29:39] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, thats_not_a_meteorite
+[2024-11-24 00:29:39] Total weight calculated: 9600
+[2024-11-24 00:29:39] Selected new mission type: little_brother_wants_out
+[2024-11-24 00:29:39] Successfully updated mission 18 to little_brother_wants_out
+[2024-11-24 00:29:39] Processing mission ID 16 for user 8
+[2024-11-24 00:29:39] User has 1 other missions
+[2024-11-24 00:29:39] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:29:39] Total weight calculated: 7500
+[2024-11-24 00:29:39] Selected new mission type: arctic_drill
+[2024-11-24 00:29:39] Successfully updated mission 16 to arctic_drill
+[2024-11-24 00:29:39] Processing mission ID 15 for user 8
+[2024-11-24 00:29:39] User has 1 other missions
+[2024-11-24 00:29:39] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, thats_not_a_meteorite
+[2024-11-24 00:29:39] Total weight calculated: 9600
+[2024-11-24 00:29:39] Selected new mission type: supply_raid
+[2024-11-24 00:29:39] Successfully updated mission 15 to supply_raid
+[2024-11-24 00:29:39] Processing mission ID 13 for user 7
+[2024-11-24 00:29:39] User has 1 other missions
+[2024-11-24 00:29:39] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:29:39] Total weight calculated: 7500
+[2024-11-24 00:29:39] Selected new mission type: suppressing_the_khev_minosk
+[2024-11-24 00:29:39] Successfully updated mission 13 to suppressing_the_khev_minosk
+[2024-11-24 00:29:39] Processing mission ID 17 for user 9
+[2024-11-24 00:29:39] User has 1 other missions
+[2024-11-24 00:29:39] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:29:39] Total weight calculated: 9000
+[2024-11-24 00:29:39] Selected new mission type: arctic_drill
+[2024-11-24 00:29:39] Successfully updated mission 17 to arctic_drill
+[2024-11-24 00:29:39] Mission refresh process completed successfully
+[2024-11-24 00:29:39] Daily updates completed successfully
+[2024-11-24 00:29:39] Daily updates completed
+[2024-11-24 00:30:22] Mission config loaded: 10 missions
+[2024-11-24 00:30:22] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 1000
+            [rarity] => Rare
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The Union of Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 2500
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 50
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 7
+                            [max_amount] => 9
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 400
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's Not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 100
+            [rarity] => Uncommon
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-11-24 00:30:22] Starting daily updates
+[2024-11-24 00:30:22] Reset expanded_borders_today for 0 users
+[2024-11-24 00:30:22] Cleaned up 0 orphaned buffs
+[2024-11-24 00:30:22] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-24 00:30:22] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-24 00:30:22] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-24 00:30:22] Updating daily unit selection
+[2024-11-24 00:31:16] Mission config loaded: 10 missions
+[2024-11-24 00:31:16] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 1000
+            [rarity] => Rare
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The Union of Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 2500
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 50
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 7
+                            [max_amount] => 9
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 400
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's Not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 100
+            [rarity] => Uncommon
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-11-24 00:31:16] Starting daily updates
+[2024-11-24 00:31:16] Reset expanded_borders_today for 0 users
+[2024-11-24 00:31:16] Cleaned up 0 orphaned buffs
+[2024-11-24 00:31:16] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-24 00:31:16] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-24 00:31:16] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-24 00:31:16] Updating daily unit selection
+[2024-11-24 00:31:16] Error updating daily unit: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'nations.daily_units' doesn't exist
+[2024-11-24 00:31:16] Starting mission refresh process
+[2024-11-24 00:31:16] Found 5 missions to refresh
+[2024-11-24 00:31:16] Processing mission ID 18 for user 9
+[2024-11-24 00:31:16] User has 1 other missions
+[2024-11-24 00:31:16] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, thats_not_a_meteorite
+[2024-11-24 00:31:16] Total weight calculated: 9600
+[2024-11-24 00:31:16] Selected new mission type: homeland_offence
+[2024-11-24 00:31:16] Successfully updated mission 18 to homeland_offence
+[2024-11-24 00:31:16] Processing mission ID 16 for user 8
+[2024-11-24 00:31:16] User has 1 other missions
+[2024-11-24 00:31:16] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:31:16] Total weight calculated: 7500
+[2024-11-24 00:31:16] Selected new mission type: arctic_drill
+[2024-11-24 00:31:16] Successfully updated mission 16 to arctic_drill
+[2024-11-24 00:31:16] Processing mission ID 15 for user 8
+[2024-11-24 00:31:16] User has 1 other missions
+[2024-11-24 00:31:16] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, thats_not_a_meteorite
+[2024-11-24 00:31:16] Total weight calculated: 9600
+[2024-11-24 00:31:16] Selected new mission type: jungle_fever
+[2024-11-24 00:31:16] Successfully updated mission 15 to jungle_fever
+[2024-11-24 00:31:16] Processing mission ID 13 for user 7
+[2024-11-24 00:31:16] User has 1 other missions
+[2024-11-24 00:31:16] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:31:16] Total weight calculated: 7500
+[2024-11-24 00:31:16] Selected new mission type: little_brother_wants_out
+[2024-11-24 00:31:16] Successfully updated mission 13 to little_brother_wants_out
+[2024-11-24 00:31:16] Processing mission ID 17 for user 9
+[2024-11-24 00:31:16] User has 1 other missions
+[2024-11-24 00:31:16] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:31:16] Total weight calculated: 9000
+[2024-11-24 00:31:16] Selected new mission type: suppressing_the_khev_minosk
+[2024-11-24 00:31:16] Successfully updated mission 17 to suppressing_the_khev_minosk
+[2024-11-24 00:31:16] Mission refresh process completed successfully
+[2024-11-24 00:31:16] Daily updates completed successfully
+[2024-11-24 00:31:16] Daily updates completed
+[2024-11-24 00:32:11] Mission config loaded: 10 missions
+[2024-11-24 00:32:11] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 1000
+            [rarity] => Rare
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The Union of Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 2500
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 50
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 7
+                            [max_amount] => 9
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 400
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's Not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 100
+            [rarity] => Uncommon
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-11-24 00:32:11] Starting daily updates
+[2024-11-24 00:32:11] UNIT_CONFIG loaded: 19 units
+[2024-11-24 00:32:11] Reset expanded_borders_today for 0 users
+[2024-11-24 00:32:11] Cleaned up 0 orphaned buffs
+[2024-11-24 00:32:11] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-24 00:32:11] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-24 00:32:11] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-24 00:32:11] Updating daily unit selection
+[2024-11-24 00:32:11] Error updating daily unit: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'nations.daily_units' doesn't exist
+[2024-11-24 00:32:11] Starting mission refresh process
+[2024-11-24 00:32:11] Found 5 missions to refresh
+[2024-11-24 00:32:11] Processing mission ID 18 for user 9
+[2024-11-24 00:32:11] User has 1 other missions
+[2024-11-24 00:32:11] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:32:11] Total weight calculated: 9000
+[2024-11-24 00:32:11] Selected new mission type: supply_raid
+[2024-11-24 00:32:11] Successfully updated mission 18 to supply_raid
+[2024-11-24 00:32:11] Processing mission ID 16 for user 8
+[2024-11-24 00:32:11] User has 1 other missions
+[2024-11-24 00:32:11] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:32:11] Total weight calculated: 9000
+[2024-11-24 00:32:11] Selected new mission type: thats_not_a_meteorite
+[2024-11-24 00:32:11] Successfully updated mission 16 to thats_not_a_meteorite
+[2024-11-24 00:32:11] Processing mission ID 15 for user 8
+[2024-11-24 00:32:11] User has 1 other missions
+[2024-11-24 00:32:11] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill
+[2024-11-24 00:32:11] Total weight calculated: 9900
+[2024-11-24 00:32:11] Selected new mission type: homeland_offence
+[2024-11-24 00:32:11] Successfully updated mission 15 to homeland_offence
+[2024-11-24 00:32:11] Processing mission ID 13 for user 7
+[2024-11-24 00:32:11] User has 1 other missions
+[2024-11-24 00:32:11] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:32:11] Total weight calculated: 7500
+[2024-11-24 00:32:11] Selected new mission type: little_brother_wants_out
+[2024-11-24 00:32:11] Successfully updated mission 13 to little_brother_wants_out
+[2024-11-24 00:32:11] Processing mission ID 17 for user 9
+[2024-11-24 00:32:11] User has 1 other missions
+[2024-11-24 00:32:11] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:32:11] Total weight calculated: 7500
+[2024-11-24 00:32:11] Selected new mission type: little_brother_wants_out
+[2024-11-24 00:32:11] Successfully updated mission 17 to little_brother_wants_out
+[2024-11-24 00:32:11] Mission refresh process completed successfully
+[2024-11-24 00:32:11] Daily updates completed successfully
+[2024-11-24 00:32:11] Daily updates completed
+[2024-11-24 00:33:10] Mission config loaded: 10 missions
+[2024-11-24 00:33:10] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 1000
+            [rarity] => Rare
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The Union of Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 2500
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 50
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 7
+                            [max_amount] => 9
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 400
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's Not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 100
+            [rarity] => Uncommon
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-11-24 00:33:10] Starting daily updates
+[2024-11-24 00:33:10] UNIT_CONFIG loaded: Failed to load
+[2024-11-24 00:33:10] Reset expanded_borders_today for 0 users
+[2024-11-24 00:33:10] Cleaned up 0 orphaned buffs
+[2024-11-24 00:33:10] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-24 00:33:10] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-24 00:33:10] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-24 00:33:10] Updating daily unit selection
+[2024-11-24 00:35:29] Mission config loaded: 10 missions
+[2024-11-24 00:35:29] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 1000
+            [rarity] => Rare
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The Union of Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => zaheria
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 11
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 1000
+            [rarity] => Common
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 45
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 2500
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 250
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 50
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak47_infantry] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 7
+                            [max_amount] => 9
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t72_tank] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 1
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 400
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's Not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 100
+            [rarity] => Uncommon
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-11-24 00:35:29] Starting daily updates
+[2024-11-24 00:35:29] UNIT_CONFIG loaded: 19 units
+[2024-11-24 00:35:29] Reset expanded_borders_today for 0 users
+[2024-11-24 00:35:29] Cleaned up 0 orphaned buffs
+[2024-11-24 00:35:29] Cleaned up 0 completed battles and 0 combat reports
+[2024-11-24 00:35:29] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-11-24 00:35:29] Cleaned up 0 inactive NPC divisions with 0 units and 0 buffs
+[2024-11-24 00:35:29] Updating daily unit selection
+[2024-11-24 00:35:29] Updated daily unit to: rioter
+[2024-11-24 00:35:29] Starting mission refresh process
+[2024-11-24 00:35:29] Found 5 missions to refresh
+[2024-11-24 00:35:29] Processing mission ID 18 for user 9
+[2024-11-24 00:35:29] User has 1 other missions
+[2024-11-24 00:35:29] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:35:29] Total weight calculated: 9000
+[2024-11-24 00:35:29] Selected new mission type: jungle_fever
+[2024-11-24 00:35:29] Successfully updated mission 18 to jungle_fever
+[2024-11-24 00:35:29] Processing mission ID 16 for user 8
+[2024-11-24 00:35:29] User has 1 other missions
+[2024-11-24 00:35:29] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:35:29] Total weight calculated: 9000
+[2024-11-24 00:35:29] Selected new mission type: jungle_fever
+[2024-11-24 00:35:29] Successfully updated mission 16 to jungle_fever
+[2024-11-24 00:35:29] Processing mission ID 15 for user 8
+[2024-11-24 00:35:29] User has 1 other missions
+[2024-11-24 00:35:29] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:35:29] Total weight calculated: 9000
+[2024-11-24 00:35:29] Selected new mission type: foreign_affairs
+[2024-11-24 00:35:29] Successfully updated mission 15 to foreign_affairs
+[2024-11-24 00:35:29] Processing mission ID 13 for user 7
+[2024-11-24 00:35:29] User has 1 other missions
+[2024-11-24 00:35:29] Available missions: riot_control, jungle_fever, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:35:29] Total weight calculated: 7500
+[2024-11-24 00:35:29] Selected new mission type: jungle_fever
+[2024-11-24 00:35:29] Successfully updated mission 13 to jungle_fever
+[2024-11-24 00:35:29] Processing mission ID 17 for user 9
+[2024-11-24 00:35:29] User has 1 other missions
+[2024-11-24 00:35:29] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, little_brother_wants_out, supply_raid, arctic_drill, thats_not_a_meteorite
+[2024-11-24 00:35:29] Total weight calculated: 9000
+[2024-11-24 00:35:29] Selected new mission type: supply_raid
+[2024-11-24 00:35:29] Successfully updated mission 17 to supply_raid
+[2024-11-24 00:35:29] Mission refresh process completed successfully
+[2024-11-24 00:35:29] Daily updates completed successfully
+[2024-11-24 00:35:29] Daily updates completed

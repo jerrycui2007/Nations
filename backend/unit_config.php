@@ -1076,7 +1076,7 @@ $UNIT_CONFIG = [
         'buffs' => [
         ],
     ],
-    'f_35_lighting_ii' => [
+    'f_35_lightning_ii' => [
         'name' => 'F-35 Lightning II',
         'tier' => 6,
         'type' => 'Air',
