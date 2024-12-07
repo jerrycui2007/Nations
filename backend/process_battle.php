@@ -47,6 +47,71 @@ function append_to_battle_report($battle_id, $html_content) {
     $stmt->execute([$html_content, $battle_id]);
 }
 
+function process_level_ups($defender_division_id, $attacker_division_id) {
+    global $pdo, $LEVEL_CONFIG, $MISSION_CONFIG;
+    
+    $level_up_messages = [];
+    
+    // Get all units that might level up
+    $stmt = $pdo->prepare("
+        SELECT unit_id, level, xp, custom_name, name 
+        FROM units 
+        WHERE division_id IN (?, ?) 
+        AND hp > 0
+    ");
+    $stmt->execute([$defender_division_id, $attacker_division_id]);
+    $units = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($units as $unit) {
+        $current_level = $unit['level'];
+        $next_level = $current_level + 1;
+        $unit_name = $unit['custom_name'] ?: $unit['name'];
+        
+        // Skip if already at max level
+        if ($current_level >= 15) {
+            continue;
+        }
+        
+        // Check if unit has enough XP for the next level
+        if ($unit['xp'] >= $LEVEL_CONFIG[$next_level]) {
+            // Randomly choose which stat to increase (1-4)
+            $stat_increase = rand(1, 4);
+            $stat_name = '';
+            
+            switch ($stat_increase) {
+                case 1:
+                    $sql = "UPDATE units SET level = ?, firepower = firepower + 1, xp = 0 WHERE unit_id = ?";
+                    $stat_name = "Firepower";
+                    break;
+                case 2:
+                    $sql = "UPDATE units SET level = ?, armour = armour + 1, xp = 0 WHERE unit_id = ?";
+                    $stat_name = "Armour";
+                    break;
+                case 3:
+                    $sql = "UPDATE units SET level = ?, maneuver = maneuver + 1, xp = 0 WHERE unit_id = ?";
+                    $stat_name = "Maneuver";
+                    break;
+                case 4:
+                    $sql = "UPDATE units SET level = ?, max_hp = FLOOR(max_hp * 1.1), hp = FLOOR(hp * 1.1), xp = 0 WHERE unit_id = ?";
+                    $stat_name = "HP";
+                    break;
+            }
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$next_level, $unit['unit_id']]);
+            
+            $level_up_messages[] = sprintf(
+                "<li>%s leveled up to level %d! (%s +1)</li>",
+                htmlspecialchars($unit_name),
+                $next_level,
+                $stat_name
+            );
+        }
+    }
+    
+    return $level_up_messages;
+}
+
 function process_battle($battle_id) {
     global $pdo, $MISSION_CONFIG;
 
@@ -134,6 +199,58 @@ function process_battle($battle_id) {
                     "%s (%s) failed to get a clean shot at %s (%s).",
                     "%s (%s) was forced to take cover by %s (%s).",
                     "%s (%s) couldn't maintain sight of %s (%s)."
+                ]
+            ],
+            "Air" => [
+                "critical" => [
+                    "%s (%s) caught %s (%s) in a devastating anti-air barrage, dealing %s damage.",
+                    "%s (%s) coordinated concentrated AA fire on %s (%s), inflicting %s damage.",
+                    "%s (%s) exploited %s's (%s) low altitude approach for %s damage.",
+                    "%s (%s) executed perfect anti-air tactics against %s (%s), dealing %s damage."
+                ],
+                "regular" => [
+                    "%s (%s) engaged %s (%s) with AA weapons, dealing %s damage.",
+                    "%s (%s) maintained suppressing fire on %s (%s), causing %s damage.",
+                    "%s (%s) fired at %s's (%s) exposed approach, inflicting %s damage.",
+                    "%s (%s) coordinated AA fire against %s (%s), dealing %s damage."
+                ],
+                "graze" => [
+                    "%s (%s) scattered AA fire near %s (%s), dealing %s damage.",
+                    "%s (%s) forced %s (%s) to break off their attack run, causing %s damage.",
+                    "%s (%s) harassed %s (%s) with covering fire, inflicting %s damage.",
+                    "%s (%s) disrupted %s's (%s) approach, dealing %s damage."
+                ],
+                "miss" => [
+                    "%s (%s) couldn't track %s (%s) effectively.",
+                    "%s (%s) failed to lead %s (%s) properly.",
+                    "%s (%s) lost sight of %s (%s) in the clouds.",
+                    "%s (%s) AA fire fell short of %s (%s)."
+                ]
+            ],
+            "Static" => [
+                "critical" => [
+                    "%s (%s) breached %s's (%s) defenses with explosives, dealing %s damage.",
+                    "%s (%s) found a weak point in %s's (%s) fortifications, inflicting %s damage.",
+                    "%s (%s) executed a perfect assault on %s's (%s) position for %s damage.",
+                    "%s (%s) overwhelmed %s's (%s) defenses, dealing %s damage."
+                ],
+                "regular" => [
+                    "%s (%s) engaged %s (%s) with sustained fire, dealing %s damage.",
+                    "%s (%s) pressed the attack against %s (%s), causing %s damage.",
+                    "%s (%s) assaulted %s's (%s) position, inflicting %s damage.",
+                    "%s (%s) maintained pressure on %s (%s), dealing %s damage."
+                ],
+                "graze" => [
+                    "%s (%s) caused minor damage to %s's (%s) defenses, dealing %s damage.",
+                    "%s (%s) harassed %s's (%s) position, causing %s damage.",
+                    "%s (%s) probed %s's (%s) defensive line, inflicting %s damage.",
+                    "%s (%s) tested %s's (%s) fortifications, dealing %s damage."
+                ],
+                "miss" => [
+                    "%s (%s) failed to breach %s's (%s) defenses.",
+                    "%s (%s) attack was repelled by %s (%s).",
+                    "%s (%s) couldn't find a weakness in %s's (%s) position.",
+                    "%s (%s) assault was stopped by %s's (%s) fortifications."
                 ]
             ]
         ],
@@ -883,17 +1000,18 @@ function process_battle($battle_id) {
         if ($final_roll >= 90) {
             $damage = floor($damage * 1.5);
             $hit_type = 'critical';
+            $damage = max(1, $damage); // Ensure minimum 1 damage for critical hits
         } elseif (1 <= $final_roll && $final_roll <= 10) {
             $damage = floor($damage * 0.5);
             $hit_type = 'graze';
+            $damage = max(1, $damage); // Ensure minimum 1 damage for grazing hits
         } elseif ($final_roll <= 0) {
             $damage = 0;
             $hit_type = 'miss';
         } else {
             $hit_type = 'regular';
+            $damage = max(1, $damage); // Ensure minimum 1 damage for regular hits
         }
-        
-        $damage = max(1, $damage);
         
         // Update target unit's HP
         if ($damage > 0) {
@@ -915,6 +1033,13 @@ function process_battle($battle_id) {
                 ");
                 $stmt->execute([$target_unit['unit_id']]);
                 
+                // Delete any equipment associated with the unit
+                $stmt = $pdo->prepare("
+                    DELETE FROM equipment 
+                    WHERE unit_id = ?
+                ");
+                $stmt->execute([$target_unit['unit_id']]);
+                
                 // Then delete the unit itself
                 $stmt = $pdo->prepare("
                     DELETE FROM units 
@@ -922,7 +1047,7 @@ function process_battle($battle_id) {
                 ");
                 $stmt->execute([$target_unit['unit_id']]);
                 
-                log_battle_message("Unit deleted", 'INFO', [
+                log_battle_message("Unit and associated equipment deleted", 'INFO', [
                     'target_unit_id' => $target_unit['unit_id'],
                     'unit_name' => $target_unit['custom_name']
                 ]);
@@ -1072,7 +1197,35 @@ function process_battle($battle_id) {
                 $battle['attacker_division_id']
             ]);
 
-            
+            // Award loot tokens to the winner if this is a player victory
+            $stmt = $pdo->prepare("
+                SELECT user_id FROM divisions WHERE division_id = ?
+            ");
+            $stmt->execute([$winner_division_id]);
+            $winner_user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($winner_user) {
+                $loot_tokens = floor(
+                    ($winner_division_id == $battle['defender_division_id'] 
+                        ? $battle['attacker_initial_strength'] 
+                        : $battle['defender_initial_strength']
+                    ) / 10
+                );
+
+                // Update the winner's loot tokens
+                $stmt = $pdo->prepare("
+                    UPDATE commodities
+                    SET loot_token = loot_token + ?
+                    WHERE id = ?;
+                ");
+                $stmt->execute([$loot_tokens, $winner_user['user_id']]);
+
+                // Add loot token gain to battle report
+                $result_message .= sprintf(
+                    "<p class='loot-reward'>Gained %d loot tokens!</p>",
+                    $loot_tokens
+                );
+            }
             
             // Update battle status
             $stmt = $pdo->prepare("
@@ -1192,7 +1345,7 @@ function process_battle($battle_id) {
             ]);
 
             // Process level ups
-            process_level_ups($battle['defender_division_id'], $battle['attacker_division_id']);
+            $level_up_messages = process_level_ups($battle['defender_division_id'], $battle['attacker_division_id']);
             
             // Add battle result to report
             $result_message = "<h3>Battle Conclusion</h3>";
@@ -1207,6 +1360,45 @@ function process_battle($battle_id) {
                     htmlspecialchars($winner_name)
                 );
             }
+
+            // Add XP gains section
+            $result_message .= "<h4>Experience Gained</h4><ul>";
+
+            // Get all surviving units and their names
+            $stmt = $pdo->prepare("
+                SELECT unit_id, custom_name, name, division_id 
+                FROM units 
+                WHERE division_id IN (?, ?) 
+                AND hp > 0
+            ");
+            $stmt->execute([$battle['defender_division_id'], $battle['attacker_division_id']]);
+            $surviving_units = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($surviving_units as $unit) {
+                $unit_name = $unit['custom_name'] ?: $unit['name'];
+                $result_message .= sprintf(
+                    "<li>%s gained %d XP</li>",
+                    htmlspecialchars($unit_name),
+                    $xp_reward
+                );
+            }
+            $result_message .= "</ul>";
+
+            // Add loot token section if tokens were awarded
+            if (isset($loot_tokens) && $loot_tokens > 0) {
+                $result_message .= sprintf(
+                    "<h4>Rewards</h4><p class='loot-reward'>Gained %d loot tokens!</p>",
+                    $loot_tokens
+                );
+            }
+
+            // Add level-ups section
+            if (!empty($level_up_messages)) {
+                $result_message .= "<h4>Level Ups</h4><ul>";
+                $result_message .= implode('', $level_up_messages);
+                $result_message .= "</ul>";
+            }
+
             append_to_battle_report($battle_id, $result_message);
 
             // Make the report visible now that battle is over
@@ -1216,6 +1408,46 @@ function process_battle($battle_id) {
                 WHERE battle_id = ?
             ");
             $stmt->execute([$battle_id]);
+            
+            // Get user IDs for both divisions
+            $stmt = $pdo->prepare("
+                SELECT user_id 
+                FROM divisions 
+                WHERE division_id IN (?, ?)
+            ");
+            $stmt->execute([$battle['defender_division_id'], $battle['attacker_division_id']]);
+            $involved_users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            // Store battle end status in session to prevent duplicate notifications
+            foreach ($involved_users as $user_id) {
+                $_SESSION['battle_' . $battle_id . '_notification_sent'] = true;
+            }
+            
+            // Get user IDs for both divisions and send them notifications
+            $stmt = $pdo->prepare("
+                SELECT d.user_id 
+                FROM divisions d 
+                WHERE d.division_id IN (?, ?) 
+                AND d.user_id IS NOT NULL
+            ");
+            $stmt->execute([$battle['defender_division_id'], $battle['attacker_division_id']]);
+            $involved_users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            foreach ($involved_users as $user_id) {
+                // Check if user has notifications enabled
+                $stmt = $pdo->prepare("SELECT notifications_enabled FROM users WHERE id = ?");
+                $stmt->execute([$user_id]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($user && $user['notifications_enabled']) {
+                    echo json_encode([
+                        'notification' => [
+                            'title' => 'Battle Concluded',
+                            'message' => "The battle '{$battle['battle_name']}' has ended! {$winner_name} emerged victorious!"
+                        ]
+                    ]);
+                }
+            }
             
             return false;
         }
@@ -1240,6 +1472,10 @@ function process_battle($battle_id) {
         log_battle_message("Combat Report Templates Structure", 'DEBUG', [
             'templates' => $COMBAT_REPORT_TEMPLATES
         ]);
+        
+        
+        
+        
         
         
         
@@ -1392,51 +1628,20 @@ function process_battle($battle_id) {
     }
 }
 
-function process_level_ups($defender_division_id, $attacker_division_id) {
-    global $pdo, $LEVEL_CONFIG, $MISSION_CONFIG;
+function sendBattleEndNotification($user_id, $battle_name, $winner_name) {
+    global $pdo;
     
-    // Get all units that might level up
-    $stmt = $pdo->prepare("
-        SELECT unit_id, level, xp 
-        FROM units 
-        WHERE division_id IN (?, ?) 
-        AND hp > 0
-    ");
-    $stmt->execute([$defender_division_id, $attacker_division_id]);
-    $units = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    foreach ($units as $unit) {
-        $current_level = $unit['level'];
-        $next_level = $current_level + 1;
-        
-        // Skip if already at max level
-        if ($current_level >= 15) {
-            continue;
-        }
-        
-        // Check if unit has enough XP for the next level
-        if ($unit['xp'] >= $LEVEL_CONFIG[$next_level]) {
-            // Randomly choose which stat to increase (1-4)
-            $stat_increase = rand(1, 4);
-            
-            switch ($stat_increase) {
-                case 1:
-                    $sql = "UPDATE units SET level = ?, firepower = firepower + 1, xp = 0 WHERE unit_id = ?";
-                    break;
-                case 2:
-                    $sql = "UPDATE units SET level = ?, armour = armour + 1, xp = 0 WHERE unit_id = ?";
-                    break;
-                case 3:
-                    $sql = "UPDATE units SET level = ?, maneuver = maneuver + 1, xp = 0 WHERE unit_id = ?";
-                    break;
-                case 4:
-                    $sql = "UPDATE units SET level = ?, max_hp = FLOOR(max_hp * 1.1), hp = FLOOR(hp * 1.1), xp = 0 WHERE unit_id = ?";
-                    break;
-            }
-            
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$next_level, $unit['unit_id']]);
-        }
+    $stmt = $pdo->prepare("SELECT notifications_enabled FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($user && $user['notifications_enabled']) {
+        echo json_encode([
+            'notification' => [
+                'title' => 'Battle Concluded',
+                'message' => "The battle '$battle_name' has ended! $winner_name emerged victorious!"
+            ]
+        ]);
     }
 }
 

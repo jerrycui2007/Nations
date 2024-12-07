@@ -501,7 +501,7 @@ $user_missions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php
                         // Fetch available divisions
                         $stmt = $pdo->prepare("
-                            SELECT d.division_id, d.name, d.in_combat, d.is_defence,
+                            SELECT d.division_id, d.name, d.in_combat, d.is_defence, d.mobilization_state,
                                    COUNT(u.unit_id) as unit_count
                             FROM divisions d 
                             LEFT JOIN units u ON d.division_id = u.division_id
@@ -513,7 +513,8 @@ $user_missions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         $divisions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         
                         foreach ($divisions as $division):
-                            if (!$division['is_defence'] && !$division['in_combat'] && $division['unit_count'] > 0):
+                            if (!$division['is_defence'] && !$division['in_combat'] && 
+                                $division['unit_count'] > 0 && $division['mobilization_state'] === 'mobilized'):
                         ?>
                             <option value="<?php echo $division['division_id']; ?>">
                                 <?php echo htmlspecialchars($division['name']); ?> 

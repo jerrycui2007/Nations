@@ -33,7 +33,11 @@ try {
 
     if ($new_division_id != 0) {  // Skip checks for reserves
         // Check if target division belongs to user and get combat status
-        $stmt = $pdo->prepare("SELECT user_id, in_combat FROM divisions WHERE division_id = ?");
+        $stmt = $pdo->prepare("
+            SELECT user_id, in_combat, mobilization_state, is_defence 
+            FROM divisions 
+            WHERE division_id = ?
+        ");
         $stmt->execute([$new_division_id]);
         $division = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -45,11 +49,8 @@ try {
             throw new Exception("Cannot move units into a division that is in combat");
         }
 
-        // Check if division belongs to user
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM divisions WHERE division_id = ? AND user_id = ?");
-        $stmt->execute([$new_division_id, $user_id]);
-        if ($stmt->fetchColumn() == 0) {
-            throw new Exception("Division not found or doesn't belong to you");
+        if ($division['mobilization_state'] !== 'demobilized' && $division['is_defence'] !== 1) {
+            throw new Exception("Cannot move units into a mobilized or mobilizing division unless it's a defense division");
         }
 
         // Count units in target division

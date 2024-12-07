@@ -1,0 +1,10 @@
+1. There is no unit queue - a unit is randomly selected to make its attack, based off random weighted pick based on maneuver.
+2. When a unit is chosen to attack, it will target a random unit from the opposing side, equally weighted.
+3. The unit makes a base roll of random number between 1 to 100. 
+4. Attacker's maneuver - defender's maneuver is added to this roll.
+5. If a final roll is 90+, the attack is critical (1.5x damage multiplier), if it is 1-10, it is a graze (0.5x damage multiplier), and if it is lower than 0, it is a miss.
+6. The base damage is the attacker's firepower * 10, and then decreased by the defender's armour * 5. A random number between -4 and 4 is added to the damage.
+7. Any unit buffs are applied here (in the order of attacker buffs, defender buffs, attacker teammate buffs, defender teammate buffs).
+8. The multiplier is applied to the damage. Damage can never be less than 1.
+9. The defender's hp is decreased by the damage. If it goes to 0 or below, the unit is destroyed, and can no longer attack or be targeted.
+

@@ -121,6 +121,18 @@ $RESOURCE_CONFIG = [
         ],
         'tier' => 1
     ],
+    'loot_token' => [
+        'display_name' => 'Loot Tokens',
+        'is_natural_resource' => false,
+        'discovery_weight' => [
+            'westberg' => 0,
+            'amarino' => 0,
+            'san_sebastian' => 0,
+            'tind' => 0,
+            'zaheria' => 0
+        ],
+        'tier' => 1
+    ],
     // Natural Resources - Flora
     'apple_tree' => [
         'display_name' => 'Apple Tree',

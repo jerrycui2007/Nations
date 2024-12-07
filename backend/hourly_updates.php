@@ -1,5 +1,5 @@
 <?php
-require_once 'db_connection.php';
+require_once __DIR__ . '/db_connection.php';
 require_once 'calculate_income.php';
 require_once 'calculate_food_consumption.php';
 require_once 'calculate_power_consumption.php';
@@ -148,6 +148,25 @@ function performHourlyUpdates() {
         $pdo->rollBack();
         log_message("Error during hourly updates: " . $e->getMessage());
     }
+
+    // After the user loop completes
+    try {
+        $pdo->beginTransaction();
+        
+        // Update mobilization states globally
+        $stmt = $pdo->prepare("
+            UPDATE divisions 
+            SET mobilization_state = 'mobilized' 
+            WHERE mobilization_state = 'mobilizing'
+        ");
+        $stmt->execute();
+        
+        $pdo->commit();
+        log_message("Mobilization states updated successfully");
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        log_message("Error updating mobilization states: " . $e->getMessage());
+    }
 }
 
 function updateProductionCapacity($user_id) {
@@ -183,10 +202,9 @@ function updateProductionCapacity($user_id) {
 }
 
 function log_message($message) {
-    /*
     $log_file = __DIR__ . '/hourly_updates.log';
     $timestamp = date('Y-m-d H:i:s');
-    file_put_contents($log_file, "[$timestamp] $message\n", FILE_APPEND);*/
+    file_put_contents($log_file, "[$timestamp] $message\n", FILE_APPEND);
 }
 
 log_message("Starting hourly updates");

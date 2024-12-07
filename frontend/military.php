@@ -80,7 +80,7 @@ foreach ($units as $unit) {
             display: flex;
             flex-direction: column;
             height: auto;
-            min-height: 100%;
+            min-height: min-content;
             position: relative;
             margin-bottom: 20px;
         }
@@ -100,6 +100,8 @@ foreach ($units as $unit) {
             flex: 1 0 auto;
             display: flex;
             flex-direction: column;
+            height: auto;
+            min-height: min-content;
         }
 
         .unit-name {
@@ -109,10 +111,12 @@ foreach ($units as $unit) {
         }
 
         .unit-custom-name {
-            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
             font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
+            gap: 8px;
+            justify-content: flex-start;
         }
 
         .unit-level {
@@ -247,15 +251,24 @@ foreach ($units as $unit) {
             padding-top: 10px;
             border-top: 1px solid #eee;
             position: relative;
-            display: block;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            min-height: min-content;
         }
 
         .buff-content {
-            width: 200px;
+            width: 100%;
             text-align: left;
             margin-top: 20px;
-            margin-bottom: 40px;
             padding-bottom: 20px;
+            height: auto;
+            min-height: min-content;
+        }
+
+        .buff-stat .unit-stat-label {
+            position: absolute;
+            top: 10px;
         }
 
         .buff-item {
@@ -264,11 +277,7 @@ foreach ($units as $unit) {
             margin-bottom: 4px;
             line-height: 1.4;
             word-wrap: break-word;
-        }
-
-        .buff-stat .unit-stat-label {
-            position: absolute;
-            top: 10px;
+            padding-right: 10px;
         }
 
         .disband-button {
@@ -517,10 +526,11 @@ foreach ($units as $unit) {
             color: #4CAF50;
             cursor: pointer;
             font-size: 0.8em;
-            margin-left: 5px;
             padding: 2px 5px;
             border-radius: 4px;
             transition: background-color 0.3s;
+            margin-left: 5px;
+            flex: 0 0 auto;
         }
 
         .rename-unit-btn:hover {
@@ -538,6 +548,8 @@ foreach ($units as $unit) {
             align-items: center;
             margin-bottom: 10px;
             font-weight: bold;
+            gap: 8px;
+            justify-content: flex-start;
         }
 
         .unit-name {
@@ -585,6 +597,167 @@ foreach ($units as $unit) {
         .fa-crossed-swords {
             color: #dc3545;
             margin-left: 8px;
+        }
+
+        .tab-container {
+            margin-top: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            border: 1px solid #dee2e6;
+            border-bottom: none;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-button:hover {
+            background-color: #e9ecef;
+        }
+
+        .tab-button.active {
+            background-color: white;
+            border-bottom: 2px solid #4CAF50;
+            color: #4CAF50;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: white;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .division-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mobilization-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobilization-status {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status-badge.demobilized {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .status-badge.mobilizing {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .status-badge.mobilized {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .mobilize-btn, .demobilize-btn, .cancel-mobilize-btn {
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .mobilize-btn {
+            color: #28a745;
+        }
+
+        .mobilize-btn:hover {
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+
+        .demobilize-btn {
+            color: #dc3545;
+        }
+
+        .demobilize-btn:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        .cancel-mobilize-btn {
+            color: #ffc107;
+        }
+
+        .cancel-mobilize-btn:hover {
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+
+        .unit-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .unit-card-link:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s ease;
+        }
+
+        .unit-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .unit-card-link:hover .unit-card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .unit-name-link {
+            text-decoration: none;
+            color: inherit;
+            text-align: left;
+            flex: 0 1 auto;
+        }
+
+        .unit-name-link:hover {
+            text-decoration: underline;
+            color: #4CAF50;
+        }
+
+        .unit-custom-name {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            gap: 8px;
+            justify-content: flex-start;
         }
     </style>
 </head>
@@ -674,64 +847,102 @@ foreach ($units as $unit) {
                 </div>
             </div>
 
-            <?php foreach ($divisions as $division): ?>
-                <div class="division-section">
-                    <h2>
-                        <?php if ($division['is_defence']): ?>
-                            <i class="fas fa-shield-alt" style="color: #4444ff; margin-right: 8px;" title="Defensive Division"></i>
-                        <?php endif; ?>
-                        <?php echo htmlspecialchars($division['name']); ?>
-                        <?php if ($division['in_combat']): ?>
-                            <i class="fa-solid fa-crosshairs" style="color: #dc3545; margin-left: 8px;" title="Division in Combat"></i>
-                        <?php endif; ?>
-                        <button class="rename-division-btn" onclick="showRenameModal(<?php echo $division['division_id']; ?>, '<?php echo addslashes($division['name']); ?>')">
-                            <i class="fas fa-edit"></i> Rename
+            <div class="tab-container">
+                <div class="tabs">
+                    <?php foreach ($divisions as $index => $division): ?>
+                        <button class="tab-button" 
+                                onclick="openTab(event, 'division-<?php echo $division['division_id']; ?>')"
+                                data-tab-id="division-<?php echo $division['division_id']; ?>">
+                            <?php if ($division['is_defence']): ?>
+                                <i class="fas fa-shield-alt" style="color: #4444ff;" title="Defensive Division"></i>
+                            <?php endif; ?>
+                            <?php echo htmlspecialchars($division['name']); ?>
+                            <?php if ($division['in_combat']): ?>
+                                <i class="fa-solid fa-crosshairs" style="color: #dc3545;" title="Division in Combat"></i>
+                            <?php endif; ?>
                         </button>
-                        <?php if (!$division['is_defence'] && !$division['in_combat']): ?>
+                    <?php endforeach; ?>
+                    <button class="tab-button" 
+                            onclick="openTab(event, 'reserves')"
+                            data-tab-id="reserves">Reserves</button>
+                </div>
+
+                <?php foreach ($divisions as $index => $division): ?>
+                    <div id="division-<?php echo $division['division_id']; ?>" 
+                         class="tab-content">
+                        <div class="division-header">
+                            <button class="rename-division-btn" 
+                                    onclick="showRenameModal(<?php echo $division['division_id']; ?>, '<?php echo addslashes($division['name']); ?>')">
+                                <i class="fas fa-edit"></i> Rename
+                            </button>
+                            <?php if (!$division['is_defence'] && !$division['in_combat']): ?>
+                                <?php 
+                                $unit_count = isset($units_by_division[$division['division_id']]) 
+                                    ? count($units_by_division[$division['division_id']]) 
+                                    : 0;
+                                ?>
+                                <button class="disband-division-btn" 
+                                        onclick="disbandDivision(<?php echo $division['division_id']; ?>, '<?php echo addslashes($division['name']); ?>')">
+                                    <i class="fas fa-trash-alt"></i> Disband
+                                </button>
+                                <?php if ($division['mobilization_state'] === 'mobilized'): ?>
+                                    <button class="peacekeeping-btn" 
+                                            onclick="sendPeacekeeping(<?php echo $division['division_id']; ?>, '<?php echo addslashes($division['name']); ?>')"
+                                            <?php echo $unit_count === 0 ? 'disabled title="Cannot send empty division"' : ''; ?>>
+                                        <i class="fas fa-dove"></i> Send on Peacekeeping Mission
+                                    </button>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <div class="mobilization-controls">
+                                <div class="mobilization-status">
+                                    Status: 
+                                    <span class="status-badge <?php echo $division['mobilization_state']; ?>">
+                                        <?php echo ucfirst($division['mobilization_state']); ?>
+                                    </span>
+                                </div>
+                                <?php if ($division['mobilization_state'] === 'demobilized'): ?>
+                                    <button class="mobilize-btn" onclick="toggleMobilization(<?php echo $division['division_id']; ?>, 'mobilizing')">
+                                        <i class="fas fa-play"></i> Mobilize
+                                    </button>
+                                <?php elseif ($division['mobilization_state'] === 'mobilizing'): ?>
+                                    <button class="cancel-mobilize-btn" onclick="toggleMobilization(<?php echo $division['division_id']; ?>, 'demobilized')">
+                                        <i class="fas fa-stop"></i> Cancel
+                                    </button>
+                                <?php else: ?>
+                                    <?php if (!$division['is_defence']): ?>
+                                        <button class="demobilize-btn" onclick="toggleMobilization(<?php echo $division['division_id']; ?>, 'demobilized')">
+                                            <i class="fas fa-power-off"></i> Demobilize
+                                        </button>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="unit-grid">
                             <?php 
-                            $unit_count = isset($units_by_division[$division['division_id']]) 
-                                ? count($units_by_division[$division['division_id']]) 
-                                : 0;
+                            if (isset($units_by_division[$division['division_id']])) {
+                                foreach ($units_by_division[$division['division_id']] as $unit) {
+                                    include 'components/unit_card.php';
+                                }
+                            } else {
+                                echo "<p class='no-units'>No units assigned to this division</p>";
+                            }
                             ?>
-                            <button class="disband-division-btn" onclick="disbandDivision(<?php echo $division['division_id']; ?>, '<?php echo addslashes($division['name']); ?>')">
-                                <i class="fas fa-trash-alt"></i> Disband
-                            </button>
-                            <button class="peacekeeping-btn" 
-                                    onclick="sendPeacekeeping(<?php echo $division['division_id']; ?>, '<?php echo addslashes($division['name']); ?>')"
-                                    <?php echo $unit_count === 0 ? 'disabled title="Cannot send empty division"' : ''; ?>>
-                                <i class="fas fa-dove"></i> Send on Peacekeeping Mission
-                            </button>
-                        <?php endif; ?>
-                    </h2>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
+                <div id="reserves" class="tab-content">
                     <div class="unit-grid">
                         <?php 
-                        if (isset($units_by_division[$division['division_id']])) {
-                            foreach ($units_by_division[$division['division_id']] as $unit) {
-                                // Existing unit card code here
+                        if (isset($units_by_division[0])) {
+                            foreach ($units_by_division[0] as $unit) {
                                 include 'components/unit_card.php';
                             }
                         } else {
-                            echo "<p class='no-units'>No units assigned to this division</p>";
+                            echo "<p class='no-units'>No units in reserves</p>";
                         }
                         ?>
                     </div>
-                </div>
-            <?php endforeach; ?>
-
-            <!-- Reserve Units -->
-            <div class="division-section">
-                <h2>Reserves</h2>
-                <div class="unit-grid">
-                    <?php 
-                    if (isset($units_by_division[0])) {
-                        foreach ($units_by_division[0] as $unit) {
-                            // Existing unit card code here
-                            include 'components/unit_card.php';
-                        }
-                    } else {
-                        echo "<p class='no-units'>No units in reserves</p>";
-                    }
-                    ?>
                 </div>
             </div>
         </div>
@@ -1092,6 +1303,83 @@ foreach ($units as $unit) {
                 localStorage.removeItem('toastType');
             }
         });
+
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            
+            // Hide all tab content
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            
+            // Remove active class from all tab buttons
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            
+            // Show the selected tab content and mark the button as active
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            // Store the current tab in localStorage
+            localStorage.setItem('currentMilitaryTab', tabName);
+        }
+
+        // Add this new function to restore the tab state
+        document.addEventListener('DOMContentLoaded', function() {
+            // First handle any toast messages
+            const message = localStorage.getItem('toastMessage');
+            const type = localStorage.getItem('toastType');
+            if (message) {
+                showToast(message, type);
+                localStorage.removeItem('toastMessage');
+                localStorage.removeItem('toastType');
+            }
+            
+            // Then restore the tab state
+            const savedTab = localStorage.getItem('currentMilitaryTab');
+            if (savedTab) {
+                const tabButton = document.querySelector(`[data-tab-id="${savedTab}"]`);
+                if (tabButton) {
+                    // Simulate a click on the saved tab
+                    tabButton.click();
+                } else {
+                    // If the saved tab no longer exists, default to the first tab
+                    const firstTab = document.querySelector('.tab-button');
+                    if (firstTab) firstTab.click();
+                }
+            } else {
+                // If no saved tab, default to the first tab
+                const firstTab = document.querySelector('.tab-button');
+                if (firstTab) firstTab.click();
+            }
+        });
+
+        function toggleMobilization(divisionId, newState) {
+            fetch('../backend/toggle_mobilization.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `division_id=${divisionId}&new_state=${newState}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem('toastMessage', data.message);
+                    localStorage.setItem('toastType', 'success');
+                    window.location.reload();
+                } else {
+                    showToast(data.message, "error");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('An error occurred while updating mobilization state', "error");
+            });
+        }
     </script>
     <div class="toast-container"></div>
 </body>

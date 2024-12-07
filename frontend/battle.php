@@ -420,6 +420,17 @@ $attacker_strength = calculateDivisionStrength($attacking_units);
             background-color: #dc3545;  /* Red */
             transition: width 0.3s ease-in-out;
         }
+
+        .unit-link {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .unit-link:hover {
+            color: #0d6efd;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -454,8 +465,14 @@ $attacker_strength = calculateDivisionStrength($attacking_units);
                         <?php foreach ($defending_units as $unit): ?>
                             <li class="unit-list-item">
                                 <div class="unit-info">
-                                    <div class="unit-custom-name"><?php echo htmlspecialchars($unit['custom_name']); ?></div>
-                                    <div class="unit-name"><?php echo htmlspecialchars($unit['unit_name']); ?></div>
+                                    <div class="unit-custom-name">
+                                        <a href="unit_view.php?unit_id=<?php echo $unit['unit_id']; ?>" class="unit-link" target="_blank">
+                                            <?php echo htmlspecialchars($unit['custom_name']); ?>
+                                        </a>
+                                    </div>
+                                    <div class="unit-name">
+                                        <?php echo htmlspecialchars($unit['unit_name']); ?>
+                                    </div>
                                 </div>
                                 <div class="unit-stats">
                                     <div class="stat-box stat-level"><?php echo $unit['level']; ?></div>
@@ -523,8 +540,14 @@ $attacker_strength = calculateDivisionStrength($attacking_units);
                         <?php foreach ($attacking_units as $unit): ?>
                             <li class="unit-list-item">
                                 <div class="unit-info">
-                                    <div class="unit-custom-name"><?php echo htmlspecialchars($unit['custom_name']); ?></div>
-                                    <div class="unit-name"><?php echo htmlspecialchars($unit['unit_name']); ?></div>
+                                    <div class="unit-custom-name">
+                                        <a href="unit_view.php?unit_id=<?php echo $unit['unit_id']; ?>" class="unit-link" target="_blank">
+                                            <?php echo htmlspecialchars($unit['custom_name']); ?>
+                                        </a>
+                                    </div>
+                                    <div class="unit-name">
+                                        <?php echo htmlspecialchars($unit['unit_name']); ?>
+                                    </div>
                                 </div>
                                 <div class="unit-stats">
                                     <div class="stat-box stat-level"><?php echo $unit['level']; ?></div>
@@ -552,6 +575,9 @@ $attacker_strength = calculateDivisionStrength($attacking_units);
     </div>
 
     <script>
+        const battleId = <?php echo $battle_id; ?>;
+        const userId = <?php echo $_SESSION['user_id']; ?>;
+        
         let page = 1;
         const reportsPerPage = 20;
         let loading = false;
@@ -592,6 +618,65 @@ $attacker_strength = calculateDivisionStrength($attacking_units);
                 loading = false;
             }
         }
+    </script>
+    <script>
+    function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+            console.log("This browser does not support desktop notifications");
+            return;
+        }
+        
+        Notification.requestPermission();
+    }
+
+    function sendBattleNotification(title, message) {
+        if (Notification.permission === "granted") {
+            new Notification(title, {
+                body: message,
+                icon: '/favicon.ico' // Add your favicon path here
+            });
+        }
+    }
+
+    // Request permission when page loads
+    requestNotificationPermission();
+
+    // Add this to your existing battle update polling logic
+    function checkBattleStatus() {
+        if (typeof battleId === 'undefined') return;
+        
+        fetch('battle_status.php?battle_id=' + battleId)
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_over && !window.battleNotificationSent) {
+                    window.battleNotificationSent = true;
+                    
+                    // Send notification to involved users
+                    fetch('../backend/send_battle_notification.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'user_id=' + userId + '&battle_id=' + battleId + '&winner_name=' + encodeURIComponent(data.winner_name)
+                    })
+                    .then(response => response.json())
+                    .then(notificationData => {
+                        if (notificationData.should_notify) {
+                            sendBattleNotification(
+                                notificationData.title,
+                                notificationData.message
+                            );
+                        }
+                    });
+                }
+            });
+    }
+
+    // Check battle status every 5 seconds
+    setInterval(checkBattleStatus, 5000);
+
+    // Initial check
+    checkBattleStatus();
     </script>
 </body>
 </html>

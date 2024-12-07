@@ -1,6 +1,6 @@
 <?php
-require_once 'db_connection.php';
-require_once 'factory_config.php';
+require_once __DIR__ . '/db_connection.php';
+require_once __DIR__ . '/factory_config.php';
 
 function calculateTotalGP($pdo, $user_id) {
     try {

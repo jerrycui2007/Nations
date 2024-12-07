@@ -27,6 +27,18 @@ $BUILDING_CONFIG = [
                 'land' => [
                     'cleared_land' => 10
                 ]
+                ],
+            3 => [
+                'minimum_tier' => 3,
+                'construction_cost' => [
+                    'money' => 25000,
+                    'building_materials' => 2500,
+                    'metal' => 500,
+                    'construction_time' => 480
+                ],
+                'land' => [
+                    'cleared_land' => 10
+                ]
             ]
         ]
     ],
@@ -52,6 +64,18 @@ $BUILDING_CONFIG = [
                     'building_materials' => 1000,
                     'metal' => 250,
                     'construction_time' => 180
+                ],
+                'land' => [
+                    'cleared_land' => 10
+                ]
+                ],
+            3 => [
+                'minimum_tier' => 3,
+                'construction_cost' => [
+                    'money' => 25000,
+                    'building_materials' => 2500,
+                    'metal' => 500,
+                    'construction_time' => 480
                 ],
                 'land' => [
                     'cleared_land' => 10
@@ -85,6 +109,18 @@ $BUILDING_CONFIG = [
                 'land' => [
                     'cleared_land' => 10
                 ]
+                ],
+            3 => [
+                'minimum_tier' => 3,
+                'construction_cost' => [
+                    'money' => 25000,
+                    'building_materials' => 2500,
+                    'metal' => 500,
+                    'construction_time' => 480
+                ],
+                'land' => [
+                    'cleared_land' => 10
+                ]
             ]
         ]
     ],
@@ -114,6 +150,18 @@ $BUILDING_CONFIG = [
                 'land' => [
                     'cleared_land' => 10
                 ]
+                ],
+            3 => [
+                'minimum_tier' => 3,
+                'construction_cost' => [
+                    'money' => 25000,
+                    'building_materials' => 2500,
+                    'metal' => 500,
+                    'construction_time' => 480
+                ],
+                'land' => [
+                    'cleared_land' => 10
+                ]
             ]
         ]
     ],
@@ -137,12 +185,12 @@ $BUILDING_CONFIG = [
                 'minimum_tier' => 3,
                 'construction_cost' => [
                     'money' => 25000,
-                    'building_materials' => 5000,
-                    'metal' => 1000,
+                    'building_materials' => 2500,
+                    'metal' => 500,
                     'construction_time' => 480
                 ],
                 'land' => [
-                    'cleared_land' => 15
+                    'cleared_land' => 10
                 ]
             ]
         ]
@@ -155,14 +203,14 @@ $BUILDING_CONFIG = [
                 'minimum_tier' => 3,
                 'construction_cost' => [
                     'money' => 25000,
-                    'building_materials' => 5000,
-                    'metal' => 1000,
+                    'building_materials' => 2500,
+                    'metal' => 500,
                     'construction_time' => 480
                 ],
                 'land' => [
-                    'cleared_land' => 15
+                    'cleared_land' => 10
                 ]
-            ],
+            ]
         ]
     ],
     'light_armour_factory' => [

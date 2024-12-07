@@ -22,11 +22,12 @@ function performDailyUpdates() {
         $affected_rows = $stmt->rowCount();
         log_message("Reset expanded_borders_today for {$affected_rows} users");
 
-        // Clean up orphaned buffs
+        // Clean up orphaned buffs that aren't referenced by equipment_buffs
         $stmt = $pdo->prepare("
             DELETE b FROM buffs b
             LEFT JOIN units u ON b.unit_id = u.unit_id
-            WHERE u.unit_id IS NULL
+            LEFT JOIN equipment_buffs eb ON b.buff_id = eb.value AND eb.buff_type = 'Buff'
+            WHERE u.unit_id IS NULL AND eb.equipment_id IS NULL
         ");
         $stmt->execute();
         

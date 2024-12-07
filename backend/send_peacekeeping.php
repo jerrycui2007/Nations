@@ -23,7 +23,7 @@ try {
 
     // Get division info and count units
     $stmt = $pdo->prepare("
-        SELECT d.name, d.is_defence, d.in_combat, COUNT(u.unit_id) as unit_count 
+        SELECT d.name, d.is_defence, d.in_combat, d.mobilization_state, COUNT(u.unit_id) as unit_count 
         FROM divisions d 
         LEFT JOIN units u ON d.division_id = u.division_id 
         WHERE d.division_id = ? AND d.user_id = ?
@@ -36,8 +36,12 @@ try {
         throw new Exception("Division not found or doesn't belong to you");
     }
 
+    if ($division['mobilization_state'] !== 'mobilized') {
+        throw new Exception("Division must be mobilized before being sent on peacekeeping");
+    }
+
     if ($division['is_defence']) {
-        throw new Exception("Cannot send defensive division on peacekeeping");
+        throw new Exception("Cannot send defence division on peacekeeping");
     }
 
     if ($division['in_combat']) {
@@ -78,7 +82,7 @@ try {
     // Create enough NPC units to match 1/2 the total strength
     $target_npc_strength = floor($total_strength / 2);
     $npc_strength = 0;
-    $unit_config = $UNIT_CONFIG['ak47_infantry'];
+    $unit_config = $UNIT_CONFIG['ak_47_infantry'];
     $single_unit_strength = $unit_config['firepower'] + $unit_config['armour'] + 
                            $unit_config['maneuver'] + floor($unit_config['hp'] / 10);
 

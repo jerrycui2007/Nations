@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../backend/unit_config.php';
 
 $unit_type = strtolower(str_replace(' ', '_', $unit['name']));
+$unit_type = strtolower(str_replace('-', '_', $unit_type));
 $recruitment_cost = isset($UNIT_CONFIG[$unit_type]['recruitment_cost']) 
     ? $UNIT_CONFIG[$unit_type]['recruitment_cost'] 
     : [];
@@ -18,7 +19,11 @@ if ($unit['division_id'] > 0) {
     <div class="unit-level-box"><?php echo $unit['level']; ?></div>
     <div class="unit-content">
         <div class="unit-custom-name">
-            <?php echo htmlspecialchars($unit['custom_name']); ?>
+            <a href="unit_view.php?unit_id=<?php echo $unit['unit_id']; ?>" 
+               class="unit-name-link" 
+               target="_blank">
+                <?php echo htmlspecialchars($unit['custom_name']); ?>
+            </a>
             <button class="rename-unit-btn" 
                     onclick="showRenameUnitModal(<?php echo $unit['unit_id']; ?>, '<?php echo addslashes($unit['custom_name'] ?? $unit['name']); ?>')"
                     <?php echo $division_in_combat ? 'disabled title="Cannot rename units while division is in combat"' : ''; ?>>

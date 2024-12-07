@@ -6,7 +6,7 @@ function calculateTier($population) {
         return 1;
     } elseif ($population < 250000) {
         return 2;
-    } elseif ($population < 500000) {
+    } elseif ($population < 600000) {
         return 3;
     } elseif ($population < 1000000) {
         return 4;

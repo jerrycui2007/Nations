@@ -115,7 +115,7 @@ $UNIT_CONFIG = [
         'recruitment_cost' => ['money' => 2500],
         'buffs' => [],
     ],
-    'ak47_infantry' => [
+    'ak_47_infantry' => [
         'name' => 'AK-47 Infantry',
         'tier' => 2,
         'type' => 'Infantry',
@@ -558,7 +558,7 @@ $UNIT_CONFIG = [
         'recruitment_cost' => ['money' => 10000, 'metal' => 100],
         'buffs' => [],
     ],
-    't72_tank' => [
+    't_72_tank' => [
         'name' => 'T-72 Tank',
         'tier' => 5,
         'type' => 'Armour',

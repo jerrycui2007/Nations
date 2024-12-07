@@ -33,7 +33,7 @@ $MISSION_CONFIG = [
             ["resource" => "ammunition", "amount" => 20]
         ],
         "enemies" => [
-            "ak47_infantry" => [
+            "ak_47_infantry" => [
                 "weight" => 70,
                 "min_amount" => 5,
                 "max_amount" => 7
@@ -79,7 +79,7 @@ $MISSION_CONFIG = [
             ["resource" => "money", "amount" => 1000]
         ],
         "enemies" => [
-            "ak47_infantry" => [
+            "ak_47_infantry" => [
                 "weight" => 70,
                 "min_amount" => 6,
                 "max_amount" => 8
@@ -129,7 +129,7 @@ $MISSION_CONFIG = [
             ["resource" => "ammunition", "amount" => 25],
         ],
         "enemies" => [
-            "ak47_infantry" => [
+            "ak_47_infantry" => [
                 "weight" => 40,
                 "min_amount" => 3,
                 "max_amount" => 5
@@ -139,7 +139,7 @@ $MISSION_CONFIG = [
                 "min_amount" => 2,
                 "max_amount" => 4
             ],
-            "t72_tank" => [
+            "t_72_tank" => [
                 "weight" => 15,
                 "min_amount" => 1,
                 "max_amount" => 3
@@ -220,7 +220,7 @@ $MISSION_CONFIG = [
                 "min_amount" => 3,
                 "max_amount" => 4
             ],
-            "t72_tank" => [
+            "t_72_tank" => [
                 "weight" => 20,
                 "min_amount" => 3,
                 "max_amount" => 4
@@ -335,7 +335,7 @@ $MISSION_CONFIG = [
                 "min_amount" => 7,
                 "max_amount" => 8
             ],
-            "ak47_infantry" => [
+            "ak_47_infantry" => [
                 "weight" => 20,
                 "min_amount" => 3,
                 "max_amount" => 5
@@ -380,7 +380,7 @@ $MISSION_CONFIG = [
                 "min_amount" => 3,
                 "max_amount" => 4
             ],
-            "ak47_infantry" => [
+            "ak_47_infantry" => [
                 "weight" => 25,
                 "min_amount" => 3,
                 "max_amount" => 4
@@ -1051,16 +1051,21 @@ $MISSION_CONFIG = [
             ["resource" => "whz", "amount" => 10],
         ],
         "enemies" => [
-            "sectopod" => [
+            "gearhound_shredder" => [
                 "weight" => 30,
-                "min_amount" => 3,
-                "max_amount" => 5
+                "min_amount" => 5,
+                "max_amount" => 7
             ],
-            "sectoid" => [
+            "gearhound_warhead" => [
                 "weight" => 70,
-                "min_amount" => 7,
-                "max_amount" => 10
-            ]
+                "min_amount" => 9,
+                "max_amount" => 13
+            ],
+            "volvo_repair_truck" => [
+                "weight" => 100,
+                "min_amount" => 2,
+                "max_amount" => 2
+            ],
         ]
     ],
     "death_from_above" => [

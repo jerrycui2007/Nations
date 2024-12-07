@@ -14,9 +14,9 @@ function calculateIncome($user) {
     // Calculate base money increase (1 for every 30 population, rounded to nearest whole number)
     $money_increase = round($population / 30);
 
-    // Get all units belonging to this user
+    // Get all units belonging to this user, including division mobilization state
     $stmt = $pdo->prepare("
-        SELECT u.*, d.in_combat 
+        SELECT u.*, d.in_combat, d.mobilization_state 
         FROM units u 
         LEFT JOIN divisions d ON u.division_id = d.division_id 
         WHERE u.player_id = ?
@@ -24,9 +24,15 @@ function calculateIncome($user) {
     $stmt->execute([$user['id']]);
     $units = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Calculate total unit upkeep
+    // Calculate total unit upkeep only for units in mobilized divisions
     $unit_money_upkeep = 0;
     foreach ($units as $unit) {
+        // Skip units that aren't in mobilized divisions
+        if ($unit['division_id'] != 0 && $unit['mobilization_state'] !== 'mobilized') {
+            continue;
+        }
+        
+        // Include upkeep for units in reserves (division_id = 0) or mobilized divisions
         $unit_type = strtolower(str_replace(' ', '_', $unit['type']));
         if (isset($UNIT_CONFIG[$unit_type]['upkeep']['money'])) {
             $unit_money_upkeep += $UNIT_CONFIG[$unit_type]['upkeep']['money'];

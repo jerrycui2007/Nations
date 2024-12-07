@@ -489,7 +489,6 @@ $daily_unit_type = $daily_unit ? $daily_unit['unit_type'] : '';
                                 foreach ($unit['building_requirements'] as $building => $required_level) {
                                     $current_level = $user_buildings[$building] ?? 0;
                                     if ($current_level < $required_level) {
-                                        echo $building_name;
                                         $building_name = strtoupper($BUILDING_CONFIG[$building]['name']);
                                         $missing_requirements[] = "$building_name LEVEL $required_level";
                                     }

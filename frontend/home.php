@@ -5,6 +5,7 @@ require_once '../backend/calculate_population_growth.php';
 require_once '../backend/gp_functions.php';
 require_once 'helpers/resource_display.php';
 require_once '../backend/continent_config.php';
+require_once '../backend/send_verification_email.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -19,7 +20,8 @@ try {
     $stmt = $pdo->prepare("
         SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, u.description,
                c.food, c.power, c.consumer_goods, l.urban_areas, u.flag, u.creationDate,
-               u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag, u.continent
+               u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag, u.continent,
+               u.notifications_enabled
         FROM users u 
         JOIN commodities c ON u.id = c.id 
         JOIN land l ON u.id = l.id
@@ -80,6 +82,45 @@ try {
             $user['description'] = $new_description;
         } else {
             $description_update_message = "Error updating description.";
+        }
+    }
+
+    // Handle email update
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_email'])) {
+        $new_email = trim($_POST['new_email']);
+        
+        if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
+            $email_update_message = "Invalid email format.";
+        } else {
+            // Check if email is already in use
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+            $stmt->execute([$new_email, $_SESSION['user_id']]);
+            if ($stmt->rowCount() > 0) {
+                $email_update_message = "This email is already in use.";
+            } else {
+                // Generate new verification token
+                $verification_token = generateVerificationToken();
+                $token_expiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
+                
+                $stmt = $pdo->prepare("
+                    UPDATE users 
+                    SET email = ?, 
+                        email_verified = FALSE,
+                        verification_token = ?,
+                        token_expiry = ?
+                    WHERE id = ?
+                ");
+                
+                if ($stmt->execute([$new_email, $verification_token, $token_expiry, $_SESSION['user_id']])) {
+                    if (sendVerificationEmail($new_email, $verification_token)) {
+                        $email_update_message = "Email updated successfully! Please check your inbox to verify your new email address.";
+                    } else {
+                        $email_update_message = "Email updated but failed to send verification email. Please contact support.";
+                    }
+                } else {
+                    $email_update_message = "Error updating email.";
+                }
+            }
         }
     }
 } catch (PDOException $e) {
@@ -456,6 +497,41 @@ if ($error) {
         .alliance-link:hover {
             text-decoration: underline;
         }
+
+        .email-privacy-notice {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+
+        .notification-toggle {
+            margin-bottom: 20px;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+        .setting-description {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+            margin-left: 25px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -563,6 +639,52 @@ if ($error) {
                         placeholder="Enter your country's description..."
                         rows="6"><?php echo isset($user['description']) ? htmlspecialchars($user['description']) : ''; ?></textarea>
                     <button type="submit" class="flag-button">Update Description</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h2>Update Email Address</h2>
+                <?php if (isset($email_update_message)): ?>
+                    <div class="flag-message <?php echo strpos($email_update_message, 'successfully') !== false ? 'success' : 'error'; ?>">
+                        <?php echo htmlspecialchars($email_update_message); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <p class="email-privacy-notice">Your email address is kept private and will never be displayed publicly.</p>
+                
+                <form method="POST" action="" id="emailForm" class="description-form" onsubmit="return handleEmailSubmit(event)">
+                    <input 
+                        type="email" 
+                        name="new_email" 
+                        id="new_email" 
+                        class="flag-input"
+                        placeholder="Enter your new email address" 
+                        required>
+                    <button type="submit" class="flag-button">Update Email</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h2>Notification Settings</h2>
+                <?php if (isset($notification_update_message)): ?>
+                    <div class="flag-message <?php echo strpos($notification_update_message, 'successfully') !== false ? 'success' : 'error'; ?>">
+                        <?php echo htmlspecialchars($notification_update_message); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <form method="POST" action="" id="notificationForm" class="description-form" onsubmit="return handleNotificationSubmit(event)">
+                    <div class="notification-toggle">
+                        <label class="toggle-label">
+                            <input 
+                                type="checkbox" 
+                                name="notifications_enabled" 
+                                id="notifications_enabled"
+                                <?php echo $user['notifications_enabled'] ? 'checked' : ''; ?>>
+                            Enable Notifications
+                        </label>
+                        <p class="setting-description">When enabled, you'll receive notifications about important events in the game.</p>
+                    </div>
+                    <button type="submit" class="flag-button">Update Settings</button>
                 </form>
             </div>
         </div>
@@ -680,6 +802,36 @@ if ($error) {
             return false;
         }
 
+        async function handleEmailSubmit(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('emailForm');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                const message = doc.querySelector('.flag-message')?.textContent?.trim();
+                
+                if (message) {
+                    showToast(message, message.includes('successfully') ? 'success' : 'error');
+                    if (message.includes('successfully')) {
+                        setTimeout(() => window.location.reload(), 1000);
+                    }
+                }
+            } catch (error) {
+                showToast('An error occurred while updating the email.', 'error');
+            }
+            
+            return false;
+        }
+
         <?php if (isset($flag_update_message)): ?>
             showToast("<?php echo addslashes($flag_update_message); ?>", 
                 "<?php echo strpos($flag_update_message, 'successfully') !== false ? 'success' : 'error'; ?>");
@@ -690,20 +842,29 @@ if ($error) {
             document.querySelector('.gp-popup').style.display = 'block';
             
             // Show loading state
-            const elements = ['population-gp', 'land-gp', 'factory-gp', 'building-gp', 'total-gp'];
+            const elements = ['population-gp', 'land-gp', 'factory-gp', 'building-gp', 'military-gp', 'total-gp'];
             elements.forEach(id => document.getElementById(id).textContent = 'Loading...');
             
             // Fetch GP breakdown
             fetch('../backend/get_gp_breakdown.php')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                .then(response => response.text())
+                .then(text => {
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error('Raw server response:', text);
+                        console.error('JSON parse error:', e);
+                        throw new Error('Server returned invalid JSON. Check console for details.');
                     }
-                    return response.json();
                 })
                 .then(data => {
                     if (data.error) {
-                        throw new Error(data.error);
+                        console.error('Server error details:', {
+                            error: data.error,
+                            message: data.message,
+                            debug_output: data.debug_output
+                        });
+                        throw new Error(data.message || data.error);
                     }
                     
                     // Update values
@@ -752,6 +913,34 @@ if ($error) {
                 gpValue.textContent = formatNumber(parseInt(gpValue.textContent));
             }
         });
+
+        async function handleNotificationSubmit(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('notificationForm');
+            const enabled = document.getElementById('notifications_enabled').checked;
+
+            try {
+                const response = await fetch('../backend/update_notification_settings.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `enabled=${enabled}`
+                });
+                
+                const data = await response.json();
+                showToast(data.message, data.success ? 'success' : 'error');
+                
+                if (data.success) {
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            } catch (error) {
+                showToast('An error occurred while updating notification settings.', 'error');
+            }
+            
+            return false;
+        }
     </script>
     <div class="gp-overlay"></div>
     <div class="gp-popup">

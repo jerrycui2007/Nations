@@ -25,7 +25,7 @@ function calculatePopulationGrowth($user) {
 
     // Cap the population based on the number of urban areas
     $max_population_by_urban_areas = $urban_areas * 1000;
-    $max_population = min(249999, $max_population_by_urban_areas); // Cap at 249,999, because haven't added tier 2 yet
+    $max_population = min(599999, $max_population_by_urban_areas); // Cap at 249,999, because haven't added tier 2 yet
 
     if ($new_population > $max_population) {
         $new_population = $max_population;
