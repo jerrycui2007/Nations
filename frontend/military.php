@@ -759,6 +759,28 @@ foreach ($units as $unit) {
             gap: 8px;
             justify-content: flex-start;
         }
+
+        .remove-equipment-btn {
+            background: none;
+            border: none;
+            color: #ffc107;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 10px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .remove-equipment-btn:hover {
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+
+        .remove-equipment-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            color: #999;
+        }
     </style>
 </head>
 <body>
@@ -893,6 +915,7 @@ foreach ($units as $unit) {
                                     </button>
                                 <?php endif; ?>
                             <?php endif; ?>
+                            
                             <div class="mobilization-controls">
                                 <div class="mobilization-status">
                                     Status: 
@@ -1378,6 +1401,34 @@ foreach ($units as $unit) {
             .catch(error => {
                 console.error('Error:', error);
                 showToast('An error occurred while updating mobilization state', "error");
+            });
+        }
+
+        function removeAllEquipment(divisionId, divisionName) {
+            if (!confirm(`Are you sure you want to remove all equipment from units in ${divisionName}?`)) {
+                return;
+            }
+
+            fetch('../backend/remove_division_equipment.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `division_id=${divisionId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem('toastMessage', data.message);
+                    localStorage.setItem('toastType', 'success');
+                    window.location.reload();
+                } else {
+                    showToast(data.message, "error");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('An error occurred while removing equipment', "error");
             });
         }
     </script>

@@ -73,13 +73,13 @@ $CRATE_CONFIG = [
     ],
     "Medium" => [
         "cost" => 20,
-        "description" => "3 pieces of equipment, 2 guarenteed rares or higher.",
+        "description" => "3 pieces of equipment, 2 guaranteed rares or higher.",
         "contents" => ["Rare", "Rare", "Regular"],
     ],
     "Epic" => [
         "cost" => 50,
-        "description" => "3 pieces of equipment, 1 guarenteed epic or higher, 2 guarenteed rares or higher.",
-        "contents" => ["Epic", "Rare", "Rare"],
+        "description" => "5 pieces of equipment, 1 guaranteed epic or higher, 2 guaranteed rares or higher.",
+        "contents" => ["Epic", "Rare", "Rare", "Regular", "Regular"],
     ]
 ];
 

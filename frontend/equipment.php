@@ -10,7 +10,14 @@ if (!isset($_SESSION['user_id'])) {
 
 // Fetch user's equipment with buffs
 $stmt = $pdo->prepare("
-    SELECT e.*, eb.buff_type, eb.value, b.description as buff_description, b.target
+    SELECT e.*, eb.buff_type, eb.value, b.description as buff_description, b.target,
+           CASE WHEN (u.equipment_1_id = e.equipment_id OR 
+                     u.equipment_2_id = e.equipment_id OR 
+                     u.equipment_3_id = e.equipment_id OR 
+                     u.equipment_4_id = e.equipment_id) 
+                THEN u.unit_id 
+                ELSE NULL 
+           END as equipped_unit_id
     FROM equipment e
     LEFT JOIN equipment_buffs eb ON e.equipment_id = eb.equipment_id
     LEFT JOIN buffs b ON eb.value = b.buff_id AND eb.buff_type = 'Buff'
@@ -34,7 +41,8 @@ foreach ($equipment_data as $row) {
             'type' => $row['type'],
             'is_foil' => $row['is_foil'],
             'buffs' => [],
-            'show_rename' => true
+            'show_rename' => true,
+            'equipped' => !is_null($row['equipped_unit_id'])
         ];
     }
     if ($row['buff_type']) {

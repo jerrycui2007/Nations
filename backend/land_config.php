@@ -64,15 +64,6 @@ $LAND_CONFIG = [
             'zaheria' => 0
         ]
     ],
-    'desert' => [
-        'weight' => [
-            'westberg' => 0,
-            'amarino' => 0,
-            'san_sebastian' => 15,
-            'tind' => 0,
-            'zaheria' => 85
-        ]
-    ],
     'tundra' => [
         'weight' => [
             'westberg' => 2,
@@ -80,6 +71,15 @@ $LAND_CONFIG = [
             'san_sebastian' => 2,
             'tind' => 30,
             'zaheria' => 0
+        ]
+        ],
+    'desert' => [
+        'weight' => [
+            'westberg' => 0,
+            'amarino' => 0,
+            'san_sebastian' => 15,
+            'tind' => 0,
+            'zaheria' => 85
         ]
     ]
 ];

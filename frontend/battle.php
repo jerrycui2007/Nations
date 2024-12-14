@@ -458,12 +458,12 @@ $attacker_strength = calculateDivisionStrength($attacking_units);
             <div class="battle-sides">
                 <div class="battle-side">
                     <div class="side-title"><?php echo htmlspecialchars($battle['defender_name']); ?></div>
-                    <div class="division-strength">
+                    <div class="division-strength defender-strength-value">
                         Division Strength: <?php echo number_format($defender_strength); ?>
                     </div>
-                    <ul class="unit-list">
+                    <ul class="unit-list defender-units">
                         <?php foreach ($defending_units as $unit): ?>
-                            <li class="unit-list-item">
+                            <li class="unit-list-item" data-unit-id="<?php echo $unit['unit_id']; ?>">
                                 <div class="unit-info">
                                     <div class="unit-custom-name">
                                         <a href="unit_view.php?unit_id=<?php echo $unit['unit_id']; ?>" class="unit-link" target="_blank">
@@ -533,12 +533,12 @@ $attacker_strength = calculateDivisionStrength($attacking_units);
 
                 <div class="battle-side">
                     <div class="side-title attacker"><?php echo htmlspecialchars($battle['attacker_name']); ?></div>
-                    <div class="division-strength">
+                    <div class="division-strength attacker-strength-value">
                         Division Strength: <?php echo number_format($attacker_strength); ?>
                     </div>
-                    <ul class="unit-list">
+                    <ul class="unit-list attacker-units">
                         <?php foreach ($attacking_units as $unit): ?>
-                            <li class="unit-list-item">
+                            <li class="unit-list-item" data-unit-id="<?php echo $unit['unit_id']; ?>">
                                 <div class="unit-info">
                                     <div class="unit-custom-name">
                                         <a href="unit_view.php?unit_id=<?php echo $unit['unit_id']; ?>" class="unit-link" target="_blank">
@@ -677,6 +677,143 @@ $attacker_strength = calculateDivisionStrength($attacking_units);
 
     // Initial check
     checkBattleStatus();
+    </script>
+    <script>
+        // Function to fetch and update battle data
+        async function updateBattleData() {
+            try {
+                const response = await fetch(`get_battle_data.php?battle_id=${battleId}`);
+                const data = await response.json();
+                
+                if (data.is_over) {
+                    // Stop polling if battle is over
+                    clearInterval(battleUpdateInterval);
+                    
+                    // Update battle status
+                    document.querySelector('.battle-status').innerHTML = 
+                        `Battle Finished - ${data.winner} Victory`;
+                    
+                    // Remove loading spinner if it exists
+                    const spinner = document.querySelector('.loading-spinner');
+                    if (spinner) spinner.remove();
+
+                    // Send notification if not already sent
+                    if (!window.battleNotificationSent) {
+                        window.battleNotificationSent = true;
+                        
+                        // Send notification to involved users
+                        const notifyResponse = await fetch('../backend/send_battle_notification.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: `user_id=${userId}&battle_id=${battleId}&winner_name=${encodeURIComponent(data.winner)}`
+                        });
+                        
+                        const notificationData = await notifyResponse.json();
+                        if (notificationData.should_notify) {
+                            sendBattleNotification(
+                                notificationData.title,
+                                notificationData.message
+                            );
+                        }
+                    }
+                }
+                
+                // Update units
+                updateUnits(data.defending_units, '.defender-units');
+                updateUnits(data.attacking_units, '.attacker-units');
+                
+                // Update strength bar
+                updateStrengthBar(data.defender_strength, data.attacker_strength);
+                
+                // Update combat reports
+                if (data.combat_reports.length > 0) {
+                    updateCombatReports(data.combat_reports);
+                }
+            } catch (error) {
+                console.error('Error updating battle data:', error);
+            }
+        }
+
+        // Function to update unit displays
+        function updateUnits(units, containerSelector) {
+            const container = document.querySelector(containerSelector);
+            units.forEach(unit => {
+                const unitElement = container.querySelector(`[data-unit-id="${unit.unit_id}"]`);
+                if (unitElement) {
+                    // Update HP display
+                    const hpElement = unitElement.querySelector('.stat-hp');
+                    hpElement.textContent = unit.hp;
+                    
+                    // Update HP status class
+                    hpElement.className = `stat-box stat-hp ${
+                        unit.hp <= 0 ? 'stat-hp-dead' : 
+                        unit.hp < unit.max_hp / 2 ? 'stat-hp-low' : ''
+                    }`;
+                }
+            });
+        }
+
+        // Function to update strength bar
+        function updateStrengthBar(defenderStrength, attackerStrength) {
+            const totalStrength = defenderStrength + attackerStrength;
+            const defenderPercentage = (totalStrength > 0) ? (defenderStrength / totalStrength) * 100 : 50;
+            
+            document.querySelector('.defender-strength').style.width = `${defenderPercentage}%`;
+            document.querySelector('.attacker-strength').style.width = `${100 - defenderPercentage}%`;
+            
+            // Update strength displays
+            document.querySelector('.defender-strength-value').textContent = 
+                `Division Strength: ${defenderStrength.toLocaleString()}`;
+            document.querySelector('.attacker-strength-value').textContent = 
+                `Division Strength: ${attackerStrength.toLocaleString()}`;
+        }
+
+        // Function to update combat reports
+        function updateCombatReports(reports) {
+            const reportList = document.querySelector('.report-list');
+            if (!reportList) {
+                // Create report list if it doesn't exist
+                const reportsContainer = document.querySelector('.combat-reports');
+                const noReports = reportsContainer.querySelector('.no-reports');
+                if (noReports) {
+                    noReports.remove();
+                }
+                const newReportList = document.createElement('div');
+                newReportList.className = 'report-list';
+                reportsContainer.appendChild(newReportList);
+                return;
+            }
+
+            reports.forEach(report => {
+                // Only add if report doesn't already exist
+                if (!document.querySelector(`[data-report-time="${report.time}"]`)) {
+                    const reportElement = document.createElement('div');
+                    reportElement.className = 'report-item';
+                    reportElement.setAttribute('data-report-time', report.time);
+                    reportElement.innerHTML = `
+                        <div class="report-time">
+                            ${new Date(report.time).toLocaleString()}
+                        </div>
+                        <div class="report-message">
+                            ${report.message.replace(/(\d+)/g, '<span class="number-highlight">$1</span>')}
+                        </div>
+                    `;
+                    reportList.insertBefore(reportElement, reportList.firstChild);
+                }
+            });
+        }
+
+        let battleUpdateInterval;
+
+        // Start polling if battle is not over
+        if (!document.querySelector('.battle-status')) {
+            battleUpdateInterval = setInterval(updateBattleData, 5000); // Poll every 5 seconds
+            
+            // Initial update
+            updateBattleData();
+        }
     </script>
 </body>
 </html>

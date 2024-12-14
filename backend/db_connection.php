@@ -1,5 +1,5 @@
 <?php
-// Database connection code here
+
 $host = 'localhost';
 $dbname = 'nations';
 $username = 'root';

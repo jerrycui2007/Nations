@@ -77,7 +77,7 @@ try {
 
         while ($remaining_points > 0) {
             // 20% chance for special buff
-            if (mt_rand(1, 5) === 1 && $remaining_points >= 1) {
+            if (mt_rand(2, 5) === 1 && $remaining_points >= 1) {
                 $buff_type = array_rand($POSSIBLE_BUFF_CONFIG);
                 $possible_targets = $POSSIBLE_BUFF_CONFIG[$buff_type];
                 $target = $possible_targets[array_rand($possible_targets)];
