@@ -578,6 +578,27 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
             background-color: #cccccc;
             cursor: not-allowed;
         }
+
+        #loading-indicator {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
+
+        .equipment-modal-content {
+            position: relative;
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 8px;
+            scroll-behavior: smooth;
+        }
+
     </style>
 </head>
 <body>
@@ -816,12 +837,15 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
                         </div>
                     </div>
 
-                    <!-- Equipment Selection Modal -->
+                    <<!-- Equipment Selection Modal -->
                     <div id="equipmentSelectorModal" class="equipment-modal">
                         <div class="equipment-modal-content">
                             <span class="close" onclick="closeEquipmentSelector()">&times;</span>
                             <h2>Select Equipment</h2>
                             <div id="available-equipment" class="available-equipment-grid"></div>
+                            <div id="loading-indicator" style="display: none; text-align: center; padding: 20px;">
+                                Loading more equipment...
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -834,17 +858,81 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
     </div>
 
     <script>
+        let currentPage = 1;
+        let isLoading = false;
+        let hasMoreItems = true;
+
         function showEquipmentSelector(unitId, slot, slotType) {
             const modal = document.getElementById('equipmentSelectorModal');
             const equipmentContainer = document.getElementById('available-equipment');
+            const unitLevel = <?php echo $unit['level']; ?>; // Add this line to get unit level
             
-            fetch(`../backend/get_available_equipment.php?type=${encodeURIComponent(slotType)}`)
-                .then(response => response.json())
+            // Reset pagination variables
+            currentPage = 1;
+            isLoading = false;
+            hasMoreItems = true;
+            
+            // Clear existing content
+            equipmentContainer.innerHTML = '';
+            
+            // Show modal
+            modal.style.display = 'block';
+            
+            // Load initial items
+            loadMoreEquipment(unitId, slot, slotType, unitLevel);
+            
+            // Add scroll event listener
+            const modalContent = modal.querySelector('.equipment-modal-content');
+            modalContent.addEventListener('scroll', () => {
+                if (shouldLoadMore(modalContent)) {
+                    loadMoreEquipment(unitId, slot, slotType, unitLevel);
+                }
+            });
+        }
+
+        function shouldLoadMore(element) {
+            return !isLoading && 
+                hasMoreItems && 
+                (element.scrollHeight - element.scrollTop - element.clientHeight < 100);
+        }
+
+        function loadMoreEquipment(unitId, slot, slotType, unitLevel) {
+            if (isLoading || !hasMoreItems) return;
+            
+            isLoading = true;
+            const loadingIndicator = document.getElementById('loading-indicator');
+            loadingIndicator.style.display = 'block';
+            
+            fetch(`../backend/get_available_equipment.php?type=${encodeURIComponent(slotType)}&unit_level=${unitLevel}&page=${currentPage}&per_page=10`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+                        });
+                    }
+                    return response.text().then(text => {
+                        try {
+                            return JSON.parse(text);
+                        } catch (e) {
+                            console.error('Raw response:', text);
+                            throw new Error(`JSON parse error: ${e.message}`);
+                        }
+                    });
+                })
                 .then(data => {
-                    equipmentContainer.innerHTML = '';
-                    data.forEach(item => {
-                        const equipmentDiv = document.createElement('div');
-                        fetch('../backend/get_equipment_card.php', {
+                    const equipmentContainer = document.getElementById('available-equipment');
+                    
+                    // Update hasMoreItems based on server response
+                    hasMoreItems = data.has_more;
+                    
+                    if (data.equipment.length === 0) {
+                        loadingIndicator.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Process equipment items
+                    Promise.all(data.equipment.map(item => {
+                        return fetch('../backend/get_equipment_card.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -853,18 +941,34 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
                         })
                         .then(response => response.text())
                         .then(html => {
+                            const equipmentDiv = document.createElement('div');
                             equipmentDiv.innerHTML = html;
                             const equipButton = document.createElement('button');
                             equipButton.className = 'equip-button';
                             equipButton.onclick = () => equipItem(item.equipment_id, unitId, slot);
                             equipButton.textContent = 'Equip';
                             equipmentDiv.querySelector('.equipment-card').appendChild(equipButton);
-                            equipmentContainer.appendChild(equipmentDiv);
+                            return equipmentDiv;
                         });
+                    })).then(elements => {
+                        elements.forEach(element => equipmentContainer.appendChild(element));
+                        currentPage++;
+                        isLoading = false;
+                        loadingIndicator.style.display = 'none';
+                        
+                        // If we have more items but no scrollbar, load more
+                        const modalContent = document.querySelector('.equipment-modal-content');
+                        if (hasMoreItems && modalContent.scrollHeight <= modalContent.clientHeight) {
+                            loadMoreEquipment(unitId, slot, slotType);
+                        }
                     });
+                })
+                .catch(error => {
+                    console.error('Error loading equipment:', error);
+                    loadingIndicator.style.display = 'none';
+                    isLoading = false;
+                    alert('Error loading equipment. Check console for details.');
                 });
-            
-            modal.style.display = 'block';
         }
 
         function closeEquipmentSelector() {

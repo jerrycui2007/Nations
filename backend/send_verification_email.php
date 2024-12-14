@@ -1,5 +1,5 @@
 <?php
-require_once 'db_connection.php';
+require_once __DIR__ . '/db_connection.php';
 require_once 'phpmailer/PHPMailer.php';
 require_once 'phpmailer/SMTP.php';
 require_once 'phpmailer/Exception.php';

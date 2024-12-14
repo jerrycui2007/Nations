@@ -1217,3 +1217,21 @@
 [06-Dec-2024 23:51:43 UTC] PHP   2. main() C:\wamp64\www\Nations\backend\minute_updates.php:225
 [06-Dec-2024 23:51:43 UTC] PHP   3. performMinuteUpdates() C:\wamp64\www\Nations\backend\minute_updates.php:221
 [06-Dec-2024 23:51:43 UTC] PHP   4. process_battle($battle_id = 121) C:\wamp64\www\Nations\backend\minute_updates.php:181
+[14-Dec-2024 21:12:10 UTC] PHP Warning:  Undefined variable $result_message in C:\wamp64\www\Nations\backend\process_battle.php on line 1226
+[14-Dec-2024 21:12:10 UTC] PHP Stack trace:
+[14-Dec-2024 21:12:10 UTC] PHP   1. {main}() C:\wamp64\www\Nations\backend\minute_updates.php:0
+[14-Dec-2024 21:12:10 UTC] PHP   2. main() C:\wamp64\www\Nations\backend\minute_updates.php:225
+[14-Dec-2024 21:12:10 UTC] PHP   3. performMinuteUpdates() C:\wamp64\www\Nations\backend\minute_updates.php:221
+[14-Dec-2024 21:12:10 UTC] PHP   4. process_battle($battle_id = 122) C:\wamp64\www\Nations\backend\minute_updates.php:181
+[14-Dec-2024 21:12:10 UTC] PHP Warning:  Trying to access array offset on false in C:\wamp64\www\Nations\backend\process_battle.php on line 1255
+[14-Dec-2024 21:12:10 UTC] PHP Stack trace:
+[14-Dec-2024 21:12:10 UTC] PHP   1. {main}() C:\wamp64\www\Nations\backend\minute_updates.php:0
+[14-Dec-2024 21:12:10 UTC] PHP   2. main() C:\wamp64\www\Nations\backend\minute_updates.php:225
+[14-Dec-2024 21:12:10 UTC] PHP   3. performMinuteUpdates() C:\wamp64\www\Nations\backend\minute_updates.php:221
+[14-Dec-2024 21:12:10 UTC] PHP   4. process_battle($battle_id = 122) C:\wamp64\www\Nations\backend\minute_updates.php:181
+[14-Dec-2024 21:12:10 UTC] PHP Warning:  Trying to access array offset on false in C:\wamp64\www\Nations\backend\process_battle.php on line 1267
+[14-Dec-2024 21:12:10 UTC] PHP Stack trace:
+[14-Dec-2024 21:12:10 UTC] PHP   1. {main}() C:\wamp64\www\Nations\backend\minute_updates.php:0
+[14-Dec-2024 21:12:10 UTC] PHP   2. main() C:\wamp64\www\Nations\backend\minute_updates.php:225
+[14-Dec-2024 21:12:10 UTC] PHP   3. performMinuteUpdates() C:\wamp64\www\Nations\backend\minute_updates.php:221
+[14-Dec-2024 21:12:10 UTC] PHP   4. process_battle($battle_id = 122) C:\wamp64\www\Nations\backend\minute_updates.php:181
