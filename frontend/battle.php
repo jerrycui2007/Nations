@@ -772,36 +772,39 @@ $attacker_strength = calculateDivisionStrength($attacking_units);
 
         // Function to update combat reports
         function updateCombatReports(reports) {
-            const reportList = document.querySelector('.report-list');
-            if (!reportList) {
-                // Create report list if it doesn't exist
-                const reportsContainer = document.querySelector('.combat-reports');
-                const noReports = reportsContainer.querySelector('.no-reports');
-                if (noReports) {
-                    noReports.remove();
-                }
-                const newReportList = document.createElement('div');
-                newReportList.className = 'report-list';
-                reportsContainer.appendChild(newReportList);
-                return;
+            const reportsContainer = document.querySelector('.combat-reports');
+            let reportList = document.querySelector('.report-list');
+            
+            // Remove "no reports" message if it exists
+            const noReports = reportsContainer.querySelector('.no-reports');
+            if (noReports) {
+                noReports.remove();
             }
 
+            // Create report list if it doesn't exist
+            if (!reportList) {
+                reportList = document.createElement('div');
+                reportList.className = 'report-list';
+                reportsContainer.appendChild(reportList);
+            }
+
+            // Clear existing reports
+            reportList.innerHTML = '';
+
+            // Add reports in reverse chronological order
             reports.forEach(report => {
-                // Only add if report doesn't already exist
-                if (!document.querySelector(`[data-report-time="${report.time}"]`)) {
-                    const reportElement = document.createElement('div');
-                    reportElement.className = 'report-item';
-                    reportElement.setAttribute('data-report-time', report.time);
-                    reportElement.innerHTML = `
-                        <div class="report-time">
-                            ${new Date(report.time).toLocaleString()}
-                        </div>
-                        <div class="report-message">
-                            ${report.message.replace(/(\d+)/g, '<span class="number-highlight">$1</span>')}
-                        </div>
-                    `;
-                    reportList.insertBefore(reportElement, reportList.firstChild);
-                }
+                const reportElement = document.createElement('div');
+                reportElement.className = 'report-item';
+                reportElement.setAttribute('data-report-time', report.time);
+                reportElement.innerHTML = `
+                    <div class="report-time">
+                        ${new Date(report.time).toLocaleString()}
+                    </div>
+                    <div class="report-message">
+                        ${report.message.replace(/(\d+)/g, '<span class="number-highlight">$1</span>')}
+                    </div>
+                `;
+                reportList.appendChild(reportElement);
             });
         }
 

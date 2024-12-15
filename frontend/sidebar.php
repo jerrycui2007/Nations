@@ -62,6 +62,7 @@ $time_until_daily = $now->diff($today_3pm);
                 </a>
                 <ul class="dropdown-menu">
                     <li><a href="leaderboard.php" <?php echo ($current_page == 'leaderboard.php') ? 'class="active"' : ''; ?>><i class="fas fa-medal"></i> Nation Leaderboard</a></li>
+                    <li><a href="military_leaderboard.php" <?php echo ($current_page == 'military_leaderboard.php') ? 'class="active"' : ''; ?>><i class="fas fa-medal"></i> Military Leaderboard</a></li>
                     <li><a href="alliance_leaderboard.php" <?php echo ($current_page == 'alliance_leaderboard.php') ? 'class="active"' : ''; ?>><i class="fas fa-users"></i> Alliance Leaderboard</a></li>
                 </ul>
             </li>
@@ -69,6 +70,7 @@ $time_until_daily = $now->diff($today_3pm);
             <li><a href="notifications.php" <?php echo ($current_page == 'notifications.php') ? 'class="active"' : ''; ?>><i class="fas fa-bell"></i> Notifications</a></li>
             <li><a href="https://nations.miraheze.org/wiki/Rules"><i class="fas fa-gavel"></i> Rules</a></li>
             <li><a href="https://discord.gg/b6VBBDKWSG"><i class="fab fa-discord"></i> Discord Server</a></li>
+            <li><a href="donate.php" <?php echo ($current_page == 'donate.php') ? 'class="active"' : ''; ?>><i class="fas fa-heart"></i> Donate</a></li>
             <li><a href="https://nations.miraheze.org/wiki/Main_Page"><i class="fas fa-book"></i> Wiki</a></li>
             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>

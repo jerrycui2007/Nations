@@ -4821,3 +4821,2001 @@
 [2024-11-24 00:35:29] Mission refresh process completed successfully
 [2024-11-24 00:35:29] Daily updates completed successfully
 [2024-11-24 00:35:29] Daily updates completed
+[2024-12-15 02:23:54] Mission config loaded: 30 missions
+[2024-12-15 02:23:54] Mission config contents: Array
+(
+    [riot_control] => Array
+        (
+            [name] => Riot Control
+            [description] => A Westberg member of the United Nations is experiencing serious riot problems after a somewhat shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => westberg
+            [spawn_weight] => 240
+            [rarity] => Common
+            [defender_division_name] => Westberg Rioters
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rioter] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 9
+                            [max_amount] => 11
+                        )
+
+                )
+
+        )
+
+    [its_the_least_we_can_do] => Array
+        (
+            [name] => It's the Least We Can Do
+            [description] => The United Nations is expecting us to contribute in the fight against the Bihadj Terrorists.
+            [continent] => zaheria
+            [spawn_weight] => 240
+            [rarity] => Common
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 20
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 5
+                            [max_amount] => 7
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 1
+                            [max_amount] => 3
+                        )
+
+                    [technical] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 3
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs] => Array
+        (
+            [name] => Foreign Affairs
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => westberg
+            [spawn_weight] => 240
+            [rarity] => Common
+            [defender_division_name] => Secret Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [secret_agent] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 9
+                            [max_amount] => 11
+                        )
+
+                )
+
+        )
+
+    [suppressing_the_khev_minosk] => Array
+        (
+            [name] => Suppressing the Khev Minosk
+            [description] => We need to stop the advancements of the terror group Khev Minosk. Strike with force.
+            [continent] => westberg
+            [spawn_weight] => 240
+            [rarity] => Common
+            [defender_division_name] => Khev Minosk
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 1000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 6
+                            [max_amount] => 8
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 2
+                            [max_amount] => 4
+                        )
+
+                )
+
+        )
+
+    [homeland_offence] => Array
+        (
+            [name] => Homeland Offence
+            [description] => To be frank, we don't like Oldenburg. It's an irrelevant little nation on the continent of Westberg, and it's mere existence is annoying. We should attack them a bit.
+            [continent] => westberg
+            [spawn_weight] => 240
+            [rarity] => Common
+            [defender_division_name] => Oldenburg Defence
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 500
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => cow
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [national_guard] => Array
+                        (
+                            [weight] => 90
+                            [min_amount] => 8
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+    [supply_raid] => Array
+        (
+            [name] => Supply Raid
+            [description] => Strategically attacking supply depots of Bihadj outposts can prove valuable.
+            [continent] => zaheria
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => Bihadj Insurgents
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 25
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 100
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 10
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 2
+                            [max_amount] => 4
+                        )
+
+                    [t_72_tank] => Array
+                        (
+                            [weight] => 15
+                            [min_amount] => 1
+                            [max_amount] => 3
+                        )
+
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 3
+                        )
+
+                    [concrete_bunker] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [zpu_4] => Array
+                        (
+                            [weight] => 15
+                            [min_amount] => 1
+                            [max_amount] => 3
+                        )
+
+                )
+
+        )
+
+    [anti_riot_control] => Array
+        (
+            [name] => Anti-Riot Control
+            [description] => A authoritarian police state is cracking down on protestors after a shady election. As a fellow UN member, it is our duty to help them.
+            [continent] => tind
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => Federal Security Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [riot_cop] => Array
+                        (
+                            [weight] => 50
+                            [min_amount] => 7
+                            [max_amount] => 9
+                        )
+
+                    [k9_team] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [signals_jammer] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [mh_6_little_bird] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 1
+                        )
+
+                    [secret_agent] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 3
+                        )
+
+                    [armoured_combat_ambulance] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 1
+                        )
+
+                )
+
+        )
+
+    [temperate_terrorists] => Array
+        (
+            [name] => Temperate Terrorists
+            [description] => The eastern nations of Westberg struggle with frequent raids by the terrorist group Khev Minosk. They are known for their reliable tanks, and we should be able to scrap them for metal if we succeed in our attack.
+            [continent] => zaheria
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => Khev Minosk Armoured Division
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 250
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [bmp_1] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [t_72_tank] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [stridsvagn_122] => Array
+                        (
+                            [weight] => 50
+                            [min_amount] => 6
+                            [max_amount] => 8
+                        )
+
+                    [volvo_repair_truck] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [the_ace_of_spades] => Array
+        (
+            [name] => The Ace of Spades
+            [description] => Francesco, the "Ace of Spades", is a legendary mobster with a deep and intense love for card games. We should attack his estate and rob the funds he uses to buy all of his cards.
+            [continent] => san_sebastian
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => The Spades
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 15000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [francesco_the_ace_of_spades] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 1
+                            [max_amount] => 1
+                        )
+
+                    [mh_6_little_bird] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 0
+                            [max_amount] => 2
+                        )
+
+                    [sniper] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 0
+                            [max_amount] => 2
+                        )
+
+                    [technical] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 0
+                            [max_amount] => 2
+                        )
+
+                    [mobster] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 10
+                            [max_amount] => 12
+                        )
+
+                )
+
+        )
+
+    [overseas_investments] => Array
+        (
+            [name] => Overseas Investments
+            [description] => A promising investment opportunity has open up in the nation of Dul Kaddir. The problem is that the local government is opposed to our so called "investment strategies". We should install a new government that is slightly more friendly to our "democratic" ideas.
+            [continent] => zaheria
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => Dul Kaddir Armed Forces
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => petroleum
+                            [amount] => 50
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [fortified_bunker] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 1
+                            [max_amount] => 1
+                        )
+
+                    [concrete_bunker] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [zpu_4] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [mi_24_hind] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [m1a1_swift_desert_platoon] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 2
+                            [max_amount] => 4
+                        )
+
+                    [trench_infantry] => Array
+                        (
+                            [weight] => 50
+                            [min_amount] => 7
+                            [max_amount] => 9
+                        )
+
+                )
+
+        )
+
+    [the_desert_fox] => Array
+        (
+            [name] => The Desert Fox
+            [description] => The Bihadj Leader, known only as "The Desert Fox", is currently residing in the western part of Zaheria. With a precise strike, we should be able to take him out and cripple his organization.
+            [continent] => zaheria
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => Bihdaj Bodyguards
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 50
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [desert_fox_bodyguard] => Array
+                        (
+                            [weight] => 50
+                            [min_amount] => 7
+                            [max_amount] => 8
+                        )
+
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [technical] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [bmp_1] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [mh_6_little_bird] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [medic] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [border_patrol] => Array
+        (
+            [name] => Border Patrol
+            [description] => An uptick in criminal activities across multiple contiennts by various organized crime groups has left citizens calling for a military response. Members of the Black Horns, Khev Minosk, and Bihadj Insurgents are thought to be responsible of drug trafficking and money laundering. Strike with force.
+            [continent] => amarino
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => Drug Smugglers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => herbs
+                            [amount] => 1
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => hemp
+                            [amount] => 1
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [ak_47_infantry] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [technical] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [mobster] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 4
+                        )
+
+                    [mh_6_little_bird] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [sniper] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [signals_jammer] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [foreign_affairs_ii] => Array
+        (
+            [name] => Foreign Affairs II
+            [description] => Hey! Look over there, Mr. President! *Boom!* *Boom!* Take the cash and run, dammit!
+            [continent] => amarino
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => Federal Security Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 25000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [armoured_limousine] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 1
+                            [max_amount] => 1
+                        )
+
+                    [armoured_combat_ambulance] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [riot_cop] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 2
+                            [max_amount] => 4
+                        )
+
+                    [k9_team] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [mh_6_little_bird] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [sniper] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [signals_jammer] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [secret_agent] => Array
+                        (
+                            [weight] => 65
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [heat] => Array
+        (
+            [name] => Heat
+            [description] => The Khev Minosk have captured a depot of anti-tank weapons, and are now digging in a defence. As a United Nations member, we must relieve them of their weaponry quickly.
+            [continent] => westberg
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => Khev Minosk Anti-Armour Company
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2500
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 2
+                            [max_amount] => 4
+                        )
+
+                    [at4_infantry] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 2
+                            [max_amount] => 4
+                        )
+
+                    [javelin_infantry] => Array
+                        (
+                            [weight] => 40
+                            [min_amount] => 5
+                            [max_amount] => 7
+                        )
+
+                    [tank_destroyer] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [mq_9_reaper] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [little_brother_wants_out] => Array
+        (
+            [name] => Little Brother Wants Out
+            [description] => Diplomatic negotiations over a small dependent region in San Sebastian had recently escalated into a armed conflict between state and regional rebels. As a fellow member of the United Nations, we are obliged to help.
+            [continent] => san_sebastian
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => Tyrian Rebels
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [infantry] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [horseback_infantry] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [merkava_iv] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [jungle_fever] => Array
+        (
+            [name] => Jungle Fever
+            [description] => The feared Followers of Black Horn is one of the reasons why southern Amarino is in such an unstable state. They are deadly when confronted in the jungle, but they have to be stopped.
+            [continent] => amarino
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => Followers of Black Horn
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 8000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [black_horn] => Array
+                        (
+                            [weight] => 85
+                            [min_amount] => 10
+                            [max_amount] => 15
+                        )
+
+                    [centurion_mk_5] => Array
+                        (
+                            [weight] => 15
+                            [min_amount] => 1
+                            [max_amount] => 3
+                        )
+
+                )
+
+        )
+
+    [arctic_drill] => Array
+        (
+            [name] => Arctic Drill
+            [description] => Every now and then, The United Nations host a military exercise in the northernmost regions of Tind. Even though the exercise is infamous for accidental deaths, we should join in to strengthen our relations with the Union.
+            [continent] => tind
+            [spawn_weight] => 45
+            [rarity] => Uncommon
+            [defender_division_name] => UN Peacekeepers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 2000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [coast_guard] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [leopard_2] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [dul_kaddir_convoy_interception] => Array
+        (
+            [name] => Dul Kaddir Convoy Interception
+            [description] => A heavily armed Dul Kaddir convoy is expected to pass through the T'el valley, opening up an opportunity for us to strike and intercept.
+            [continent] => zaheria
+            [spawn_weight] => 25
+            [rarity] => Rare
+            [defender_division_name] => Dul Kaddir Armoured Convoy
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 5000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 50
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 100
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [volvo_repair_truck] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 2
+                            [max_amount] => 2
+                        )
+
+                    [bmp_1] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [humvee] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 2
+                            [max_amount] => 3
+                        )
+
+                    [m1a1_abrahms] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [m1a1_swift_desert_platoon] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 7
+                            [max_amount] => 9
+                        )
+
+                    [tank_destroyer] => Array
+                        (
+                            [weight] => 15
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [k2_black_panther] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [m2_bradley] => Array
+                        (
+                            [weight] => 15
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [2k22_tunguska] => Array
+                        (
+                            [weight] => 15
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [all_ghillied_up] => Array
+        (
+            [name] => All Ghillied Up
+            [description] => The Khev Minosk has been reportedly stealing uranium from an abandoned nuclear power plant. However, it seems that they have no soldiers with them . . .?
+            [continent] => westberg
+            [spawn_weight] => 25
+            [rarity] => Rare
+            [defender_division_name] => Khev Minosk Special Forces
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 5000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => uranium
+                            [amount] => 50
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [forest_camo_expert] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 6
+                            [max_amount] => 8
+                        )
+
+                    [sniper] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 6
+                            [max_amount] => 8
+                        )
+
+                    [gear_sniper] => Array
+                        (
+                            [weight] => 50
+                            [min_amount] => 6
+                            [max_amount] => 8
+                        )
+
+                    [signals_jammer] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 2
+                        )
+
+                    [mh_6_little_bird] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 0
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [the_mortar_rain_of_alba_nera] => Array
+        (
+            [name] => The Mortar Rain of Alba Nera
+            [description] => Exploding hail falling from the skies. Alba Nera neighbours tremble. Literally. We have to stop this.
+            [continent] => san_sebastian
+            [spawn_weight] => 25
+            [rarity] => Rare
+            [defender_division_name] => Alba Nera Artillery Brigade
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 500
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [mortar_infantry] => Array
+                        (
+                            [weight] => 50
+                            [min_amount] => 9
+                            [max_amount] => 11
+                        )
+
+                    [zpu_4] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 2
+                            [max_amount] => 4
+                        )
+
+                    [mq_9_reaper] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 2
+                            [max_amount] => 4
+                        )
+
+                    [javelin_infantry] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [dust_to_dust] => Array
+        (
+            [name] => Dust to Dust
+            [description] => A hotel in Zaheria is harbouring dangerous terrorists. Although the security is heavily armed, this is our best opportunity to take them down.
+            [continent] => zaheria
+            [spawn_weight] => 25
+            [rarity] => Rare
+            [defender_division_name] => Oasis Hotel Security Service
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 15000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 50
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [gear_infantry] => Array
+                        (
+                            [weight] => 50
+                            [min_amount] => 9
+                            [max_amount] => 11
+                        )
+
+                    [medic] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [rpg_infantry] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [mg_infantry] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [mh_6_little_bird] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [riot_cop] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [the_impenetrable_norrland_wall] => Array
+        (
+            [name] => The Impenetrable Norrland Wall
+            [description] => The Norrland conflict has recently escalated and taking the fight to them may be the only way to make them yield.
+            [continent] => tind
+            [spawn_weight] => 25
+            [rarity] => Rare
+            [defender_division_name] => The Norrland Wall
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 7500
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 500
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 500
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [national_guard] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [arctic_camo_expert] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [concrete_bunker] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 6
+                            [max_amount] => 8
+                        )
+
+                    [combat_engineer] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [2k22_tunguska] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                )
+
+        )
+
+    [rumble_in_the_never_mind] => Array
+        (
+            [name] => Rumble in the . . . Never Mind
+            [description] => Have you ever been to the jungle? I have heard it's supposed to be warm. And sometimes wet. And full of unpleasant wildlife. We could send a 'delegation' to steal some of their fauna. They could be useful enough to make it worth the risk.
+            [continent] => amarino
+            [spawn_weight] => 25
+            [rarity] => Rare
+            [defender_division_name] => World Wildlife Fund
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => panther
+                            [amount] => 100
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => elephant
+                            [amount] => 100
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => piranha
+                            [amount] => 100
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [a10_thunderbolt] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [navy_seal] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 14
+                            [max_amount] => 16
+                        )
+
+                    [humvee] => Array
+                        (
+                            [weight] => 15
+                            [min_amount] => 2
+                            [max_amount] => 3
+                        )
+
+                    [signals_jammer] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 3
+                        )
+
+                )
+
+        )
+
+    [venland_airspace_violations] => Array
+        (
+            [name] => Venland Airspace Violations
+            [description] => Oldenburg is constantly harassing Venland with unprecedented airspace violations. As a United Nations member we have been called upon to teach Oldenburg a lesson.
+            [continent] => westberg
+            [spawn_weight] => 10
+            [rarity] => Epic
+            [defender_division_name] => 2nd Oldenburg Air Squadron
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 1000
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 5000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [f_35_lightning_ii] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [a10_thunderbolt] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [f_22_raptor] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [mi_24_hind] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [mq_9_reaper] => Array
+                        (
+                            [weight] => 20
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [convoy_interception_interception] => Array
+        (
+            [name] => Convoy Interception Interception
+            [description] => Our attempt to intercept an armoured convoy in the T'el valley led us straight into an ambush! Quick, we must counterattack!
+            [continent] => zaheria
+            [spawn_weight] => 10
+            [rarity] => Epic
+            [defender_division_name] => Dul Kaddir Air Force
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 1000
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 5000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [mq_9_reaper] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [mq_20_avenger] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [pave_low] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [b_2_spirit] => Array
+                        (
+                            [weight] => 25
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_comet] => Array
+        (
+            [name] => That's not a Comet
+            [description] => Our intelligence suggests that Alba Nera has developed nuclear powered rifles. We must take them all out before the technology spreads.
+            [continent] => san_sebastian
+            [spawn_weight] => 10
+            [rarity] => Epic
+            [defender_division_name] => Alba Nera Rocket Snipers
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => uranium
+                            [amount] => 500
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 5000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [medic] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [rocket_sniper] => Array
+                        (
+                            [weight] => 50
+                            [min_amount] => 9
+                            [max_amount] => 11
+                        )
+
+                    [nuclear_rocket_sniper] => Array
+                        (
+                            [weight] => 50
+                            [min_amount] => 9
+                            [max_amount] => 11
+                        )
+
+                )
+
+        )
+
+    [the_second_norrland_wall] => Array
+        (
+            [name] => The Second Norrland Wall
+            [description] => As we approach the heavily defended Norrland capital, a new, devstating weapon has been revealed . . .
+            [continent] => tind
+            [spawn_weight] => 10
+            [rarity] => Epic
+            [defender_division_name] => Norrland Bunker Complex
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => building_materials
+                            [amount] => 1000
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => metal
+                            [amount] => 500
+                        )
+
+                    [3] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 1000
+                        )
+
+                    [4] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 500
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [railgun] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 1
+                            [max_amount] => 1
+                        )
+
+                    [fortified_bunker] => Array
+                        (
+                            [weight] => 50
+                            [min_amount] => 9
+                            [max_amount] => 11
+                        )
+
+                    [zpu_4] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 2
+                            [max_amount] => 4
+                        )
+
+                    [2k22_tunguska] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 2
+                            [max_amount] => 4
+                        )
+
+                    [signals_jammer] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [tyz_uav_engineer] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [type_99a] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [leopard_2] => Array
+                        (
+                            [weight] => 5
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [thats_not_a_meteorite] => Array
+        (
+            [name] => That's not a Meteorite
+            [description] => Well... This is interesting. As far as we know, the strange light that flashed across the sky near the eastern regions of Westberg was not a meteorite. Locals report heavy fighting in the area. We should investigate.
+            [continent] => westberg
+            [spawn_weight] => 2
+            [rarity] => Legendary
+            [defender_division_name] => Alien Invaders
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 25
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [sectopod] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 3
+                            [max_amount] => 5
+                        )
+
+                    [sectoid] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 7
+                            [max_amount] => 10
+                        )
+
+                )
+
+        )
+
+    [the_hounds_of_spring] => Array
+        (
+            [name] => The Hounds of Spring
+            [description] => What’s that? An anomaly has been detected at the edge of our nation’s borders. The once thought destroyed Hounds of Alba are alive! We must send a pre-emptive strike to ensure they do not grow strong enough to exact revenge on us.
+            [continent] => san_sebastian
+            [spawn_weight] => 3
+            [rarity] => Legendary
+            [defender_division_name] => The Black Hounds of Alba Nera
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 100000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => uranium
+                            [amount] => 1000
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => whz
+                            [amount] => 10
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [gearhound_shredder] => Array
+                        (
+                            [weight] => 30
+                            [min_amount] => 5
+                            [max_amount] => 7
+                        )
+
+                    [gearhound_warhead] => Array
+                        (
+                            [weight] => 70
+                            [min_amount] => 9
+                            [max_amount] => 13
+                        )
+
+                    [volvo_repair_truck] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 2
+                            [max_amount] => 2
+                        )
+
+                )
+
+        )
+
+    [death_from_above] => Array
+        (
+            [name] => Death From Above
+            [description] => An unknown supporter of Alba Nera has provided them with an AC-130, giving them unprecendented air superiority. We must shoot it down before it's too late.
+            [continent] => san_sebastian
+            [spawn_weight] => 3
+            [rarity] => Legendary
+            [defender_division_name] => Alba Nera Strike Force
+            [rewards] => Array
+                (
+                    [0] => Array
+                        (
+                            [resource] => money
+                            [amount] => 10000
+                        )
+
+                    [1] => Array
+                        (
+                            [resource] => fuel
+                            [amount] => 1000
+                        )
+
+                    [2] => Array
+                        (
+                            [resource] => ammunition
+                            [amount] => 5000
+                        )
+
+                )
+
+            [enemies] => Array
+                (
+                    [lockheed_ac_130] => Array
+                        (
+                            [weight] => 100
+                            [min_amount] => 1
+                            [max_amount] => 1
+                        )
+
+                    [forest_camo_expert] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [mi_24_hind] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [sukhoi_su_75_checkmate] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [b_2_spirit] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [javelin_infantry] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [signals_jammer] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 1
+                            [max_amount] => 2
+                        )
+
+                    [sniper] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [merkava_iv] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [f_22_raptor] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                    [2k22_tunguska] => Array
+                        (
+                            [weight] => 10
+                            [min_amount] => 4
+                            [max_amount] => 6
+                        )
+
+                )
+
+        )
+
+)
+
+[2024-12-15 02:23:54] Starting daily updates
+[2024-12-15 02:23:54] UNIT_CONFIG loaded: 68 units
+[2024-12-15 02:23:54] Reset expanded_borders_today for 0 users
+[2024-12-15 02:23:55] Cleaned up 153 orphaned buffs
+[2024-12-15 02:23:55] Cleaned up 21 completed battles and 271 combat reports
+[2024-12-15 02:23:55] Cleaned up 0 unassigned units and 0 associated buffs
+[2024-12-15 02:23:55] Cleaned up 17 inactive NPC divisions with 107 units and 56 buffs
+[2024-12-15 02:23:55] Updating daily unit selection
+[2024-12-15 02:23:55] Updated daily unit to: secret_agent
+[2024-12-15 02:23:55] Starting mission refresh process
+[2024-12-15 02:23:55] Found 10 missions to refresh
+[2024-12-15 02:23:55] Processing mission ID 43 for user 10
+[2024-12-15 02:23:55] User has 1 other missions
+[2024-12-15 02:23:55] Available missions: riot_control, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, supply_raid, anti_riot_control, temperate_terrorists, the_ace_of_spades, overseas_investments, the_desert_fox, border_patrol, foreign_affairs_ii, heat, little_brother_wants_out, jungle_fever, arctic_drill, dul_kaddir_convoy_interception, all_ghillied_up, the_mortar_rain_of_alba_nera, dust_to_dust, the_impenetrable_norrland_wall, rumble_in_the_never_mind, venland_airspace_violations, convoy_interception_interception, thats_not_a_comet, the_second_norrland_wall, thats_not_a_meteorite, the_hounds_of_spring, death_from_above
+[2024-12-15 02:23:55] Total weight calculated: 1698
+[2024-12-15 02:23:55] Selected new mission type: homeland_offence
+[2024-12-15 02:23:55] Successfully updated mission 43 to homeland_offence
+[2024-12-15 02:23:55] Processing mission ID 24 for user 9
+[2024-12-15 02:23:55] User has 1 other missions
+[2024-12-15 02:23:55] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, supply_raid, anti_riot_control, temperate_terrorists, the_ace_of_spades, overseas_investments, the_desert_fox, border_patrol, foreign_affairs_ii, heat, little_brother_wants_out, arctic_drill, dul_kaddir_convoy_interception, all_ghillied_up, the_mortar_rain_of_alba_nera, dust_to_dust, the_impenetrable_norrland_wall, rumble_in_the_never_mind, venland_airspace_violations, convoy_interception_interception, thats_not_a_comet, the_second_norrland_wall, thats_not_a_meteorite, the_hounds_of_spring, death_from_above
+[2024-12-15 02:23:55] Total weight calculated: 1893
+[2024-12-15 02:23:55] Selected new mission type: the_mortar_rain_of_alba_nera
+[2024-12-15 02:23:55] Successfully updated mission 24 to the_mortar_rain_of_alba_nera
+[2024-12-15 02:23:55] Processing mission ID 23 for user 9
+[2024-12-15 02:23:55] User has 1 other missions
+[2024-12-15 02:23:55] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, supply_raid, anti_riot_control, temperate_terrorists, the_ace_of_spades, overseas_investments, the_desert_fox, border_patrol, foreign_affairs_ii, heat, little_brother_wants_out, jungle_fever, arctic_drill, dul_kaddir_convoy_interception, all_ghillied_up, dust_to_dust, the_impenetrable_norrland_wall, rumble_in_the_never_mind, venland_airspace_violations, convoy_interception_interception, thats_not_a_comet, the_second_norrland_wall, thats_not_a_meteorite, the_hounds_of_spring, death_from_above
+[2024-12-15 02:23:55] Total weight calculated: 1913
+[2024-12-15 02:23:55] Selected new mission type: foreign_affairs
+[2024-12-15 02:23:55] Successfully updated mission 23 to foreign_affairs
+[2024-12-15 02:23:55] Processing mission ID 22 for user 8
+[2024-12-15 02:23:55] User has 1 other missions
+[2024-12-15 02:23:55] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, supply_raid, anti_riot_control, temperate_terrorists, the_ace_of_spades, overseas_investments, the_desert_fox, border_patrol, foreign_affairs_ii, heat, little_brother_wants_out, jungle_fever, arctic_drill, dul_kaddir_convoy_interception, all_ghillied_up, the_mortar_rain_of_alba_nera, dust_to_dust, the_impenetrable_norrland_wall, rumble_in_the_never_mind, venland_airspace_violations, convoy_interception_interception, thats_not_a_comet, the_second_norrland_wall, thats_not_a_meteorite, the_hounds_of_spring, death_from_above
+[2024-12-15 02:23:55] Total weight calculated: 1698
+[2024-12-15 02:23:55] Selected new mission type: dul_kaddir_convoy_interception
+[2024-12-15 02:23:55] Successfully updated mission 22 to dul_kaddir_convoy_interception
+[2024-12-15 02:23:55] Processing mission ID 42 for user 7
+[2024-12-15 02:23:55] User has 1 other missions
+[2024-12-15 02:23:55] Available missions: riot_control, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, supply_raid, anti_riot_control, temperate_terrorists, the_ace_of_spades, overseas_investments, the_desert_fox, border_patrol, foreign_affairs_ii, heat, little_brother_wants_out, jungle_fever, arctic_drill, dul_kaddir_convoy_interception, all_ghillied_up, the_mortar_rain_of_alba_nera, dust_to_dust, the_impenetrable_norrland_wall, rumble_in_the_never_mind, venland_airspace_violations, convoy_interception_interception, thats_not_a_comet, the_second_norrland_wall, thats_not_a_meteorite, the_hounds_of_spring, death_from_above
+[2024-12-15 02:23:55] Total weight calculated: 1698
+[2024-12-15 02:23:55] Selected new mission type: arctic_drill
+[2024-12-15 02:23:55] Successfully updated mission 42 to arctic_drill
+[2024-12-15 02:23:55] Processing mission ID 21 for user 8
+[2024-12-15 02:23:55] User has 1 other missions
+[2024-12-15 02:23:55] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, supply_raid, anti_riot_control, temperate_terrorists, the_ace_of_spades, overseas_investments, the_desert_fox, border_patrol, foreign_affairs_ii, heat, little_brother_wants_out, jungle_fever, arctic_drill, all_ghillied_up, the_mortar_rain_of_alba_nera, dust_to_dust, the_impenetrable_norrland_wall, rumble_in_the_never_mind, venland_airspace_violations, convoy_interception_interception, thats_not_a_comet, the_second_norrland_wall, thats_not_a_meteorite, the_hounds_of_spring, death_from_above
+[2024-12-15 02:23:55] Total weight calculated: 1913
+[2024-12-15 02:23:55] Selected new mission type: little_brother_wants_out
+[2024-12-15 02:23:55] Successfully updated mission 21 to little_brother_wants_out
+[2024-12-15 02:23:55] Processing mission ID 35 for user 7
+[2024-12-15 02:23:55] User has 1 other missions
+[2024-12-15 02:23:55] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, supply_raid, anti_riot_control, temperate_terrorists, the_ace_of_spades, overseas_investments, the_desert_fox, border_patrol, foreign_affairs_ii, heat, little_brother_wants_out, jungle_fever, dul_kaddir_convoy_interception, all_ghillied_up, the_mortar_rain_of_alba_nera, dust_to_dust, the_impenetrable_norrland_wall, rumble_in_the_never_mind, venland_airspace_violations, convoy_interception_interception, thats_not_a_comet, the_second_norrland_wall, thats_not_a_meteorite, the_hounds_of_spring, death_from_above
+[2024-12-15 02:23:55] Total weight calculated: 1893
+[2024-12-15 02:23:55] Selected new mission type: riot_control
+[2024-12-15 02:23:55] Successfully updated mission 35 to riot_control
+[2024-12-15 02:23:55] Processing mission ID 44 for user 10
+[2024-12-15 02:23:55] User has 1 other missions
+[2024-12-15 02:23:55] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, supply_raid, anti_riot_control, temperate_terrorists, the_ace_of_spades, overseas_investments, the_desert_fox, border_patrol, foreign_affairs_ii, heat, little_brother_wants_out, jungle_fever, arctic_drill, dul_kaddir_convoy_interception, all_ghillied_up, the_mortar_rain_of_alba_nera, dust_to_dust, the_impenetrable_norrland_wall, rumble_in_the_never_mind, venland_airspace_violations, convoy_interception_interception, thats_not_a_comet, the_second_norrland_wall, thats_not_a_meteorite, the_hounds_of_spring, death_from_above
+[2024-12-15 02:23:55] Total weight calculated: 1698
+[2024-12-15 02:23:55] Selected new mission type: rumble_in_the_never_mind
+[2024-12-15 02:23:55] Successfully updated mission 44 to rumble_in_the_never_mind
+[2024-12-15 02:23:55] Processing mission ID 45 for user 11
+[2024-12-15 02:23:55] User has 1 other missions
+[2024-12-15 02:23:55] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, suppressing_the_khev_minosk, homeland_offence, supply_raid, anti_riot_control, temperate_terrorists, the_ace_of_spades, overseas_investments, the_desert_fox, border_patrol, foreign_affairs_ii, heat, little_brother_wants_out, jungle_fever, arctic_drill, dul_kaddir_convoy_interception, all_ghillied_up, the_mortar_rain_of_alba_nera, dust_to_dust, the_impenetrable_norrland_wall, rumble_in_the_never_mind, venland_airspace_violations, convoy_interception_interception, thats_not_a_comet, thats_not_a_meteorite, the_hounds_of_spring, death_from_above
+[2024-12-15 02:23:55] Total weight calculated: 1928
+[2024-12-15 02:23:55] Selected new mission type: suppressing_the_khev_minosk
+[2024-12-15 02:23:55] Successfully updated mission 45 to suppressing_the_khev_minosk
+[2024-12-15 02:23:55] Processing mission ID 46 for user 11
+[2024-12-15 02:23:55] User has 1 other missions
+[2024-12-15 02:23:55] Available missions: riot_control, its_the_least_we_can_do, foreign_affairs, homeland_offence, supply_raid, anti_riot_control, temperate_terrorists, the_ace_of_spades, overseas_investments, the_desert_fox, border_patrol, foreign_affairs_ii, heat, little_brother_wants_out, jungle_fever, arctic_drill, dul_kaddir_convoy_interception, all_ghillied_up, the_mortar_rain_of_alba_nera, dust_to_dust, the_impenetrable_norrland_wall, rumble_in_the_never_mind, venland_airspace_violations, convoy_interception_interception, thats_not_a_comet, the_second_norrland_wall, thats_not_a_meteorite, the_hounds_of_spring, death_from_above
+[2024-12-15 02:23:55] Total weight calculated: 1698
+[2024-12-15 02:23:55] Selected new mission type: riot_control
+[2024-12-15 02:23:55] Successfully updated mission 46 to riot_control
+[2024-12-15 02:23:55] Mission refresh process completed successfully
+[2024-12-15 02:23:55] Updated premium days for 1 users
+[2024-12-15 02:23:55] Daily updates completed successfully
+[2024-12-15 02:23:55] Daily updates completed

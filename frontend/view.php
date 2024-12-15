@@ -14,7 +14,7 @@ if ($nation_id === 0) {
 
 // Fetch nation data
 $stmt = $pdo->prepare("SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, u.flag, u.description, u.creationDate,
-                       u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag, u.continent
+                       u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag, u.continent, u.is_premium, u.background_image
                        FROM users u
                        LEFT JOIN alliances a ON u.alliance_id = a.alliance_id
                        WHERE u.id = ?");
@@ -49,7 +49,13 @@ if (!$nation) {
         }
 
         .header {
-            background: url('resources/<?php echo $nation['continent'] ? $nation['continent'] : 'default'; ?>.png') no-repeat center center;
+            background: url('<?php 
+                if ($nation['is_premium'] && $nation['background_image']) {
+                    echo htmlspecialchars($nation['background_image']);
+                } else {
+                    echo 'resources/' . ($nation['continent'] ? $nation['continent'] : 'default') . '.png';
+                }
+            ?>') no-repeat center center;
             background-size: cover;
             padding: 150px 20px;
             color: white;
@@ -263,7 +269,12 @@ if (!$nation) {
                 <div class="header-right">
                     <div class="info-group">
                         <div class="info-label">Leader</div>
-                        <div class="info-value"><?php echo htmlspecialchars($nation['leader_name']); ?></div>
+                        <div class="info-value">
+                            <?php if ($nation['is_premium']): ?>
+                                <img src="resources/premium.png" alt="Premium" style="height: 1em; width: auto; vertical-align: middle; margin-right: 5px;">
+                            <?php endif; ?>
+                            <?php echo htmlspecialchars($nation['leader_name']); ?>
+                        </div>
                     </div>
                     
                     <div class="info-group">

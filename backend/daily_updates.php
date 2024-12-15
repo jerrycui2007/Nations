@@ -228,6 +228,20 @@ function performDailyUpdates() {
             throw $e;
         }
 
+        // Update premium days and premium status
+        $stmt = $pdo->prepare("
+            UPDATE users 
+            SET premium_days_left = GREATEST(0, premium_days_left - 1),
+                is_premium = CASE 
+                    WHEN premium_days_left <= 1 THEN FALSE 
+                    ELSE is_premium 
+                END
+            WHERE premium_days_left > 0
+        ");
+        $stmt->execute();
+        $affected_rows = $stmt->rowCount();
+        log_message("Updated premium days for {$affected_rows} users");
+
         // Commit the single transaction at the end
         $pdo->commit();
         log_message("Daily updates completed successfully");

@@ -9,31 +9,45 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// First get all users ordered by GP
+// First get all users ordered by military GP
 $stmt = $pdo->prepare("
     SELECT 
         u.id, 
         u.country_name, 
-        u.leader_name, 
-        u.gp,
+        u.leader_name,
         u.flag,
-        u.population,
         u.alliance_id,
         u.is_premium,
         a.name as alliance_name,
         a.flag_link as alliance_flag,
-        (SELECT COUNT(*) + 1 
-         FROM users u2 
-         WHERE u2.gp > u.gp) as ranking
+        (
+            SELECT SUM(firepower + armour + maneuver + FLOOR(hp/10)) / 10
+            FROM units
+            WHERE player_id = u.id AND hp > 0
+        ) as military_gp,
+        (
+            SELECT COUNT(*) + 1 
+            FROM users u2 
+            WHERE (
+                SELECT SUM(firepower + armour + maneuver + FLOOR(hp/10))
+                FROM units
+                WHERE player_id = u2.id AND hp > 0
+            ) > (
+                SELECT SUM(firepower + armour + maneuver + FLOOR(hp/10))
+                FROM units
+                WHERE player_id = u.id AND hp > 0
+            )
+        ) as ranking
     FROM users u
     LEFT JOIN alliances a ON u.alliance_id = a.alliance_id
-    ORDER BY gp DESC
+    HAVING military_gp IS NOT NULL
+    ORDER BY military_gp DESC
     LIMIT 100
 ");
 $stmt->execute();
 $top_nations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Check if current user is in top 10
+// Check if current user is in top 100
 $user_in_top_100 = false;
 foreach ($top_nations as $nation) {
     if ($nation['id'] == $_SESSION['user_id']) {
@@ -48,17 +62,30 @@ if (!$user_in_top_100) {
         SELECT 
             u1.id, 
             u1.country_name, 
-            u1.leader_name, 
-            u1.gp,
+            u1.leader_name,
             u1.flag,
-            u1.population,
             u1.alliance_id,
             u1.is_premium,
             a.name as alliance_name,
             a.flag_link as alliance_flag,
-            (SELECT COUNT(*) + 1 
-             FROM users u2 
-             WHERE u2.gp > u1.gp) as ranking
+            (
+                SELECT SUM(firepower + armour + maneuver + FLOOR(hp/10))
+                FROM units
+                WHERE player_id = u1.id AND hp > 0
+            ) as military_gp,
+            (
+                SELECT COUNT(*) + 1 
+                FROM users u2 
+                WHERE (
+                    SELECT SUM(firepower + armour + maneuver + FLOOR(hp/10))
+                    FROM units
+                    WHERE player_id = u2.id AND hp > 0
+                ) > (
+                    SELECT SUM(firepower + armour + maneuver + FLOOR(hp/10))
+                    FROM units
+                    WHERE player_id = u1.id AND hp > 0
+                )
+            ) as ranking
         FROM users u1
         LEFT JOIN alliances a ON u1.alliance_id = a.alliance_id
         WHERE u1.id = ?
@@ -75,21 +102,35 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
         SELECT 
             u1.id, 
             u1.country_name, 
-            u1.leader_name, 
-            u1.gp,
+            u1.leader_name,
             u1.flag,
-            u1.population,
             u1.alliance_id,
             u1.is_premium,
             a.name as alliance_name,
             a.flag_link as alliance_flag,
-            (SELECT COUNT(*) + 1 
-             FROM users u2 
-             WHERE u2.gp > u1.gp) as ranking
+            (
+                SELECT SUM(firepower + armour + maneuver + FLOOR(hp/10))
+                FROM units
+                WHERE player_id = u1.id AND hp > 0
+            ) as military_gp,
+            (
+                SELECT COUNT(*) + 1 
+                FROM users u2 
+                WHERE (
+                    SELECT SUM(firepower + armour + maneuver + FLOOR(hp/10))
+                    FROM units
+                    WHERE player_id = u2.id AND hp > 0
+                ) > (
+                    SELECT SUM(firepower + armour + maneuver + FLOOR(hp/10))
+                    FROM units
+                    WHERE player_id = u1.id AND hp > 0
+                )
+            ) as ranking
         FROM users u1
         LEFT JOIN alliances a ON u1.alliance_id = a.alliance_id
         WHERE u1.country_name LIKE ? OR u1.leader_name LIKE ?
-        ORDER BY gp DESC
+        HAVING military_gp IS NOT NULL
+        ORDER BY military_gp DESC
         LIMIT 50
     ");
     $stmt->execute([$search_term, $search_term]);
@@ -102,7 +143,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nation Leaderboard - Nations</title>
+    <title>Military Leaderboard - Nations</title>
     <link rel="stylesheet" type="text/css" href="design/style.css">
     <style>
         body {
@@ -236,15 +277,14 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
     
     <div class="main-content">
         <div class="content">
-            <h1>Nation Leaderboard</h1>
+            <h1>Military Leaderboard</h1>
             <table>
                 <tr>
                     <th>Rank</th>
                     <th>Nation</th>
                     <th>Alliance</th>
                     <th>Leader</th>
-                    <th>Population</th>
-                    <th>GP</th>
+                    <th>Military GP</th>
                 </tr>
                 <?php foreach ($top_nations as $nation): ?>
                     <tr <?php if ($nation['id'] == $_SESSION['user_id']) echo 'class="current-user"'; ?>>
@@ -291,8 +331,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                             <?php endif; ?>
                             <?php echo htmlspecialchars($nation['leader_name']); ?>
                         </td>
-                        <td><?php echo number_format($nation['population']); ?></td>
-                        <td><?php echo number_format($nation['gp']); ?></td>
+                        <td><?php echo number_format($nation['military_gp']); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 
@@ -321,8 +360,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                             <?php endif; ?>
                             <?php echo htmlspecialchars($user_nation['leader_name']); ?>
                         </td>
-                        <td><?php echo number_format($user_nation['population']); ?></td>
-                        <td><?php echo number_format($user_nation['gp']); ?></td>
+                        <td><?php echo number_format($user_nation['military_gp']); ?></td>
                     </tr>
                 <?php endif; ?>
             </table>
@@ -343,8 +381,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                             <th>Nation</th>
                             <th>Alliance</th>
                             <th>Leader</th>
-                            <th>Population</th>
-                            <th>GP</th>
+                            <th>Military GP</th>
                         </tr>
                         <?php foreach ($search_results as $nation): ?>
                             <tr <?php if ($nation['id'] == $_SESSION['user_id']) echo 'class="current-user"'; ?>>
@@ -375,8 +412,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                                     <?php endif; ?>
                                     <?php echo htmlspecialchars($nation['leader_name']); ?>
                                 </td>
-                                <td><?php echo number_format($nation['population']); ?></td>
-                                <td><?php echo number_format($nation['gp']); ?></td>
+                                <td><?php echo number_format($nation['military_gp']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </table>
@@ -389,4 +425,4 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
         </div>
     </div>
 </body>
-</html>
+</html> 

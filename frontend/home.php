@@ -19,9 +19,9 @@ try {
     // Fetch user data
     $stmt = $pdo->prepare("
         SELECT u.country_name, u.leader_name, u.population, u.tier, u.gp, u.description,
-               c.food, c.power, c.consumer_goods, l.urban_areas, u.flag, u.creationDate,
-               u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag, u.continent,
-               u.notifications_enabled
+        c.food, c.power, c.consumer_goods, l.urban_areas, u.flag, u.creationDate,
+        u.alliance_id, a.name as alliance_name, a.flag_link as alliance_flag, u.continent,
+        u.notifications_enabled, u.is_premium, u.background_image
         FROM users u 
         JOIN commodities c ON u.id = c.id 
         JOIN land l ON u.id = l.id
@@ -123,6 +123,39 @@ try {
             }
         }
     }
+
+    // Handle background update for premium users
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_background']) && $user['is_premium']) {
+        $new_background = trim($_POST['new_background']);
+        
+        // Check if it's a valid URL
+        if (filter_var($new_background, FILTER_VALIDATE_URL)) {
+            // Check if the URL ends with an allowed image extension
+            $valid_extensions = array('.jpg', '.jpeg', '.png', '.webp');
+            $is_valid_image = false;
+            
+            foreach ($valid_extensions as $ext) {
+                if (strtolower(substr($new_background, -strlen($ext))) === $ext) {
+                    $is_valid_image = true;
+                    break;
+                }
+            }
+
+            if ($is_valid_image) {
+                $stmt = $pdo->prepare("UPDATE users SET background_image = ? WHERE id = ?");
+                if ($stmt->execute([$new_background, $_SESSION['user_id']])) {
+                    $background_update_message = "Background updated successfully!";
+                    $user['background_image'] = $new_background;
+                } else {
+                    $background_update_message = "Error updating background.";
+                }
+            } else {
+                $background_update_message = "Invalid image format. URL must end with .jpg, .jpeg, .png, or .webp";
+            }
+        } else {
+            $background_update_message = "Invalid URL format.";
+        }
+    }
 } catch (PDOException $e) {
     error_log($e->getMessage());
     $error = "An error occurred while loading the page.";
@@ -175,7 +208,7 @@ if ($error) {
         }
 
         .header {
-            background: url('resources/<?php echo $user['continent'] ? $user['continent'] : 'default'; ?>.png') no-repeat center center;
+            background: url('<?php echo $user['is_premium'] && $user['background_image'] ? htmlspecialchars($user['background_image']) : 'resources/' . ($user['continent'] ? $user['continent'] : 'default') . '.png'; ?>') no-repeat center center;
             background-size: cover;
             padding: 150px 20px;
             color: white;
@@ -542,12 +575,19 @@ if ($error) {
             <div class="header-content">
                 <div class="header-left">
                     <img src="<?php echo htmlspecialchars($user['flag']); ?>" alt="Nation Flag" class="nation-flag">
-                    <div class="nation-name"><?php echo htmlspecialchars($user['country_name']); ?></div>
+                    <div class="nation-name">
+                        <?php echo htmlspecialchars($user['country_name']); ?>
+                    </div>
                 </div>
                 <div class="header-right">
                     <div class="info-group">
                         <div class="info-label">Leader</div>
-                        <div class="info-value"><?php echo htmlspecialchars($user['leader_name']); ?></div>
+                        <div class="info-value">
+                            <?php if ($user['is_premium']): ?>
+                                <img src="resources/premium.png" alt="Premium" style="height: 1em; width: auto; vertical-align: middle; margin-right: 5px;">
+                            <?php endif; ?>
+                            <?php echo htmlspecialchars($user['leader_name']); ?>
+                        </div>
                     </div>
                     
                     <div class="info-group">
@@ -687,6 +727,31 @@ if ($error) {
                     <button type="submit" class="flag-button">Update Settings</button>
                 </form>
             </div>
+
+            <?php if ($user['is_premium']): ?>
+                <div class="panel">
+                    <h2>
+                        <img src="resources/premium.png" alt="Premium" style="height: 1em; width: auto; vertical-align: middle; margin-right: 5px;">
+                        Custom Background
+                    </h2>
+                    <?php if (isset($background_update_message)): ?>
+                        <div class="flag-message <?php echo strpos($background_update_message, 'successfully') !== false ? 'success' : 'error'; ?>">
+                            <?php echo htmlspecialchars($background_update_message); ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <form method="POST" action="" id="backgroundForm" class="flag-form" onsubmit="return handleBackgroundSubmit(event)">
+                        <input type="text" 
+                            name="new_background" 
+                            id="new_background" 
+                            class="flag-input"
+                            placeholder="Enter background image URL (must end with .jpg, .jpeg, .png, or .webp)" 
+                            value="<?php echo htmlspecialchars($user['background_image'] ?? ''); ?>"
+                            required>
+                        <button type="submit" class="flag-button">Update Background</button>
+                    </form>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="footer">
@@ -937,6 +1002,36 @@ if ($error) {
                 }
             } catch (error) {
                 showToast('An error occurred while updating notification settings.', 'error');
+            }
+            
+            return false;
+        }
+
+        async function handleBackgroundSubmit(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('backgroundForm');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                const message = doc.querySelector('.flag-message')?.textContent?.trim();
+                
+                if (message) {
+                    showToast(message, message.includes('successfully') ? 'success' : 'error');
+                    if (message.includes('successfully')) {
+                        setTimeout(() => window.location.reload(), 1000);
+                    }
+                }
+            } catch (error) {
+                showToast('An error occurred while updating the background.', 'error');
             }
             
             return false;
