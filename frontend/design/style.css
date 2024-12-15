@@ -91,3 +91,9 @@ h1 {
         opacity: 1;
     }
 }
+
+.sidebar nav ul li a i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}

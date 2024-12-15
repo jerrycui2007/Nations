@@ -15,17 +15,32 @@ $unit_id = $_GET['unit_id'] ?? 0;
 
 // Fetch unit and its division's combat status
 $stmt = $pdo->prepare("
-    SELECT u.*, d.in_combat as division_in_combat,
-           e1.equipment_id as e1_id, e1.name as e1_name, e1.type as e1_type, e1.rarity as e1_rarity, e1.is_foil as e1_foil,
-           e2.equipment_id as e2_id, e2.name as e2_name, e2.type as e2_type, e2.rarity as e2_rarity, e2.is_foil as e2_foil,
-           e3.equipment_id as e3_id, e3.name as e3_name, e3.type as e3_type, e3.rarity as e3_rarity, e3.is_foil as e3_foil,
-           e4.equipment_id as e4_id, e4.name as e4_name, e4.type as e4_type, e4.rarity as e4_rarity, e4.is_foil as e4_foil
+    SELECT 
+        u.unit_id, u.custom_name, u.name, u.level, u.firepower, 
+        u.armour, u.maneuver, u.hp, u.max_hp, u.xp,
+        u.type,
+        d.in_combat as division_in_combat,
+        (
+            SELECT JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'slot', CASE 
+                        WHEN e.equipment_id = u.equipment_1_id THEN 1
+                        WHEN e.equipment_id = u.equipment_2_id THEN 2
+                        WHEN e.equipment_id = u.equipment_3_id THEN 3
+                        WHEN e.equipment_id = u.equipment_4_id THEN 4
+                    END,
+                    'id', e.equipment_id,
+                    'name', e.name,
+                    'type', e.type,
+                    'rarity', e.rarity,
+                    'is_foil', e.is_foil
+                )
+            )
+            FROM equipment e
+            WHERE e.equipment_id IN (u.equipment_1_id, u.equipment_2_id, u.equipment_3_id, u.equipment_4_id)
+        ) as equipment_data
     FROM units u
     LEFT JOIN divisions d ON u.division_id = d.division_id
-    LEFT JOIN equipment e1 ON u.equipment_1_id = e1.equipment_id
-    LEFT JOIN equipment e2 ON u.equipment_2_id = e2.equipment_id
-    LEFT JOIN equipment e3 ON u.equipment_3_id = e3.equipment_id
-    LEFT JOIN equipment e4 ON u.equipment_4_id = e4.equipment_id
     WHERE u.unit_id = ? AND u.player_id = ?
 ");
 $stmt->execute([$unit_id, $_SESSION['user_id']]);
@@ -40,6 +55,38 @@ $division_in_combat = $unit['division_in_combat'] ?? false;
 
 $unit_type = strtolower(str_replace(' ', '_', $unit['name']));
 $unit_type = strtolower(str_replace('-', '_', $unit_type));
+
+function getEquipmentBuffs($pdo, $equipment_ids) {
+    static $buffs_cache = [];
+    $cache_key = implode(',', $equipment_ids);
+    
+    if (isset($buffs_cache[$cache_key])) {
+        return $buffs_cache[$cache_key];
+    }
+    
+    $placeholders = str_repeat('?,', count($equipment_ids) - 1) . '?';
+    $stmt = $pdo->prepare("
+        SELECT 
+            eb.equipment_id,
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'buff_type', eb.buff_type,
+                    'value', eb.value,
+                    'description', b.description
+                )
+            ) as buffs
+        FROM equipment_buffs eb
+        LEFT JOIN buffs b ON eb.value = b.buff_id AND eb.buff_type = 'Buff'
+        WHERE eb.equipment_id IN ($placeholders)
+        GROUP BY eb.equipment_id
+    ");
+    
+    $stmt->execute($equipment_ids);
+    $results = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+    $buffs_cache[$cache_key] = $results;
+    
+    return $results;
+}
 ?>
 
 <!DOCTYPE html>
@@ -710,15 +757,16 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
                         }
 
                         // Add buffs from equipped items
-                        for ($slot = 1; $slot <= 4; $slot++) {
-                            if ($unit["e{$slot}_id"]) {
+                        if (!empty($unit['equipment_data'])) {
+                            $equipped_items = json_decode($unit['equipment_data'], true) ?? [];
+                            foreach ($equipped_items as $equipment) {
                                 $stmt = $pdo->prepare("
                                     SELECT eb.buff_type, eb.value, b.description as buff_description
                                     FROM equipment_buffs eb
                                     LEFT JOIN buffs b ON eb.value = b.buff_id
                                     WHERE eb.equipment_id = ?
                                 ");
-                                $stmt->execute([$unit["e{$slot}_id"]]);
+                                $stmt->execute([$equipment['id']]);
                                 $equipment_buffs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 
                                 foreach ($equipment_buffs as $buff) {
@@ -774,23 +822,51 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
                             <div class="equipment-grid">
                                 <?php
                                 // Get unit type from database to determine equipment slot types
-                                $unit_type = $unit['type']; // Assuming this comes from your unit query
+                                $unit_type = $unit['type'] ?? 'infantry'; // Default to infantry if type is not set
+                                if (!isset($TYPE_CONFIG[$unit_type])) {
+                                    error_log("Unknown unit type: " . $unit_type);
+                                    $unit_type = 'infantry'; // Fallback to infantry if type is not found
+                                }
                                 $equipment_types = $TYPE_CONFIG[$unit_type];
+
+                                if (!$equipment_types) {
+                                    error_log("No equipment types found for unit type: " . $unit_type);
+                                    $equipment_types = [
+                                        1 => 'Weapon',
+                                        2 => 'Armor',
+                                        3 => 'Accessory',
+                                        4 => 'Special'
+                                    ]; // Default equipment types
+                                }
                                 
+                                // Parse equipment data from JSON
+                                $equipped_items = [];
+                                if ($unit['equipment_data']) {
+                                    $equipped_items = json_decode($unit['equipment_data'], true) ?? [];
+                                }
+
                                 for ($slot = 1; $slot <= 4; $slot++) {
-                                    $equipment_id = $unit["e{$slot}_id"];
                                     $slot_type = $equipment_types[$slot];
-                                    ?>
+                                    $equipment = null;
+                                    
+                                    // Find equipment for this slot
+                                    foreach ($equipped_items as $item) {
+                                        if ($item['slot'] == $slot) {
+                                            $equipment = $item;
+                                            break;
+                                        }
+                                    }
+                                ?>
                                     <div class="equipment-slot" data-slot="<?php echo $slot; ?>">
-                                        <?php if ($equipment_id): ?>
+                                        <?php if ($equipment): ?>
                                             <?php
                                             // Create equipment item array for the card component
                                             $item = [
-                                                'equipment_id' => $equipment_id,
-                                                'name' => $unit["e{$slot}_name"],
-                                                'type' => $unit["e{$slot}_type"],
-                                                'rarity' => $unit["e{$slot}_rarity"],
-                                                'is_foil' => $unit["e{$slot}_foil"],
+                                                'equipment_id' => $equipment['id'],
+                                                'name' => $equipment['name'],
+                                                'type' => $equipment['type'],
+                                                'rarity' => $equipment['rarity'],
+                                                'is_foil' => $equipment['is_foil'],
                                                 'buffs' => [],
                                                 'show_rename' => false
                                             ];
@@ -802,7 +878,7 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
                                                 LEFT JOIN buffs b ON eb.value = b.buff_id
                                                 WHERE eb.equipment_id = ?
                                             ");
-                                            $stmt->execute([$equipment_id]);
+                                            $stmt->execute([$equipment['id']]);
                                             $buffs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             
                                             foreach ($buffs as $buff) {
@@ -816,7 +892,7 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
                                             <!-- Display equipped item -->
                                             <?php include 'components/equipment_card.php'; ?>
                                             <button class="unequip-btn" 
-                                                    onclick="unequipItem(<?php echo $equipment_id; ?>, <?php echo $unit['unit_id']; ?>, <?php echo $slot; ?>)"
+                                                    onclick="unequipItem(<?php echo $equipment['id']; ?>, <?php echo $unit['unit_id']; ?>, <?php echo $slot; ?>)"
                                                     <?php echo $division_in_combat ? 'disabled title="Cannot modify equipment while in combat"' : ''; ?>>
                                                 <i class="fas fa-times"></i> Unequip
                                             </button>
@@ -861,16 +937,19 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
         let currentPage = 1;
         let isLoading = false;
         let hasMoreItems = true;
+        let currentSlotType = '';
+        let equipmentCache = {};
 
         function showEquipmentSelector(unitId, slot, slotType) {
             const modal = document.getElementById('equipmentSelectorModal');
             const equipmentContainer = document.getElementById('available-equipment');
-            const unitLevel = <?php echo $unit['level']; ?>; // Add this line to get unit level
+            const unitLevel = <?php echo $unit['level']; ?>;
             
-            // Reset pagination variables
+            // Reset pagination variables and set current slot type
             currentPage = 1;
             isLoading = false;
             hasMoreItems = true;
+            currentSlotType = slotType;
             
             // Clear existing content
             equipmentContainer.innerHTML = '';
@@ -878,32 +957,83 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
             // Show modal
             modal.style.display = 'block';
             
-            // Load initial items
-            loadMoreEquipment(unitId, slot, slotType, unitLevel);
+            // Check cache first
+            const cacheKey = `${currentSlotType}_${unitLevel}_${currentPage}`;
+            if (equipmentCache[cacheKey]) {
+                displayCachedEquipment(equipmentCache[cacheKey], unitId, slot);
+            } else {
+                // Load initial items if not in cache
+                loadMoreEquipment(unitId, slot);
+            }
             
             // Add scroll event listener
             const modalContent = modal.querySelector('.equipment-modal-content');
-            modalContent.addEventListener('scroll', () => {
+            modalContent.removeEventListener('scroll', scrollHandler);
+            modalContent.addEventListener('scroll', scrollHandler);
+
+            function scrollHandler() {
                 if (shouldLoadMore(modalContent)) {
-                    loadMoreEquipment(unitId, slot, slotType, unitLevel);
+                    loadMoreEquipment(unitId, slot);
+                }
+            }
+        }
+
+        function displayCachedEquipment(data, unitId, slot) {
+            const equipmentContainer = document.getElementById('available-equipment');
+            
+            Promise.all(data.equipment.map(item => {
+                return createEquipmentElement(item, unitId, slot);
+            })).then(elements => {
+                elements.forEach(element => equipmentContainer.appendChild(element));
+                
+                // If we have more items but no scrollbar, load more
+                const modalContent = document.querySelector('.equipment-modal-content');
+                if (hasMoreItems && modalContent.scrollHeight <= modalContent.clientHeight) {
+                    loadMoreEquipment(unitId, slot);
                 }
             });
         }
 
-        function shouldLoadMore(element) {
-            return !isLoading && 
-                hasMoreItems && 
-                (element.scrollHeight - element.scrollTop - element.clientHeight < 100);
+        function createEquipmentElement(item, unitId, slot) {
+            return fetch('../backend/get_equipment_card.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(item)
+            })
+            .then(response => response.text())
+            .then(html => {
+                const equipmentDiv = document.createElement('div');
+                equipmentDiv.innerHTML = html;
+                const equipButton = document.createElement('button');
+                equipButton.className = 'equip-button';
+                equipButton.onclick = () => equipItem(item.equipment_id, unitId, slot);
+                equipButton.textContent = 'Equip';
+                equipmentDiv.querySelector('.equipment-card').appendChild(equipButton);
+                return equipmentDiv;
+            });
         }
 
-        function loadMoreEquipment(unitId, slot, slotType, unitLevel) {
+        function loadMoreEquipment(unitId, slot) {
             if (isLoading || !hasMoreItems) return;
             
             isLoading = true;
             const loadingIndicator = document.getElementById('loading-indicator');
             loadingIndicator.style.display = 'block';
             
-            fetch(`../backend/get_available_equipment.php?type=${encodeURIComponent(slotType)}&unit_level=${unitLevel}&page=${currentPage}&per_page=10`)
+            const cacheKey = `${currentSlotType}_${<?php echo $unit['level']; ?>}_${currentPage}`;
+            
+            // Check cache first
+            if (equipmentCache[cacheKey]) {
+                displayCachedEquipment(equipmentCache[cacheKey], unitId, slot);
+                currentPage++;
+                isLoading = false;
+                loadingIndicator.style.display = 'none';
+                return;
+            }
+            
+            fetch(`../backend/get_available_equipment.php?type=${encodeURIComponent(currentSlotType)}&unit_level=${<?php echo $unit['level']; ?>}&page=${currentPage}&per_page=10`)
                 .then(response => {
                     if (!response.ok) {
                         return response.text().then(text => {
@@ -922,7 +1052,6 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
                 .then(data => {
                     const equipmentContainer = document.getElementById('available-equipment');
                     
-                    // Update hasMoreItems based on server response
                     hasMoreItems = data.has_more;
                     
                     if (data.equipment.length === 0) {
@@ -930,26 +1059,11 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
                         return;
                     }
                     
-                    // Process equipment items
+                    // Cache the response
+                    equipmentCache[cacheKey] = data;
+                    
                     Promise.all(data.equipment.map(item => {
-                        return fetch('../backend/get_equipment_card.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(item)
-                        })
-                        .then(response => response.text())
-                        .then(html => {
-                            const equipmentDiv = document.createElement('div');
-                            equipmentDiv.innerHTML = html;
-                            const equipButton = document.createElement('button');
-                            equipButton.className = 'equip-button';
-                            equipButton.onclick = () => equipItem(item.equipment_id, unitId, slot);
-                            equipButton.textContent = 'Equip';
-                            equipmentDiv.querySelector('.equipment-card').appendChild(equipButton);
-                            return equipmentDiv;
-                        });
+                        return createEquipmentElement(item, unitId, slot);
                     })).then(elements => {
                         elements.forEach(element => equipmentContainer.appendChild(element));
                         currentPage++;
@@ -959,7 +1073,7 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
                         // If we have more items but no scrollbar, load more
                         const modalContent = document.querySelector('.equipment-modal-content');
                         if (hasMoreItems && modalContent.scrollHeight <= modalContent.clientHeight) {
-                            loadMoreEquipment(unitId, slot, slotType);
+                            loadMoreEquipment(unitId, slot);
                         }
                     });
                 })
@@ -969,6 +1083,12 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
                     isLoading = false;
                     alert('Error loading equipment. Check console for details.');
                 });
+        }
+
+        function shouldLoadMore(element) {
+            return !isLoading && 
+                hasMoreItems && 
+                (element.scrollHeight - element.scrollTop - element.clientHeight < 100);
         }
 
         function closeEquipmentSelector() {
@@ -986,6 +1106,8 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // Clear cache when equipment is equipped
+                    equipmentCache = {};
                     window.location.reload();
                 } else {
                     alert(data.message);
@@ -1004,6 +1126,8 @@ $unit_type = strtolower(str_replace('-', '_', $unit_type));
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // Clear cache when equipment is unequipped
+                    equipmentCache = {};
                     window.location.reload();
                 } else {
                     alert(data.message);

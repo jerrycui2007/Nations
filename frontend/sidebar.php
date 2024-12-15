@@ -20,59 +20,59 @@ $time_until_daily = $now->diff($today_3pm);
 <div class="sidebar">
     <nav>
         <ul>
-            <li><a href="home.php" <?php echo ($current_page == 'home.php') ? 'class="active"' : ''; ?>>Home</a></li>
-            <li><a href="land.php" <?php echo ($current_page == 'land.php') ? 'class="active"' : ''; ?>>Land</a></li>
-            <li><a href="industry.php" <?php echo ($current_page == 'industry.php') ? 'class="active"' : ''; ?>>Industry</a></li>
-            <li><a href="buildings.php" <?php echo ($current_page == 'buildings.php') ? 'class="active"' : ''; ?>>Buildings</a></li>
-            <li><a href="resources.php" <?php echo ($current_page == 'resources.php') ? 'class="active"' : ''; ?>>Natural Resources</a></li>
-            <li><a href="trade.php" <?php echo ($current_page == 'trade.php') ? 'class="active"' : ''; ?>>Trade</a></li>
-            <li><a href="alliance.php" <?php echo ($current_page == 'alliance.php') ? 'class="active"' : ''; ?>>Alliance</a></li>
+            <li><a href="home.php" <?php echo ($current_page == 'home.php') ? 'class="active"' : ''; ?>><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="land.php" <?php echo ($current_page == 'land.php') ? 'class="active"' : ''; ?>><i class="fas fa-map"></i> Land</a></li>
+            <li><a href="industry.php" <?php echo ($current_page == 'industry.php') ? 'class="active"' : ''; ?>><i class="fas fa-industry"></i> Industry</a></li>
+            <li><a href="buildings.php" <?php echo ($current_page == 'buildings.php') ? 'class="active"' : ''; ?>><i class="fas fa-building"></i> Buildings</a></li>
+            <li><a href="resources.php" <?php echo ($current_page == 'resources.php') ? 'class="active"' : ''; ?>><i class="fas fa-tree"></i> Natural Resources</a></li>
+            <li><a href="trade.php" <?php echo ($current_page == 'trade.php') ? 'class="active"' : ''; ?>><i class="fas fa-exchange-alt"></i> Trade</a></li>
+            <li><a href="alliance.php" <?php echo ($current_page == 'alliance.php') ? 'class="active"' : ''; ?>><i class="fas fa-handshake"></i> Alliance</a></li>
             
             <!-- Military Category -->
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle">
-                    <span>Military</span>
+                    <span><i class="fas fa-shield-alt"></i> Military</span>
                     <i class="fas fa-chevron-down"></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="military.php" <?php echo ($current_page == 'military.php') ? 'class="active"' : ''; ?>>Military Overview</a></li>
-                    <li><a href="recruitment.php" <?php echo ($current_page == 'recruitment.php') ? 'class="active"' : ''; ?>>Recruitment</a></li>
-                    <li><a href="battles.php" <?php echo ($current_page == 'battles.php') ? 'class="active"' : ''; ?>>Battle Reports</a></li>
-                    <li><a href="missions.php" <?php echo ($current_page == 'missions.php') ? 'class="active"' : ''; ?>>Missions</a></li>
+                    <li><a href="military.php" <?php echo ($current_page == 'military.php') ? 'class="active"' : ''; ?>><i class="fas fa-flag"></i> Military Overview</a></li>
+                    <li><a href="recruitment.php" <?php echo ($current_page == 'recruitment.php') ? 'class="active"' : ''; ?>><i class="fas fa-user-plus"></i> Recruitment</a></li>
+                    <li><a href="battles.php" <?php echo ($current_page == 'battles.php') ? 'class="active"' : ''; ?>><i class="fas fa-crosshairs"></i> Battle Reports</a></li>
+                    <li><a href="missions.php" <?php echo ($current_page == 'missions.php') ? 'class="active"' : ''; ?>><i class="fas fa-tasks"></i> Missions</a></li>
                 </ul>
             </li>
 
             <!-- Equipment Category -->
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle">
-                    <span>Equipment</span>
+                    <span><i class="fas fa-tools"></i> Equipment</span>
                     <i class="fas fa-chevron-down"></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="equipment.php" <?php echo ($current_page == 'equipment.php') ? 'class="active"' : ''; ?>>Equipment</a></li>
-                    <li><a href="loot_crates.php" <?php echo ($current_page == 'loot_crates.php') ? 'class="active"' : ''; ?>>Loot Crate Shop</a></li>
+                    <li><a href="equipment.php" <?php echo ($current_page == 'equipment.php') ? 'class="active"' : ''; ?>><i class="fas fa-wrench"></i> Equipment</a></li>
+                    <li><a href="loot_crates.php" <?php echo ($current_page == 'loot_crates.php') ? 'class="active"' : ''; ?>><i class="fas fa-box-open"></i> Loot Crate Shop</a></li>
                 </ul>
             </li>
 
             <!-- Leaderboards Category -->
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle">
-                    <span>Leaderboards</span>
+                    <span><i class="fas fa-trophy"></i> Leaderboards</span>
                     <i class="fas fa-chevron-down"></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="leaderboard.php" <?php echo ($current_page == 'leaderboard.php') ? 'class="active"' : ''; ?>>Nation Leaderboard</a></li>
-                    <li><a href="alliance_leaderboard.php" <?php echo ($current_page == 'alliance_leaderboard.php') ? 'class="active"' : ''; ?>>Alliance Leaderboard</a></li>
+                    <li><a href="leaderboard.php" <?php echo ($current_page == 'leaderboard.php') ? 'class="active"' : ''; ?>><i class="fas fa-medal"></i> Nation Leaderboard</a></li>
+                    <li><a href="alliance_leaderboard.php" <?php echo ($current_page == 'alliance_leaderboard.php') ? 'class="active"' : ''; ?>><i class="fas fa-users"></i> Alliance Leaderboard</a></li>
                 </ul>
             </li>
 
-            <li><a href="notifications.php" <?php echo ($current_page == 'notifications.php') ? 'class="active"' : ''; ?>>Notifications</a></li>
-            <li><a href="https://nations.miraheze.org/wiki/Rules">Rules</a></li>
-            <li><a href="https://discord.gg/b6VBBDKWSG">Discord Server</a></li>
-            <li><a href="https://nations.miraheze.org/wiki/Main_Page">Wiki</a></li>
-            <li><a href="logout.php">Logout</a></li>
+            <li><a href="notifications.php" <?php echo ($current_page == 'notifications.php') ? 'class="active"' : ''; ?>><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="https://nations.miraheze.org/wiki/Rules"><i class="fas fa-gavel"></i> Rules</a></li>
+            <li><a href="https://discord.gg/b6VBBDKWSG"><i class="fab fa-discord"></i> Discord Server</a></li>
+            <li><a href="https://nations.miraheze.org/wiki/Main_Page"><i class="fas fa-book"></i> Wiki</a></li>
+            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
-        <div class="version-info">v0.7.0-beta</div>
+        <div class="version-info">v0.7.1-beta</div>
         <div class="version-info">Join the official Discord Server to interact with the community and be notified of updates!</div>
         <div class="turn-info">
             <div class="turn-timer">

@@ -907,6 +907,11 @@ foreach ($units as $unit) {
                                         onclick="disbandDivision(<?php echo $division['division_id']; ?>, '<?php echo addslashes($division['name']); ?>')">
                                     <i class="fas fa-trash-alt"></i> Disband
                                 </button>
+                                <button class="remove-equipment-btn" 
+                                        onclick="removeAllEquipment(<?php echo $division['division_id']; ?>, '<?php echo addslashes($division['name']); ?>')"
+                                        <?php echo $unit_count === 0 ? 'disabled title="No units in division"' : ''; ?>>
+                                    <i class="fas fa-box-open"></i> Remove All Equipment
+                                </button>
                                 <?php if ($division['mobilization_state'] === 'mobilized'): ?>
                                     <button class="peacekeeping-btn" 
                                             onclick="sendPeacekeeping(<?php echo $division['division_id']; ?>, '<?php echo addslashes($division['name']); ?>')"

@@ -59,20 +59,32 @@ $total_count = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
 // Fetch unequipped equipment of the specified type with pagination and sorting
 $stmt = $pdo->prepare("
-    SELECT e.*, eb.buff_type, eb.value, b.description as buff_description
-    FROM equipment e
-    LEFT JOIN equipment_buffs eb ON e.equipment_id = eb.equipment_id
-    LEFT JOIN buffs b ON eb.value = b.buff_id
-    WHERE e.user_id = ? 
-    AND e.type = ?
-    " . $rarity_restriction . "
-    AND NOT EXISTS (
-        SELECT 1 FROM units u 
-        WHERE (u.equipment_1_id = e.equipment_id 
-            OR u.equipment_2_id = e.equipment_id 
-            OR u.equipment_3_id = e.equipment_id 
-            OR u.equipment_4_id = e.equipment_id)
+    WITH available_equipment AS (
+        SELECT e.*
+        FROM equipment e
+        WHERE e.user_id = ? 
+        AND e.type = ?
+        " . $rarity_restriction . "
+        AND NOT EXISTS (
+            SELECT 1 FROM units u 
+            WHERE e.equipment_id IN (u.equipment_1_id, u.equipment_2_id, u.equipment_3_id, u.equipment_4_id)
+        )
     )
+    SELECT 
+        e.*,
+        (
+            SELECT JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'buff_type', eb.buff_type,
+                    'value', eb.value,
+                    'description', b.description
+                )
+            )
+            FROM equipment_buffs eb
+            LEFT JOIN buffs b ON eb.value = b.buff_id
+            WHERE eb.equipment_id = e.equipment_id
+        ) as buffs
+    FROM available_equipment e
     ORDER BY " . $rarity_order . ", e.is_foil DESC, e.name ASC
     LIMIT ? OFFSET ?
 ");
@@ -92,6 +104,8 @@ $equipment_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Group equipment buffs
 $equipment = [];
 foreach ($equipment_data as $row) {
+    $buffs = json_decode($row['buffs'], true) ?? [];
+    
     if (!isset($equipment[$row['equipment_id']])) {
         $equipment[$row['equipment_id']] = [
             'equipment_id' => $row['equipment_id'],
@@ -99,14 +113,7 @@ foreach ($equipment_data as $row) {
             'rarity' => $row['rarity'],
             'type' => $row['type'],
             'is_foil' => $row['is_foil'],
-            'buffs' => []
-        ];
-    }
-    if ($row['buff_type']) {
-        $equipment[$row['equipment_id']]['buffs'][] = [
-            'buff_type' => $row['buff_type'],
-            'value' => $row['value'],
-            'description' => $row['buff_description']
+            'buffs' => $buffs
         ];
     }
 }
@@ -114,6 +121,7 @@ foreach ($equipment_data as $row) {
 // Calculate if there are more items to load
 $has_more = ($offset + $per_page) < $total_count;
 
+// Convert to array and output
 echo json_encode([
     'equipment' => array_values($equipment),
     'has_more' => $has_more,

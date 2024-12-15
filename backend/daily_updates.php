@@ -238,10 +238,9 @@ function performDailyUpdates() {
 }
 
 function log_message($message) {
-    /*
     $log_file = __DIR__ . '/daily_updates.log';
     $timestamp = date('Y-m-d H:i:s');
-    file_put_contents($log_file, "[$timestamp] $message\n", FILE_APPEND);*/
+    file_put_contents($log_file, "[$timestamp] $message\n", FILE_APPEND);
 }
 
 log_message("Starting daily updates");
